@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  bot_upravlyaika:
+    build: .
+    image: bot_upravlyaika
+    container_name: BOT__Upravlyaika.aiogram
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - /home/.VOLUMES/BOT__Upravlyaika.aiogram/source:/source:rw
+    tty: true
+    working_dir: /source
+    command: ["python", "bot.py"]
