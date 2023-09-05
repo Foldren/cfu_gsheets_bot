@@ -1,0 +1,6 @@
+aiogram~=3.0.0rc1
+tortoise-orm
+tortoise-orm[asyncmy]
+aerich
+gspread-asyncio
+environs
