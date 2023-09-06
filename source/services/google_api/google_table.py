@@ -41,7 +41,7 @@ class GoogleTable:
         queue_items = queue_op.split(" → ")
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
         type_op = "Доход" if type_op == "profit" else "Расход"
-        volume_with_sign = "-" + volume_op if type_op == "cost" else volume_op
+        volume_with_sign = volume_op if type_op == "profit" else ("-" + volume_op)
         surname_fstname = fullname_worker.split(" ")[1] + " " + fullname_worker.split(" ")[0]
 
         i = 0
