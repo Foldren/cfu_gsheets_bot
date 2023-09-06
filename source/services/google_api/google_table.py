@@ -52,7 +52,6 @@ class GoogleTable:
         await ws.append_row([str(chat_id_worker),
                              surname_fstname,
                              frmt_date_time,
-                             str(volume_op),
                              type_op,
                              payment_method,
                              volume_with_sign,
