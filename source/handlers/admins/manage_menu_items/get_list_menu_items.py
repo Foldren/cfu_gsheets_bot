@@ -37,22 +37,22 @@ async def next_to_nested_items(callb_or_msg: Union[Message, CallbackQuery], stat
     if upper_menu:
         selected_item_id = None
         menu_items = await MenuItemApi.get_user_upper_items(callb_or_msg.from_user.id)
-        msg_queue = await get_msg_queue(level=1)
+        msg_queue = await get_msg_queue(level=0)
     else:
         selected_item_id = await get_callb_content(callb_or_msg.data)
         selected_item = await MenuItemApi.get_by_id(selected_item_id)
         menu_items = await MenuItemApi.get_user_items_by_parent_id(callb_or_msg.from_user.id, parent_id=selected_item.id)
-        msg_queue = await get_msg_queue(selected_item.level + 1, selected_item.name, selected_item.queue)
+        msg_queue = await get_msg_queue(selected_item.level, selected_item.name, selected_item.queue)
 
     if menu_items:
         keyboard = await get_inline_keyb_markup(
             list_names=[(e["name"] + ("  💤" if e["status"] == 0 else "")) for e in menu_items],
             list_data=[e["id"] for e in menu_items],
-            callback_str="menu_item" if menu_items[0]['level'] < 4 else "empty",
+            callback_str="menu_item" if menu_items[0]['level'] < 6 else "empty",
             number_cols=2,
             add_keyb_to_start=await get_inline_keyb_str_full(selected_item_id, upper=upper_menu)
         )
-        if menu_items[0]['level'] == 4:
+        if menu_items[0]['level'] == 6:
             msg_queue += "\n Вы достигли максимального уровня 🆙"
 
     else:
@@ -73,7 +73,9 @@ async def back_to_parent_items(callback: CallbackQuery):
     selected_item = await MenuItemApi.get_by_id(selected_item_id)
     menu_items = await MenuItemApi.get_parent_items(selected_item_id)
     new_queue = selected_item.queue[:selected_item.queue.rfind('→')-1]
-    msg_queue = await get_msg_queue(selected_item.level, selected_item.name, new_queue)
+    parent_item = await selected_item.parent
+    parent_item_name = parent_item.name if parent_item is not None else None
+    msg_queue = await get_msg_queue(selected_item.level-1, parent_item_name, new_queue)
     upper_level = menu_items[0]['parent_id'] is None
     final_msg = text_get_list_categories + msg_queue if upper_level else msg_queue
     selected_upper_item_id = selected_item.parent_id

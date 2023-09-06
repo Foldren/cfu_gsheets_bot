@@ -27,13 +27,13 @@ async def start_delete_menu_item(callback: CallbackQuery, state: FSMContext):
     if "delete_menu_items" in callback.data:
         parent_item_id = await get_callb_content(callback.data)
         parent_item = await MenuItemApi.get_by_id(parent_item_id)
-        level_item = parent_item.level + 1
+        level_item = parent_item.level
         name_item = parent_item.name
         queue_item = parent_item.queue
     else:
         parent_item_id = None
-        level_item = 1
-        name_item = "Верхнее меню"
+        level_item = 0
+        name_item = "Юр. Лица"
         queue_item = ""
 
     msg_queue = await get_msg_queue(level=level_item, selected_item_name=name_item, queue=queue_item)

@@ -81,3 +81,4 @@ class MenuItemApi:
     @staticmethod
     async def delete_menu_items_by_ids(ids_items_list: list):
         await MenuItem.filter(id__in=ids_items_list).delete()
+

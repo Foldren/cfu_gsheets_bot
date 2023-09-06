@@ -26,7 +26,7 @@ async def start_add_menu_item(callback: CallbackQuery, state: FSMContext):
     menu = await MenuItemApi.get_by_id(id_parent_menu) if id_parent_menu is not None else None
 
     text_lvl = await get_msg_queue(
-        level=menu.level+1 if id_parent_menu is not None else 1,
+        level=menu.level if id_parent_menu is not None else 0,
         selected_item_name=menu.name if id_parent_menu is not None else "",
         queue=menu.queue if id_parent_menu is not None else "",
         only_queue=True,
@@ -36,8 +36,8 @@ async def start_add_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.set_data({
         'id_parent_menu': id_parent_menu,
         'text_level': text_lvl,
-        'level_new_menu': menu.level + 1 if menu is not None else 1,
-        'queue_new_menu': menu.queue if menu is not None else 'Верхнее меню'
+        'level_new_menu': (menu.level + 1) if menu is not None else 1,
+        'queue_new_menu': menu.queue if menu is not None else None
     })
 
     await callback.message.edit_text(text=text_lvl + text_start_add_menu_item, parse_mode="html")
@@ -67,8 +67,8 @@ async def choose_observers_menu_item(message: Message, state: FSMContext):
         add_keyb_to_start=keyb_str_pass_add_users_to_mi
     )
 
-    message_text = f"<code>Название новой категории</code>: {message.text}\n" + text_choose_observers_menu_item
-    queue = md['queue_new_menu'] + " → " + message.text
+    message_text = f"<u>Название новой категории</u>: <b>{message.text}</b>\n" + text_choose_observers_menu_item
+    queue = ((md['queue_new_menu'] + " → ") if md['queue_new_menu'] is not None else "") + message.text
 
     # Сохраняем название выбранного пункта и лист статусов пользователей (выбран или нет)
     await state.update_data({
@@ -76,7 +76,7 @@ async def choose_observers_menu_item(message: Message, state: FSMContext):
         'name_new_item': message.text,
         'status_list': status_list,
         'users': users,
-        'text_level': md['text_level'] + f"<code>Название новой категории</code>: {message.text}\n",
+        'text_level': md['text_level'] + f"<u>Название новой категории</u>: <b>{message.text}</b>\n",
         'queue_new_menu': queue
     })
 

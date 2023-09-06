@@ -1,4 +1,4 @@
-from tortoise import Model, Tortoise
+from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
     ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField
 

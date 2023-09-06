@@ -42,10 +42,10 @@ async def choose_new_data_user(callback: CallbackQuery, state: FSMContext):
     id_user = await get_callb_content(callback.data)
     user = await UserApi.get_by_id(id_user)
 
-    msg_text = f"<code>Chat_id пользователя:</code> {user.chat_id}\n" \
-               f"<code>Полное имя:</code> {user.fullname}\n" \
-               f"<code>Никнейм:</code> {user.nickname}\n" \
-               f"<code>Профессия:</code> {user.profession}"
+    msg_text = f"<b>Chat_id</b> - {user.chat_id}\n" \
+               f"<b>Полное имя</b> - {user.fullname}\n" \
+               f"<b>Никнейм</b> - {user.nickname}\n" \
+               f"<b>Профессия</b> - {user.profession}"
 
     await callback.message.edit_text(
         text=msg_text,
@@ -62,7 +62,7 @@ async def set_new_main_data_user(callback: CallbackQuery, state: FSMContext, bot
     id_user = await get_callb_content(callback.data)
     user = await UserApi.get_by_id(id_user)
 
-    msg_text = f"<code>Пользователь:</code> <b>{user.fullname}</b> - {user.profession} ({user.nickname})\n\n"
+    msg_text = f"<u>Пользователь:</u> {user.nickname}\n<b>{user.fullname}</b> - {user.profession} \n\n"
     example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}</code>"
 
     await set_memory_data(bot_object, callback.message, {

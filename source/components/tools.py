@@ -1,16 +1,12 @@
 from datetime import datetime
-from typing import List
-
 from aiogram import Bot
+from aiogram.exceptions import TelegramForbiddenError
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
 from components.texts import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE, CHECKS_PATH
-
-# Метод генерации inline клавиатуры с пунктами меню
+from config import MEMORY_STORAGE
 from services.database_extends.notify_group import NotifyGroupApi
 from services.database_extends.user import UserApi
 from services.google_api.google_table import GoogleTable
@@ -114,20 +110,25 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
     numbers = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
     emoji_level = ""
 
-    if level == 1:
+    if level == 0:
         if only_queue:
-            return f"<code>Вложенность</code>:  <b>Верхнее меню</b>\n"
+            return f"<u>Вложенность</u>:  <b>Юр. Лица</b>\n"
         else:
-            return f"<code>Уровень</code>: 1️⃣ <b>Верхнее меню</b>\n"
+            return f"<u>Уровень</u>: 0️⃣ <b>Юр. Лица</b>\n"
+    elif level == 1:
+        if only_queue:
+            return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
+        else:
+            return f"<u>Уровень</u>: 1️⃣ <b>{selected_item_name}</b>\n"
 
     for i in range(0, len(str(level))):
         emoji_level += numbers[int(str(level)[i])]
 
     if only_queue:
-        return f"<code>Вложенность</code>:  <b>{queue}</b>\n"
+        return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
     else:
-        return f"<code>Уровень</code>: {emoji_level} <b>{selected_item_name}</b>\n" \
-               f"<code>Вложенность</code>:  <b>{queue}</b>\n"
+        return f"<u>Уровень</u>: {emoji_level} <b>{selected_item_name}</b>\n" \
+               f"<u>Вложенность</u>:  <b>{queue}</b>\n"
 
 
 # Получить содержимое колбека
@@ -201,12 +202,12 @@ async def generate_observers_list(users: dict):
 
 
 async def get_sure_delete_mi_msg(list_menu_items: list):
-    return f"Вы уверены что хотите удалить: <b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
+    return f"Вы уверены что хотите удалить:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
            f"При удалении, исчезнут все вложенные категории а также определенные пользователям доступы к этим категориям 🤔‼️"
 
 
 async def get_sure_delete_usr_msg(list_users: list):
-    return f"Вы уверены что хотите забрать доступ у: <b>{', '.join(str(u) for u in list_users)}</b> ❓\n\n" \
+    return f"Вы уверены что хотите забрать доступ у:\n<b>{', '.join(str(u) for u in list_users)}</b> ❓\n\n" \
            f"При удалении исчезнут все определенные пользователям права видимости к определенным пунктам меню, " \
            f"а доступ пользователей к боту будет анулирован 🤔‼️"
 
@@ -252,27 +253,30 @@ async def get_current_frmt_datetime():
 
 async def send_multiply_messages(bot: Bot, msg_text: str, list_chat_ids: list[int], keyboard_markup=None):
     for chat_id in list_chat_ids:
-        await bot.send_message(
-            chat_id=chat_id,
-            text=msg_text,
-            parse_mode="html",
-            reply_markup=keyboard_markup,
-        )
+        try:
+            await bot.send_message(
+                chat_id=chat_id,
+                text=msg_text,
+                parse_mode="html",
+                reply_markup=keyboard_markup,
+            )
+        except TelegramForbiddenError:
+            await NotifyGroupApi.detach_group_from_admin(chat_id)
 
 
 async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, queue: str,
                                      volume_op: str, payment_method: str):
-    return f"📳 Пользователь <b>{fullname_worker}</b>, только что, оформил: {last_queue_e}\n"\
-           f"<b>Очередь операции</b>: {queue}\n"\
-           f"<b>Сумма</b>: {volume_op}\n"\
-           f"<b>Кошелек</b>: {payment_method}\n"
+    return f"📳 Пользователь <b>{fullname_worker}</b>, только что, оформил: {last_queue_e}\n" \
+           f"<u>Очередь операции</u>: <b>{queue}</b>\n" \
+           f"<u>Сумма</u>: <b>{volume_op}</b>\n" \
+           f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
 
 
 async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMContext, bot_object: Bot,
                                                gt_object: GoogleTable, file_id: str):
     current_user = await UserApi.get_by_id(message.chat.id)
     admin_id = await UserApi.get_user_admin_id(message.chat.id)
-    file_path = CHECKS_PATH + str(admin_id) + "/" + await get_current_frmt_datetime() + ".png"
+    # file_path = CHECKS_PATH + str(admin_id) + "/" + await get_current_frmt_datetime() + ".png"
     admin_info = await UserApi.get_admin_info(admin_id)
     state_data = await state.get_data()
 
@@ -288,16 +292,16 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
         payment_method=state_data['payment_method'],
     )
 
-    message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩◻◻◻◻◻')
+    message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
     # Сохраняем чек на сервере
-    await bot_object.download(file=file_id, destination=file_path)
+    # await bot_object.download(file=file_id, destination=file_path)
     await state.clear()
 
     # Рассылаем уведомление по группам админа
     check_admin_empty_groups = await NotifyGroupApi.check_admin_groups_empty(admin_id)
 
     if not check_admin_empty_groups:
-        message = await message.edit_text('Включен, отправляю уведомления в группы 📩 \n\n🟩🟩🟩🟩🟩🟩🟩◻◻◻')
+        message = await message.edit_text('Включен, отправляю уведомления в группы 📩 \n\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩')
         list_ngroups_ids = await NotifyGroupApi.get_admin_notify_groups_chat_ids(admin_id)
         operation_name = state_data['item_queue'].split(" → ")[-1]
 

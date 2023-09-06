@@ -36,7 +36,7 @@ async def start_change_menu_item(callback: CallbackQuery, state: FSMContext):
     )
 
     text_queue = await get_msg_queue(
-        level=parent_item.level + 1 if parent_item_id is not None else 1,
+        level=parent_item.level if parent_item_id is not None else 0,
         selected_item_name=parent_item.name if parent_item_id is not None else "",
         queue=parent_item.queue if parent_item_id is not None else ""
     )
@@ -53,18 +53,22 @@ async def choose_menu_item_params_to_change(callback: CallbackQuery, state: FSMC
 
     id_menu_item = await get_callb_content(callback.data)
     menu = await MenuItemApi.get_by_id(id_menu_item)
+    level_menu = menu.level if id_menu_item is not None else 0
 
     if "change_status_menu_item" in callback.data:
         await MenuItemApi.invert_status(menu)
 
     text_queue = await get_msg_queue(
-        level=menu.level + 1 if id_menu_item is not None else 1,
+        level=level_menu,
         selected_item_name=menu.name if id_menu_item is not None else "",
         queue=menu.queue if id_menu_item is not None else "",
         only_queue=True,
     )
 
-    text_name_c = f"<code>Выбран пункт</code>: <b>{menu.name}</b>\n"
+    text_name_c = f"<u>Выбран пункт</u>: <b>{menu.name}</b>\n" if level_menu != 1 else f"<u>Выбрано юр. лицо</u>: " \
+                                                                                       f"<b>{menu.name}</b>\n"
+
+    text_queue = text_queue if level_menu != 1 else ""
 
     await state.set_data({
         'queue_text': text_name_c + text_queue,
