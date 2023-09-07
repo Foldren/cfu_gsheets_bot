@@ -273,6 +273,16 @@ async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, qu
            f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
 
 
+async def get_gt_url_keyb_markup(google_table_url, google_drive_url):
+    keyboard = [
+        [
+            InlineKeyboardButton(text="Ссылка на таблицу", url=google_table_url),
+            InlineKeyboardButton(text="Ссылка на чеки", url=google_drive_url)
+        ]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
 async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMContext, bot_object: Bot,
                                                gt_object: GoogleTable, gd_object: GoogleDrive, file_id: str):
     current_user = await UserApi.get_by_id(message.chat.id)
@@ -281,6 +291,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
     file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
     admin_info = await UserApi.get_admin_info(admin_id)
     state_data = await state.get_data()
+    keyboard_end_write = await get_gt_url_keyb_markup(admin_info.google_table_url, admin_info.google_drive_dir_url)
 
     message = await message.answer('Добавляю запись в вашу гугл таблицу 🔄 \n\n🟩🟩🟩◻◻◻◻◻◻◻')
     # Добавляем запись в google
@@ -330,4 +341,4 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
             list_chat_ids=list_ngroups_ids
         )
 
-    await message.edit_text(text=text_end_add_mi_to_bd)
+    await message.edit_text(text=text_end_add_mi_to_bd, reply_markup=keyboard_end_write, parse_mode="html")

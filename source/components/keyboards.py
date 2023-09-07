@@ -6,16 +6,23 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMar
 keyb_start_admin = [
     [
         KeyboardButton(text="Меню"),
-        KeyboardButton(text="Сотрудники")
+        KeyboardButton(text="Сотрудники"),
+        KeyboardButton(text="Режим: Админ 👨‍💼")
     ]
 ]
 
 keyb_start_user = [
     [
-        KeyboardButton(text="Новая запись 🖊")
+        KeyboardButton(text="Новая запись")
     ]
 ]
 
+keyb_start_user_admin = [
+    [
+        KeyboardButton(text="Новая запись"),
+        KeyboardButton(text="Режим: Юзер 🙎‍♂️")
+    ]
+]
 
 keyb_empty_user_list = [
     [
@@ -69,6 +76,11 @@ cf_key_start_admin = ReplyKeyboardMarkup(
 
 cf_keyb_start_user = ReplyKeyboardMarkup(
     keyboard=keyb_start_user,
+    resize_keyboard=True,  # меняем размер клавиатуры
+)
+
+cf_keyb_start_user_admin = ReplyKeyboardMarkup(
+    keyboard=keyb_start_user_admin,
     resize_keyboard=True,  # меняем размер клавиатуры
 )
 

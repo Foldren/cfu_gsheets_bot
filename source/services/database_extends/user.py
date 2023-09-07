@@ -3,6 +3,12 @@ from models import User, AdminInfo
 
 class UserApi:
     @staticmethod
+    async def invert_mode(admin_id):
+        admin_info = await AdminInfo.get(admin_id=admin_id)
+        admin_info.admin_mode = not admin_info.admin_mode
+        await admin_info.save()
+
+    @staticmethod
     async def get_admin_info(admin_id):
         return await AdminInfo.get(admin_id=admin_id)
 
