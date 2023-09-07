@@ -5,7 +5,7 @@ from gspread_asyncio import AsyncioGspreadClientManager
 
 class GoogleTable:
     agcm: AsyncioGspreadClientManager
-    json_creds_path = "upravlyaika-credentials.json"
+    json_creds_path = "upravlyaika-credentials.json"  # "universe_domain": "googleapis.com"
 
     def __inti_credentials(self):
         creds = Credentials.from_service_account_file(self.json_creds_path)
@@ -40,8 +40,9 @@ class GoogleTable:
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         queue_items = queue_op.split(" → ")
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
-        type_op = "Доход" if type_op == "profit" else "Расход"
-        volume_with_sign = volume_op if type_op == "profit" else ("-" + str(volume_op))
+        profit_or_cost = type_op == "profit"
+        type_op = "Доход" if profit_or_cost else "Расход"
+        volume_with_sign = volume_op if profit_or_cost else f"-{volume_op}"
         surname_fstname = fullname_worker.split(" ")[1] + " " + fullname_worker.split(" ")[0]
 
         i = 0

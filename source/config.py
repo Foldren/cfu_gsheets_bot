@@ -21,5 +21,5 @@ AERICH_CONFIG = {
     },
 }  # "connections": {"default": "sqlite://source/upravlyaika.db"},
 MEMORY_STORAGE = MemoryStorage()
-BANKS_UPRAVLYAIKA = ["Точка", "Модуль", "Сбер", "Тинькофф", "Альфа", "Наличные 💵"]
+BANKS_UPRAVLYAIKA = ["Точка", "Модуль", "Сбер", "Тинькофф", "Альфа", "Наличные"]
 CHECKS_PATH = getcwd() + "/misc/images/checks/"

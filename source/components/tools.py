@@ -6,9 +6,10 @@ from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from components.texts import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE
+from config import MEMORY_STORAGE, CHECKS_PATH
 from services.database_extends.notify_group import NotifyGroupApi
 from services.database_extends.user import UserApi
+from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 
 
@@ -273,10 +274,11 @@ async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, qu
 
 
 async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMContext, bot_object: Bot,
-                                               gt_object: GoogleTable, file_id: str):
+                                               gt_object: GoogleTable, gd_object: GoogleDrive, file_id: str):
     current_user = await UserApi.get_by_id(message.chat.id)
     admin_id = await UserApi.get_user_admin_id(message.chat.id)
-    # file_path = CHECKS_PATH + str(admin_id) + "/" + await get_current_frmt_datetime() + ".png"
+    file_name = await get_current_frmt_datetime() + ".png"
+    file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
     admin_info = await UserApi.get_admin_info(admin_id)
     state_data = await state.get_data()
 
@@ -293,8 +295,17 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
     )
 
     message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
+
     # Сохраняем чек на сервере
-    # await bot_object.download(file=file_id, destination=file_path)
+    await bot_object.download(file=file_id, destination=file_path)
+
+    # Отправляем файл в папку google drive клиента
+    await gd_object.upload_check_too_google_drive_dir(
+        file_path=file_path,
+        google_dir_url=admin_info.google_drive_dir_url,
+        file_name_on_gd=file_name
+    )
+
     await state.clear()
 
     # Рассылаем уведомление по группам админа

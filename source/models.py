@@ -44,6 +44,7 @@ class NotifyGroup(Model):
 class AdminInfo(Model):
     admin: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE, related_name="admin_info", pk=True)
     google_table_url = TextField(maxlength=500, null=False)
+    google_drive_dir_url = TextField(maxlength=500, null=False)
 
     class Meta:
         table = "admin_info"

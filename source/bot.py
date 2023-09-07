@@ -8,6 +8,7 @@ from config import TOKEN
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import browse_menu_items, start_user, write_menu_item_to_bd, join_to_notification_group
 from init_db import init_db
+from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 
 admin_routers = [
@@ -32,9 +33,10 @@ async def main():
     dp.include_routers(*admin_routers, *user_routers)
 
     google_table = GoogleTable()
+    google_drive = GoogleDrive()
 
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, bot_object=bot, gt_object=google_table)
+    await dp.start_polling(bot, bot_object=bot, gt_object=google_table, gd_object=google_drive)
 
 
 if __name__ == "__main__":

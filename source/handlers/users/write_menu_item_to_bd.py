@@ -11,6 +11,7 @@ from models import AdminInfo
 from services.database_extends.menu_item import MenuItemApi
 from services.database_extends.notify_group import NotifyGroupApi
 from services.database_extends.user import UserApi
+from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 from states.steps_create_notes_to_bd import BrowseMenuItems, WriteMenuItemsToBd
 
@@ -78,15 +79,16 @@ async def load_check(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.message(WriteMenuItemsToBd.load_check)
-async def end_write_new_note(message: Message, state: FSMContext, bot_object: Bot, gt_object: GoogleTable):
+async def end_write_new_note(message: Message, state: FSMContext, bot_object: Bot,
+                             gt_object: GoogleTable, gd_object: GoogleDrive):
     if message.photo:
         file_id = message.photo[-1].file_id
-        await add_new_note_to_bd_handler_algorithm(message, state, bot_object, gt_object, file_id)
+        await add_new_note_to_bd_handler_algorithm(message, state, bot_object, gt_object, gd_object, file_id)
 
     elif message.document:
         if message.document.mime_type[:5] == 'image':
             file_id = message.document.file_id
-            await add_new_note_to_bd_handler_algorithm(message, state, bot_object, gt_object, file_id)
+            await add_new_note_to_bd_handler_algorithm(message, state, bot_object, gt_object, gd_object, file_id)
         else:
             await message.answer(text=text_invalid_check_photo)
 

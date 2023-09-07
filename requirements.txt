@@ -3,4 +3,5 @@ tortoise-orm
 tortoise-orm[asyncmy]
 aerich
 gspread-asyncio
-environs
+environs~=9.5.0
+aiogoogle~=5.5.0
