@@ -7,6 +7,8 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from components.texts import text_end_add_mi_to_bd
 from config import MEMORY_STORAGE, CHECKS_PATH
+from models import MenuItem
+from services.database_extends.menu_item import MenuItemApi
 from services.database_extends.notify_group import NotifyGroupApi
 from services.database_extends.user import UserApi
 from services.google_api.google_drive import GoogleDrive
@@ -342,3 +344,8 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
         )
 
     await message.edit_text(text=text_end_add_mi_to_bd, reply_markup=keyboard_end_write, parse_mode="html")
+
+
+async def get_str_format_queue(selected_item_id) -> str:
+    menu_items_names_list = await MenuItemApi.get_parent_items_names(selected_item_id)
+    return " → ".join(menu_items_names_list)

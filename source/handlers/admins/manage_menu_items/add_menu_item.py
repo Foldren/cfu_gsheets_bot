@@ -4,7 +4,8 @@ from aiogram import Router, F
 from components.filters import IsAdminFilter
 from components.keyboards import keyb_str_pass_add_users_to_mi
 from components.texts import text_start_add_menu_item, text_choose_observers_menu_item, text_end_add_menu_item
-from components.tools import get_callb_content, get_inline_keyb_markup, get_msg_queue, generate_zero_array
+from components.tools import get_callb_content, get_inline_keyb_markup, get_msg_queue, generate_zero_array, \
+    get_str_format_queue
 from services.database_extends.menu_item import MenuItemApi
 from services.database_extends.user import UserApi
 from states.steps_manage_menu_items import StepsGetListMenu, StepsAddMenuItem
@@ -24,11 +25,12 @@ async def start_add_menu_item(callback: CallbackQuery, state: FSMContext):
 
     id_parent_menu = await get_callb_content(callback.data) if "add_menu_item" in callback.data else None
     menu = await MenuItemApi.get_by_id(id_parent_menu) if id_parent_menu is not None else None
+    queue = await get_str_format_queue(id_parent_menu) if id_parent_menu is not None else ""
 
     text_lvl = await get_msg_queue(
         level=menu.level if id_parent_menu is not None else 0,
         selected_item_name=menu.name if id_parent_menu is not None else "",
-        queue=menu.queue if id_parent_menu is not None else "",
+        queue=queue,
         only_queue=True,
     )
 
@@ -36,8 +38,7 @@ async def start_add_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.set_data({
         'id_parent_menu': id_parent_menu,
         'text_level': text_lvl,
-        'level_new_menu': (menu.level + 1) if menu is not None else 1,
-        'queue_new_menu': menu.queue if menu is not None else None
+        'level_new_menu': (menu.level + 1) if menu is not None else 1
     })
 
     await callback.message.edit_text(text=text_lvl + text_start_add_menu_item, parse_mode="html")
@@ -68,7 +69,6 @@ async def choose_observers_menu_item(message: Message, state: FSMContext):
     )
 
     message_text = f"<u>Название новой категории</u>: <b>{message.text}</b>\n" + text_choose_observers_menu_item
-    queue = ((md['queue_new_menu'] + " → ") if md['queue_new_menu'] is not None else "") + message.text
 
     # Сохраняем название выбранного пункта и лист статусов пользователей (выбран или нет)
     await state.update_data({
@@ -77,7 +77,6 @@ async def choose_observers_menu_item(message: Message, state: FSMContext):
         'status_list': status_list,
         'users': users,
         'text_level': md['text_level'] + f"<u>Название новой категории</u>: <b>{message.text}</b>\n",
-        'queue_new_menu': queue
     })
 
     await state.set_state(StepsAddMenuItem.choose_observers_menu_item)
@@ -133,8 +132,7 @@ async def save_add_menu_item(callback: CallbackQuery, state: FSMContext):
         name_item=data_menu_item['name_new_item'],
         lvl_item=data_menu_item['level_new_menu'],
         parent_menu_item_id=data_menu_item['id_parent_menu'],
-        observers_id_list=list_id_users,
-        queue=data_menu_item['queue_new_menu']
+        observers_id_list=list_id_users
     )
 
     await state.clear()

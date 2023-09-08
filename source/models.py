@@ -28,6 +28,7 @@ class MenuItem(Model):
     status = BooleanField(default=1)
     level = IntField(default=1, null=False)
     queue = TextField(maxlength=3000, null=True)
+    queue_id = TextField(maxlength=3000, null=True)
 
     class Meta:
         table = "menu_items"

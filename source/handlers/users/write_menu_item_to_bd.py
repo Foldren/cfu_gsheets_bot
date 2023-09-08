@@ -3,14 +3,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter
 from components.texts import text_start_add_mi_to_bd, text_invalid_volume_operation, text_send_check_photo, \
-    text_invalid_check_photo, text_choose_bank, text_end_add_mi_to_bd
-from components.tools import get_callb_content, get_inline_keyb_markup, get_current_frmt_datetime, \
-    send_multiply_messages, get_msg_notify_new_note_bd, add_new_note_to_bd_handler_algorithm
-from config import BANKS_UPRAVLYAIKA, CHECKS_PATH
-from models import AdminInfo
-from services.database_extends.menu_item import MenuItemApi
-from services.database_extends.notify_group import NotifyGroupApi
-from services.database_extends.user import UserApi
+    text_invalid_check_photo, text_choose_bank
+from components.tools import get_callb_content, get_inline_keyb_markup, add_new_note_to_bd_handler_algorithm, \
+    get_str_format_queue
+from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 from states.steps_create_notes_to_bd import BrowseMenuItems, WriteMenuItemsToBd
@@ -29,10 +25,10 @@ async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext)
     await state.set_state(WriteMenuItemsToBd.set_volume_operation)
 
     item_id = await get_callb_content(callback.data)
-    item = await MenuItemApi.get_by_id(item_id)
+    queue = await get_str_format_queue(item_id)
 
     await state.set_data({
-        'item_queue': item.queue,
+        'item_queue': queue,
         'item_id': item_id,
         'operation_type': 'cost' if "cost_item" in callback.data else "profit"
     })

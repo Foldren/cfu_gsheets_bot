@@ -7,7 +7,7 @@ from components.texts import text_start_change_menu_item, \
     text_choose_param_to_change_menu_item, text_change_name_menu_item, text_end_change_name_menu_item, \
     text_start_change_observers_menu_item, text_end_change_observers_menu_item
 from components.tools import get_callb_content, get_msg_queue, get_inline_keyb_change_menu_item, get_inline_keyb_markup, \
-    generate_observers_list
+    generate_observers_list, get_str_format_queue
 from services.database_extends.menu_item import MenuItemApi
 from states.steps_manage_menu_items import StepsChangeMenuItem, StepsGetListMenu
 
@@ -27,6 +27,7 @@ async def start_change_menu_item(callback: CallbackQuery, state: FSMContext):
     parent_item_id = await get_callb_content(callback.data) if "change_upper_menu_items" not in callback.data else None
     menu_items = await MenuItemApi.get_user_items_by_parent_id(callback.message.chat.id, parent_item_id)
     parent_item = await MenuItemApi.get_by_id(parent_item_id)
+    queue = await get_str_format_queue(parent_item_id) if parent_item_id is not None else ""
 
     keyboard = await get_inline_keyb_markup(
         list_names=[(e["name"] + ("  💤" if e["status"] == 0 else "")) for e in menu_items],
@@ -38,7 +39,7 @@ async def start_change_menu_item(callback: CallbackQuery, state: FSMContext):
     text_queue = await get_msg_queue(
         level=parent_item.level if parent_item_id is not None else 0,
         selected_item_name=parent_item.name if parent_item_id is not None else "",
-        queue=parent_item.queue if parent_item_id is not None else ""
+        queue=queue
     )
 
     await callback.message.edit_text(text=text_queue + text_start_change_menu_item, reply_markup=keyboard,
@@ -54,6 +55,7 @@ async def choose_menu_item_params_to_change(callback: CallbackQuery, state: FSMC
     id_menu_item = await get_callb_content(callback.data)
     menu = await MenuItemApi.get_by_id(id_menu_item)
     level_menu = menu.level if id_menu_item is not None else 0
+    queue = await get_str_format_queue(id_menu_item) if id_menu_item is not None else ""
 
     if "change_status_menu_item" in callback.data:
         await MenuItemApi.invert_status(menu)
@@ -61,7 +63,7 @@ async def choose_menu_item_params_to_change(callback: CallbackQuery, state: FSMC
     text_queue = await get_msg_queue(
         level=level_menu,
         selected_item_name=menu.name if id_menu_item is not None else "",
-        queue=menu.queue if id_menu_item is not None else "",
+        queue=queue,
         only_queue=True,
     )
 

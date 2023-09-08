@@ -1,4 +1,5 @@
 from models import User, MenuItem
+from tortoise.expressions import F
 
 
 class MenuItemApi:
@@ -29,12 +30,26 @@ class MenuItemApi:
         return users
 
     @staticmethod
+    async def get_parent_items_names(item_id: int):
+        mi1 = await MenuItem.get(id=item_id).prefetch_related()
+        items_names_list = []
+
+        parent = mi1
+        while parent is not None:
+            items_names_list.append(parent.name)
+            parent = await parent.parent
+
+        items_names_list.reverse()
+
+        return items_names_list
+
+    @staticmethod
     async def update_by_id(item_id: int, name: str = None, observers_id_list: list = None):
         menu_item = await MenuItem.get(id=item_id)
 
         if name is not None:
             menu_item.name = name
-            menu_item.queue = menu_item.queue[:menu_item.queue.rfind(" →")] + " → " + menu_item.name
+
         if observers_id_list is not None:
             users = await User.filter(chat_id__in=observers_id_list)
             await menu_item.observers.clear()  # Удаляем текущих наблюдателей
@@ -44,9 +59,16 @@ class MenuItemApi:
 
     @staticmethod
     async def add(name_item: str, lvl_item: int,
-                  parent_menu_item_id: MenuItem, queue: str, observers_id_list: list):
+                  parent_menu_item_id: MenuItem, observers_id_list: list):
         users = await User.filter(chat_id__in=observers_id_list)
-        menu_item = await MenuItem.create(name=name_item, level=lvl_item, parent_id=parent_menu_item_id, queue=queue)
+
+        # Создаем пункт меню
+        menu_item = await MenuItem.create(
+            name=name_item,
+            level=lvl_item,
+            parent_id=parent_menu_item_id,
+        )
+
         await menu_item.observers.add(*users)
 
     @staticmethod
@@ -66,7 +88,7 @@ class MenuItemApi:
     @staticmethod
     async def get_parent_items(item_id):
         parent = await MenuItem.filter(id=item_id).first().values("parent_id")
-        return await MenuItem.filter(parent_id=parent['parent_id']).all().values("id", "name", "parent_id", "status")
+        return await MenuItem.filter(parent_id=parent['parent_id']).all().values("id", "name", "parent_id", "status", "level")
 
     @staticmethod
     async def get_parent_items_by_chat_id(item_id, user_id):

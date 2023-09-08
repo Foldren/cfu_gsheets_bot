@@ -6,7 +6,8 @@ from components.filters import IsUserFilter
 from components.texts import text_get_user_list_mi, text_no_menu_items_u
 from services.database_extends.menu_item import MenuItemApi
 from components.tools import get_inline_keyb_markup, get_msg_queue, get_callb_content, \
-    get_inline_keyb_profit_cost, answer_or_edit_message, get_inline_keyb_str_back_to_parent_items_u
+    get_inline_keyb_profit_cost, answer_or_edit_message, get_inline_keyb_str_back_to_parent_items_u, \
+    get_str_format_queue
 from states.steps_create_notes_to_bd import BrowseMenuItems
 
 rt = Router()
@@ -41,7 +42,8 @@ async def next_to_nested_items_u(callb_or_msg: Union[Message, CallbackQuery], st
         selected_item_id = await get_callb_content(callb_or_msg.data)
         selected_item = await MenuItemApi.get_by_id(selected_item_id)
         menu_items = await MenuItemApi.get_user_items_by_parent_id(callb_or_msg.from_user.id, parent_id=selected_item.id)
-        msg_queue = await get_msg_queue(selected_item.level, selected_item.name, selected_item.queue)
+        queue = await get_str_format_queue(selected_item_id)
+        msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
 
     dict_mi_names_ids = {'names': [], "ids": []}
 
@@ -85,7 +87,8 @@ async def back_to_parent_items_u(callback: CallbackQuery):
     parent_item = await selected_item.parent
     parent_item_name = parent_item.name if parent_item is not None else None
     menu_items = await MenuItemApi.get_parent_items_by_chat_id(selected_item_id, callback.message.chat.id)
-    new_queue = selected_item.queue[:selected_item.queue.rfind('→')-1]
+    old_queue = await get_str_format_queue(selected_item_id)
+    new_queue = old_queue[:old_queue.rfind('→') - 1]
     msg_queue = await get_msg_queue(selected_item.level-1, parent_item_name, new_queue)
     upper_level = menu_items[0]['parent_id'] is None
     final_msg = text_get_user_list_mi + msg_queue if upper_level else msg_queue

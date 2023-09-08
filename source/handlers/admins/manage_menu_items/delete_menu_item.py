@@ -6,7 +6,7 @@ from components.keyboards import keyb_str_delete_mi, cf_key_end_delete_mi
 from components.texts import text_start_delete_menu_item, \
     text_stop_delete_menu_item, text_end_delete_menu_item
 from components.tools import get_callb_content, get_msg_queue, get_inline_keyb_markup, \
-    generate_zero_array, get_sure_delete_mi_msg
+    generate_zero_array, get_sure_delete_mi_msg, get_str_format_queue
 from services.database_extends.menu_item import MenuItemApi
 from states.steps_manage_menu_items import StepsGetListMenu, StepsDeleteMenuItem
 
@@ -29,7 +29,7 @@ async def start_delete_menu_item(callback: CallbackQuery, state: FSMContext):
         parent_item = await MenuItemApi.get_by_id(parent_item_id)
         level_item = parent_item.level
         name_item = parent_item.name
-        queue_item = parent_item.queue
+        queue_item = await get_str_format_queue(parent_item_id)
     else:
         parent_item_id = None
         level_item = 0
