@@ -34,8 +34,8 @@ class UserApi:
 
     @staticmethod
     async def get_user_admin_id(id_user: int) -> int:
-        values_user = await User.get(chat_id=id_user).values("admin_id")
-        return values_user['admin_id']
+        user = await User.get(chat_id=id_user)
+        return user.admin_id if user.admin_id else id_user
 
     @staticmethod
     async def get_admin_users(id_admin: int):
