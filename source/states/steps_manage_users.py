@@ -7,7 +7,6 @@ class StepsGetListUsers(StatesGroup):
 
 class StepsAddUser(StatesGroup):
     start_add_user = State()
-    get_user_id = State()
 
 
 class StepsChangeUser(StatesGroup):

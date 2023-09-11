@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F
 from components.filters import IsAdminFilter
-from components.texts import text_get_list_categories, text_get_list_ur_faces
-from services.database_extends.menu_item import MenuItemApi
+from components.admins.texts import text_get_list_categories, text_get_list_ur_faces
+from services.models_extends.menu_item import MenuItemApi
 from components.tools import get_inline_keyb_markup, get_msg_queue, \
     get_callb_content, get_inline_keyb_markup_empty, \
     get_inline_keyb_str_full, get_str_format_queue

@@ -5,12 +5,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from components.texts import text_end_add_mi_to_bd
+from components.users.texts import text_end_add_mi_to_bd
 from config import MEMORY_STORAGE, CHECKS_PATH
-from models import MenuItem
-from services.database_extends.menu_item import MenuItemApi
-from services.database_extends.notify_group import NotifyGroupApi
-from services.database_extends.user import UserApi
+from services.models_extends.menu_item import MenuItemApi
+from services.models_extends.notify_group import NotifyGroupApi
+from services.models_extends.user import UserApi
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 

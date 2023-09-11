@@ -1,9 +1,11 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from components.admins.text_generators import get_text_start_admin
+from components.admins.texts import text_start_admin_user
 from components.filters import IsAdminFilter
-from components.keyboards import cf_key_start_admin, keyb_start_user_admin, keyb_start_admin
-from services.database_extends.user import UserApi
+from components.keyboards import cf_keyb_start_user_admin, cf_keyb_start_admin
+from services.redis_extends.user import RedisUser
 
 rt = Router()
 
@@ -12,17 +14,17 @@ rt.message.filter(IsAdminFilter())
 rt.callback_query.filter(IsAdminFilter())
 
 
-@rt.message(((F.text == "Режим: Админ 👨‍💼") or (F.text == "Режим: Юзер 🙎‍♂️")))
-async def change_mode(message: Message, state: FSMContext):
+@rt.message(F.text.in_({'Режим: Админ 👨‍💼', 'Режим: Юзер 🙎‍♂️'}))
+async def change_mode(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
-    admin_info = await UserApi.get_admin_info(message.from_user.id)
-    admin_mode = admin_info.admin_mode
+    admin_status = await redis_users.get_user_status(message.chat.id, invert=True)
+    await redis_users.set_admin_status(message.chat.id, admin_status)
 
-    if admin_mode:
-        keyboard = keyb_start_user_admin
+    if admin_status == 0:
+        keyboard = cf_keyb_start_user_admin
+        message_text = text_start_admin_user
     else:
-        keyboard = keyb_start_admin
-
-    await UserApi.invert_mode(message.from_user.id)
+        keyboard = cf_keyb_start_admin
+        message_text = await get_text_start_admin(message.chat.full_name)
 
     await message.answer(message_text, reply_markup=keyboard, parse_mode='html')

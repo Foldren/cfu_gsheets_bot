@@ -3,11 +3,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter
 from components.keyboards import keyb_str_delete_mi, cf_key_end_delete_mi
-from components.texts import text_start_delete_menu_item, \
+from components.admins.texts import text_start_delete_menu_item, \
     text_stop_delete_menu_item, text_end_delete_menu_item
 from components.tools import get_callb_content, get_msg_queue, get_inline_keyb_markup, \
     generate_zero_array, get_sure_delete_mi_msg, get_str_format_queue
-from services.database_extends.menu_item import MenuItemApi
+from services.models_extends.menu_item import MenuItemApi
 from states.steps_manage_menu_items import StepsGetListMenu, StepsDeleteMenuItem
 
 rt = Router()

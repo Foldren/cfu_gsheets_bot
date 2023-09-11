@@ -1,19 +1,22 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
+from aioredis import from_url
 from tortoise import run_async
-from handlers.admins import start_admin
+from handlers.admins import start_admin, change_mode
 from handlers.admins.manage_menu_items import get_list_menu_items, add_menu_item, change_menu_item, delete_menu_item
-from config import TOKEN
+from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import browse_menu_items, start_user, write_menu_item_to_bd, join_to_notification_group
 from init_db import init_db
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
+from services.redis_extends.registrations import RedisRegistration
+from services.redis_extends.user import RedisUser
 
 admin_routers = [
     start_admin.rt, get_list_menu_items.rt, add_menu_item.rt, get_list_users.rt, add_user.rt,
-    change_user.rt, change_menu_item.rt, delete_menu_item.rt, delete_user.rt
+    change_user.rt, change_menu_item.rt, delete_menu_item.rt, delete_user.rt, change_mode.rt
 ]
 
 user_routers = [
@@ -34,9 +37,17 @@ async def main():
 
     google_table = GoogleTable()
     google_drive = GoogleDrive()
+    redis_status_users = RedisUser(await from_url(REDIS_URL, db=0, decode_responses=True))
+    redis_registrations_users = RedisRegistration(await from_url(REDIS_URL, db=1, decode_responses=True))
 
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, bot_object=bot, gt_object=google_table, gd_object=google_drive)
+    await dp.start_polling(bot,
+                           bot_object=bot,
+                           gt_object=google_table,
+                           gd_object=google_drive,
+                           redis_users=redis_status_users,
+                           redis_regs=redis_registrations_users
+                           )
 
 
 if __name__ == "__main__":

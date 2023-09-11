@@ -2,11 +2,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F, Bot
 from components.filters import IsAdminFilter
-from components.texts import text_start_change_user, text_change_user, text_end_change_user, text_get_id_user, \
+from components.admins.texts import text_start_change_user, text_change_user, text_end_change_user, text_get_id_user, \
     text_invalid_user_id, text_end_change_id_user
 from components.tools import get_inline_users_keyb_markup, get_callb_content, get_inline_keyb_change_user, \
     get_msg_user_data, set_memory_data, get_memory_data
-from services.database_extends.user import UserApi
+from services.models_extends.user import UserApi
 from states.steps_manage_users import StepsGetListUsers, StepsChangeUser
 
 rt = Router()

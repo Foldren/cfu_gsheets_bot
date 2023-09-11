@@ -69,7 +69,7 @@ keyb_end_delete_u = [
 
 # Конфигурации ---------------------------------------------------------------------------------------------------------
 
-cf_key_start_admin = ReplyKeyboardMarkup(
+cf_keyb_start_admin = ReplyKeyboardMarkup(
     keyboard=keyb_start_admin,
     resize_keyboard=True,  # меняем размер клавиатуры
 )

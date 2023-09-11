@@ -29,6 +29,10 @@ class UserApi:
         return await User.filter(chat_id=id_user).first()
 
     @staticmethod
+    async def get_by_nickname(nickname: str) -> User:
+        return await User.filter(nickname=nickname).first()
+
+    @staticmethod
     async def get_user_admin_id(id_user: int) -> int:
         values_user = await User.get(chat_id=id_user).values("admin_id")
         return values_user['admin_id']

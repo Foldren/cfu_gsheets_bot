@@ -2,9 +2,9 @@ from aiogram.filters import ChatMemberUpdatedFilter, MEMBER, LEFT
 from aiogram.types import ChatMemberUpdated
 from aiogram import Router, F
 from components.filters import IsSenderMemberFilter, IsSenderGroupExistFilter
-from components.texts import text_success_join_bot_to_group
-from services.database_extends.notify_group import NotifyGroupApi
-from services.database_extends.user import UserApi
+from components.users.texts import text_success_join_bot_to_group
+from services.models_extends.notify_group import NotifyGroupApi
+from services.models_extends.user import UserApi
 
 rt = Router()
 

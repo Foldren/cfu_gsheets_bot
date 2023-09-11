@@ -2,7 +2,7 @@ from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter
-from components.texts import text_start_add_mi_to_bd, text_invalid_volume_operation, text_send_check_photo, \
+from components.users.texts import text_start_add_mi_to_bd, text_invalid_volume_operation, text_send_check_photo, \
     text_invalid_check_photo, text_choose_bank
 from components.tools import get_callb_content, get_inline_keyb_markup, add_new_note_to_bd_handler_algorithm, \
     get_str_format_queue

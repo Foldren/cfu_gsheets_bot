@@ -3,12 +3,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from components.filters import IsAdminFilter
 from components.keyboards import keyb_str_change_observers_mi
-from components.texts import text_start_change_menu_item, \
+from components.admins.texts import text_start_change_menu_item, \
     text_choose_param_to_change_menu_item, text_change_name_menu_item, text_end_change_name_menu_item, \
     text_start_change_observers_menu_item, text_end_change_observers_menu_item
 from components.tools import get_callb_content, get_msg_queue, get_inline_keyb_change_menu_item, get_inline_keyb_markup, \
     generate_observers_list, get_str_format_queue
-from services.database_extends.menu_item import MenuItemApi
+from services.models_extends.menu_item import MenuItemApi
 from states.steps_manage_menu_items import StepsChangeMenuItem, StepsGetListMenu
 
 rt = Router()
