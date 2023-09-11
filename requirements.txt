@@ -5,3 +5,4 @@ aerich
 gspread-asyncio
 environs~=9.5.0
 aiogoogle~=5.5.0
+aioredis~=2.0.1
