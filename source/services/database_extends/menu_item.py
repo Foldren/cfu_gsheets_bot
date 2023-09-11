@@ -93,7 +93,7 @@ class MenuItemApi:
     @staticmethod
     async def get_parent_items_by_chat_id(item_id, user_id):
         parent = await MenuItem.filter(id=item_id).first().values("parent_id")
-        return await MenuItem.filter(parent_id=parent['parent_id'], observers__chat_id__contains=user_id).all().values("id", "name", "parent_id", "status")
+        return await MenuItem.filter(parent_id=parent['parent_id'], observers__chat_id__contains=user_id).all().values("id", "name", "parent_id", "status", "level")
 
     @staticmethod
     async def invert_status(menu: MenuItem):

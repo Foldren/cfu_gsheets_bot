@@ -76,7 +76,7 @@ async def next_to_nested_items(callb_or_msg: Union[Message, CallbackQuery], stat
 async def back_to_parent_items(callback: CallbackQuery):
     selected_item_id = await get_callb_content(callback.data)
     selected_item = await MenuItemApi.get_by_id(selected_item_id)
-    menu_items = await MenuItemApi.get_parent_items(selected_item_id)
+    menu_items = await MenuItemApi.get_parent_items_by_chat_id(selected_item_id, callback.message.chat.id)
     old_queue = await get_str_format_queue(selected_item_id)
     new_queue = old_queue[:old_queue.rfind('→')-1]
     parent_item = await selected_item.parent
