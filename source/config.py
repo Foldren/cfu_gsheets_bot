@@ -7,8 +7,8 @@ from environs import Env
 env = Env()
 env.read_env('.env')
 
-REDIS_URL = env('REDIS_URL')
 IS_THIS_LOCAL = "Pycharm" in str(Path.cwd())
+REDIS_URL = getenv("REDIS_URL") if IS_THIS_LOCAL else env('REDIS_URL')
 TOKEN = getenv("LOCAL_TOKEN_BOT") if IS_THIS_LOCAL else env('TOKEN_BOT')
 MYSQL_URL = getenv('MYSQL_URL') if IS_THIS_LOCAL else env("MYSQL_URL")  # getenv для терминала Pycharm
 

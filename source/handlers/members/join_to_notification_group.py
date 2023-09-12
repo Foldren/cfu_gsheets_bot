@@ -16,7 +16,7 @@ async def join_to_notification_group(event: ChatMemberUpdated):
     admin_id = event.from_user.id if admin is None else admin.chat_id
 
     # Прикрепляем группу к админу
-    await NotifyGroupApi.attach_group_to_admin(admin_id=admin_id, chat_id_group=event.chat.id)
+    await NotifyGroupApi.attach_group_to_admin(admin_id=admin_id, chat_id_group=event.chat.id, name_group=event.chat.full_name)
 
     await event.answer(text_success_join_bot_to_group, parse_mode='html')
 

@@ -3,6 +3,17 @@ from models import User, AdminInfo
 
 class UserApi:
     @staticmethod
+    async def get_table_url(admin_chat_id):
+        admin = await User.get(chat_id=admin_chat_id)
+        admin_info = await admin.admin_info
+        return admin_info.google_table_url
+
+    @staticmethod
+    async def get_notify_groups(admin_id):
+        admin = await User.get(chat_id=admin_id)
+        return await admin.notify_groups.all().values("chat_id", "name")
+
+    @staticmethod
     async def invert_mode(admin_id):
         admin_info = await AdminInfo.get(admin_id=admin_id)
         admin_info.admin_mode = not admin_info.admin_mode

@@ -9,3 +9,11 @@ class WriteMenuItemsToBd(StatesGroup):
     set_volume_operation = State()
     choose_bank = State()
     load_check = State()
+
+
+class WriteIssuanceReport(StatesGroup):
+    select_ip = State()
+    select_worker = State()
+    set_volume = State()
+    select_payment_method = State()
+    select_notify_group = State()

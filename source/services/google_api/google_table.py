@@ -63,3 +63,21 @@ class GoogleTable:
                              menu_item_lvls[4],
                              menu_item_lvls[5]
                              ])
+
+    async def add_issuance_report_to_bd(self, table_url: str, chat_id_worker: int, fullname_recipient: str,
+                                        volume_op: str, payment_method: str):
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_url)
+        ws = await ss.worksheet("БД")
+
+        frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
+        volume_with_sign = f"-{volume_op}"
+        surname_fstname = fullname_recipient.split(" ")[1] + " " + fullname_recipient.split(" ")[0]
+        row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", payment_method, volume_with_sign, "Выдача под отчет"]
+        row_2 = [str(chat_id_worker), surname_fstname, frmt_date_time, "Доход", payment_method, volume_op, "Получение под отчет"]
+
+        await ws.append_rows([row_1, row_2])
+
+
+
+

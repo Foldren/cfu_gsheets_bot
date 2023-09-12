@@ -7,7 +7,8 @@ from handlers.admins import start_admin, change_mode
 from handlers.admins.manage_menu_items import get_list_menu_items, add_menu_item, change_menu_item, delete_menu_item
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
-from handlers.users import browse_menu_items, start_user, write_menu_item_to_bd, join_to_notification_group
+from handlers.users import browse_menu_items, start_user, write_menu_item_to_bd, issuance_of_report
+from handlers.members import join_to_notification_group, confirm_issuance_report
 from init_db import init_db
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
@@ -20,7 +21,11 @@ admin_routers = [
 ]
 
 user_routers = [
-    start_user.rt, browse_menu_items.rt, write_menu_item_to_bd.rt, join_to_notification_group.rt
+    start_user.rt, browse_menu_items.rt, write_menu_item_to_bd.rt, issuance_of_report.rt
+]
+
+member_routers = [
+    join_to_notification_group.rt, confirm_issuance_report.rt
 ]
 
 
@@ -33,7 +38,7 @@ async def main():
     # Включаем логирование, чтобы не пропустить важные сообщения
 
     logging.basicConfig(level=logging.INFO)
-    dp.include_routers(*admin_routers, *user_routers)
+    dp.include_routers(*admin_routers, *user_routers, *member_routers)
 
     google_table = GoogleTable()
     google_drive = GoogleDrive()
@@ -46,7 +51,8 @@ async def main():
                            gt_object=google_table,
                            gd_object=google_drive,
                            redis_users=redis_status_users,
-                           redis_regs=redis_registrations_users
+                           redis_regs=redis_registrations_users,
+                           allowed_updates=["message", "callback_query", "my_chat_member"]
                            )
 
 

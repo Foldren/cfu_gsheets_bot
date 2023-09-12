@@ -134,8 +134,8 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
 
 
 # Получить содержимое колбека
-async def get_callb_content(callback_data: str):
-    return callback_data.split(":")[1]
+async def get_callb_content(callback_data: str, multiply_values: bool = False):
+    return callback_data.split(":") if multiply_values else callback_data.split(":")[1]
 
 
 # Добавить/перезаписать значение в оперативной памяти
@@ -348,3 +348,12 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 async def get_str_format_queue(selected_item_id) -> str:
     menu_items_names_list = await MenuItemApi.get_parent_items_names(selected_item_id)
     return " → ".join(menu_items_names_list)
+
+
+async def get_confirm_issuance_keyb_button(id_issuance_report: int):
+    keyboard = [
+        [
+            InlineKeyboardButton(text="Подтвердить  ✅", callback_data=f"confirm_issuance:{id_issuance_report}")
+        ]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)

@@ -19,6 +19,10 @@ class RedisUser:
         else:
             return None
 
+    async def get_user_admin_id(self, user_id: int):
+        admin_id = await self.redis_users.get(str(user_id))
+        return user_id if admin_id == "0" else admin_id
+
     async def set_admin_status(self, admin_id: int, admin_status: int):
         return await self.redis_users.set(str(admin_id), str(admin_status))
 

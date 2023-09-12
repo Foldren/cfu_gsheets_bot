@@ -3,8 +3,8 @@ from models import NotifyGroup, User
 
 class NotifyGroupApi:
     @staticmethod
-    async def attach_group_to_admin(admin_id: int, chat_id_group: int):
-        await NotifyGroup.create(admin_id=admin_id, chat_id=chat_id_group)
+    async def attach_group_to_admin(admin_id: int, chat_id_group: int, name_group: str):
+        await NotifyGroup.create(admin_id=admin_id, chat_id=chat_id_group, name=name_group)
 
     @staticmethod
     async def detach_group_from_admin(chat_id_group: int):

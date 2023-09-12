@@ -7,19 +7,25 @@ keyb_start_admin = [
     [
         KeyboardButton(text="Меню"),
         KeyboardButton(text="Сотрудники"),
+    ],
+    [
         KeyboardButton(text="Режим: Админ 👨‍💼")
     ]
 ]
 
 keyb_start_user = [
     [
-        KeyboardButton(text="Новая запись")
+        KeyboardButton(text="Новая запись"),
+        KeyboardButton(text="Выдача под отчет")
     ]
 ]
 
 keyb_start_user_admin = [
     [
         KeyboardButton(text="Новая запись"),
+        KeyboardButton(text="Выдача под отчет")
+    ],
+    [
         KeyboardButton(text="Режим: Юзер 🙎‍♂️")
     ]
 ]
