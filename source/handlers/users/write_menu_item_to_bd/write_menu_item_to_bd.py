@@ -9,7 +9,7 @@ from components.tools import get_callb_content, get_inline_keyb_markup, add_new_
 from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
-from states.user.steps_create_notes_to_bd import WriteMenuItemsToBd
+from states.user.steps_create_notes_to_bd import StepsWriteMenuItemsToBd
 
 rt = Router()
 
@@ -18,10 +18,10 @@ rt.message.filter(IsUserFilter())
 rt.callback_query.filter(IsUserFilter())
 
 
-@rt.callback_query(WriteMenuItemsToBd.set_queue_menu_items,
+@rt.callback_query(StepsWriteMenuItemsToBd.set_queue_menu_items,
                    (F.data.startswith("profit_item") | F.data.startswith("cost_item")))
 async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteMenuItemsToBd.set_volume_operation)
+    await state.set_state(StepsWriteMenuItemsToBd.set_volume_operation)
 
     item_id = await get_callb_content(callback.data)
     queue = await get_str_format_queue(item_id)
@@ -35,14 +35,14 @@ async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext)
     await callback.message.edit_text(text=text_start_add_mi_to_bd, parse_mode="html")
 
 
-@rt.message(WriteMenuItemsToBd.set_volume_operation)
+@rt.message(StepsWriteMenuItemsToBd.set_volume_operation)
 async def choose_bank(message: Message, state: FSMContext):
-    await state.set_state(WriteMenuItemsToBd.choose_bank)
+    await state.set_state(StepsWriteMenuItemsToBd.choose_bank)
 
     try:
         volume_op = int(message.text)
     except Exception:
-        await state.set_state(WriteMenuItemsToBd.set_volume_operation)
+        await state.set_state(StepsWriteMenuItemsToBd.set_volume_operation)
         await message.answer(text=text_invalid_volume_operation, parse_mode="html")
         return
 
@@ -60,7 +60,7 @@ async def choose_bank(message: Message, state: FSMContext):
     await message.answer(text=text_choose_bank, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(WriteMenuItemsToBd.choose_bank)
+@rt.callback_query(StepsWriteMenuItemsToBd.choose_bank)
 async def load_or_pass_load_check(callback: CallbackQuery, state: FSMContext, bot_object: Bot,
                                   gt_object: GoogleTable, gd_object: GoogleDrive):
     st_data = await state.get_data()
@@ -71,13 +71,13 @@ async def load_or_pass_load_check(callback: CallbackQuery, state: FSMContext, bo
     })
 
     if st_data['sender'] == "me":
-        await state.set_state(WriteMenuItemsToBd.load_check)
+        await state.set_state(StepsWriteMenuItemsToBd.load_check)
         await callback.message.edit_text(text=text_send_check_photo, parse_mode="html")
     else:
         await add_new_note_to_bd_handler_algorithm(callback.message, state, bot_object, gt_object, gd_object)
 
 
-@rt.message(WriteMenuItemsToBd.load_check)
+@rt.message(StepsWriteMenuItemsToBd.load_check)
 async def end_write_new_note(message: Message, state: FSMContext, bot_object: Bot,
                              gt_object: GoogleTable, gd_object: GoogleDrive):
     if message.photo:

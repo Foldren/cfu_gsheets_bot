@@ -13,7 +13,7 @@ from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.models_extends.user import UserApi
 from services.redis_extends.user import RedisUser
-from states.user.steps_create_notes_to_bd import WriteIssuanceReport
+from states.user.steps_create_notes_to_bd import StepsWriteIssuanceReport
 
 rt = Router()
 
@@ -25,7 +25,7 @@ rt.callback_query.filter(IsUserFilter())
 @rt.message(F.text == "Выдача под отчет")
 async def start_write_issuance_of_report_to_bd(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
-    await state.set_state(WriteIssuanceReport.select_ip)
+    await state.set_state(StepsWriteIssuanceReport.select_ip)
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
     check_admin_empty_groups = await NotifyGroupApi.check_admin_groups_empty(admin_id)
@@ -49,9 +49,9 @@ async def start_write_issuance_of_report_to_bd(message: Message, state: FSMConte
         await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(WriteIssuanceReport.select_ip, F.data.startswith("ip_to_issuance"))
+@rt.callback_query(StepsWriteIssuanceReport.select_ip, F.data.startswith("ip_to_issuance"))
 async def choose_issuance_worker(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteIssuanceReport.select_worker)
+    await state.set_state(StepsWriteIssuanceReport.select_worker)
 
     selected_ip_params = await get_callb_content(callback.data, multiply_values=True)
 
@@ -73,9 +73,9 @@ async def choose_issuance_worker(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(text=text_select_worker_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(WriteIssuanceReport.select_worker, F.data.startswith("worker_to_issuance"))
+@rt.callback_query(StepsWriteIssuanceReport.select_worker, F.data.startswith("worker_to_issuance"))
 async def set_volume_for_issuance(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteIssuanceReport.set_volume)
+    await state.set_state(StepsWriteIssuanceReport.set_volume)
     selected_worker_id = await get_callb_content(callback.data)
     selected_worker = await UserApi.get_by_id(selected_worker_id)
 
@@ -87,14 +87,14 @@ async def set_volume_for_issuance(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(text=text_set_volume_issuance, parse_mode="html")
 
 
-@rt.message(WriteIssuanceReport.set_volume)
+@rt.message(StepsWriteIssuanceReport.set_volume)
 async def select_payment_method_issuance(message: Message, state: FSMContext):
-    await state.set_state(WriteIssuanceReport.select_payment_method)
+    await state.set_state(StepsWriteIssuanceReport.select_payment_method)
 
     try:
         volume_op = int(message.text)
     except Exception:
-        await state.set_state(WriteIssuanceReport.set_volume)
+        await state.set_state(StepsWriteIssuanceReport.set_volume)
         await message.answer(text=text_invalid_volume_operation, parse_mode="html")
         return
 
@@ -112,9 +112,9 @@ async def select_payment_method_issuance(message: Message, state: FSMContext):
     await message.answer(text=text_select_payment_method_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(WriteIssuanceReport.select_payment_method, F.data.startswith("select_payment_method_issuance"))
+@rt.callback_query(StepsWriteIssuanceReport.select_payment_method, F.data.startswith("select_payment_method_issuance"))
 async def select_group_for_notify(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteIssuanceReport.select_notify_group)
+    await state.set_state(StepsWriteIssuanceReport.select_notify_group)
     await state.update_data({
         'selected_payment_method': await get_callb_content(callback.data)
     })
@@ -132,11 +132,10 @@ async def select_group_for_notify(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(text=text_select_notify_group_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(WriteIssuanceReport.select_notify_group, F.data.startswith("select_notify_group_issuance"))
+@rt.callback_query(StepsWriteIssuanceReport.select_notify_group, F.data.startswith("select_notify_group_issuance"))
 async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
     selected_notify_group_chat_id = int(await get_callb_content(callback.data))
     st_data = await state.get_data()
-
     user = await UserApi.get_by_id(callback.message.chat.id)
 
     # Генерируем сообщение уведомления ---------------------------------------------------------------------------------

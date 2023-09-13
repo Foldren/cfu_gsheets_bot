@@ -12,7 +12,7 @@ from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.models_extends.user import UserApi
 from services.redis_extends.user import RedisUser
-from states.user.steps_create_notes_to_bd import WriteIssuanceReport, ReturnIssuanceMeans
+from states.user.steps_create_notes_to_bd import StepsWriteIssuanceReport, StepsReturnIssuanceMeans
 
 rt = Router()
 
@@ -24,7 +24,7 @@ rt.callback_query.filter(IsUserFilter())
 @rt.message(F.text == "Возврат подотчетных средств")
 async def start_return_issuance_means(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
-    await state.set_state(ReturnIssuanceMeans.select_ip)
+    await state.set_state(StepsReturnIssuanceMeans.select_ip)
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
 
@@ -44,9 +44,9 @@ async def start_return_issuance_means(message: Message, state: FSMContext, redis
     await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(ReturnIssuanceMeans.select_ip, F.data.startswith("ip_to_issuance"))
+@rt.callback_query(StepsReturnIssuanceMeans.select_ip, F.data.startswith("ip_to_issuance"))
 async def set_volume_for_return_issuance(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(ReturnIssuanceMeans.set_volume)
+    await state.set_state(StepsReturnIssuanceMeans.set_volume)
     selected_ip_params = await get_callb_content(callback.data, multiply_values=True)
 
     await state.update_data({
@@ -57,14 +57,14 @@ async def set_volume_for_return_issuance(callback: CallbackQuery, state: FSMCont
     await callback.message.edit_text(text=text_set_volume_return_issuance, parse_mode="html")
 
 
-@rt.message(ReturnIssuanceMeans.set_volume)
+@rt.message(StepsReturnIssuanceMeans.set_volume)
 async def select_payment_method_return_issuance(message: Message, state: FSMContext):
-    await state.set_state(ReturnIssuanceMeans.select_payment_method)
+    await state.set_state(StepsReturnIssuanceMeans.select_payment_method)
 
     try:
         volume_op = int(message.text)
     except Exception:
-        await state.set_state(WriteIssuanceReport.set_volume)
+        await state.set_state(StepsWriteIssuanceReport.set_volume)
         await message.answer(text=text_invalid_volume_operation, parse_mode="html")
         return
 
@@ -82,7 +82,7 @@ async def select_payment_method_return_issuance(message: Message, state: FSMCont
     await message.answer(text=text_select_payment_method_return_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(ReturnIssuanceMeans.select_payment_method, F.data.startswith("select_payment_method_issuance"))
+@rt.callback_query(StepsReturnIssuanceMeans.select_payment_method, F.data.startswith("select_payment_method_issuance"))
 async def end_write_return_issuance_to_bd(callback: CallbackQuery, state: FSMContext,
                                           bot_object: Bot, gt_object: GoogleTable):
     selected_payment_method = await get_callb_content(callback.data)

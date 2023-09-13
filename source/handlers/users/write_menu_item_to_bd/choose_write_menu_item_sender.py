@@ -7,7 +7,7 @@ from components.tools import get_callb_content, get_msg_queue, \
     get_inline_keyb_markup
 from components.users.texts import text_choose_sender_write_item, text_get_user_list_mi, text_no_menu_items_u
 from services.models_extends.menu_item import MenuItemApi
-from states.user.steps_create_notes_to_bd import WriteMenuItemsToBd
+from states.user.steps_create_notes_to_bd import StepsWriteMenuItemsToBd
 
 rt = Router()
 
@@ -19,13 +19,13 @@ rt.callback_query.filter(IsUserFilter())
 @rt.message(F.text == "Операция с категориями")
 async def choose_write_menu_item_sender(message: Message, state: FSMContext):
     await state.clear()
-    await state.set_state(WriteMenuItemsToBd.set_sender)
+    await state.set_state(StepsWriteMenuItemsToBd.set_sender)
     await message.answer(text=text_choose_sender_write_item, reply_markup=cf_keyb_choose_write_menu_sender, parse_mode="html")
 
 
-@rt.callback_query(WriteMenuItemsToBd.set_sender, F.data.startswith("choose_write_menu_sender"))
+@rt.callback_query(StepsWriteMenuItemsToBd.set_sender, F.data.startswith("choose_write_menu_sender"))
 async def choose_write_menu_item_sender(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteMenuItemsToBd.set_queue_menu_items)
+    await state.set_state(StepsWriteMenuItemsToBd.set_queue_menu_items)
 
     callb_data = await get_callb_content(callback.data)
 
@@ -33,7 +33,7 @@ async def choose_write_menu_item_sender(callback: CallbackQuery, state: FSMConte
         'sender': callb_data
     })
 
-    await state.set_state(WriteMenuItemsToBd.set_queue_menu_items)
+    await state.set_state(StepsWriteMenuItemsToBd.set_queue_menu_items)
 
     message = callback.message
     menu_items = await MenuItemApi.get_user_upper_items(callback.message.chat.id)

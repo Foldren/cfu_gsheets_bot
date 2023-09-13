@@ -34,3 +34,12 @@ async def get_msg_notify_new_return_issuance(profession_worker: str, fullname_wo
            f"<u>ЮР Лицо</u>: <b>{ip}</b>\n" \
            f"<u>Сумма</u>: <b>{volume}</b>\n" \
            f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
+
+
+async def get_msg_notify_new_transfer(profession_worker: str, fullname_worker: str, organization: str,
+                                      volume: str, wallet_sender: str, wallet_recipient: str):
+    return f"⏩ {profession_worker.title()} - <b>{fullname_worker}</b>, только что,\nоформил перевод:\n" \
+           f"<u>ЮР Лицо</u>: <b>{organization}</b>\n" \
+           f"<u>Сумма</u>: <b>{volume}</b>\n" \
+           f"<u>Кошелек для вывода</u>: <b>{wallet_sender}</b>\n" \
+           f"<u>Кошелек для пополнения</u>: <b>{wallet_recipient}</b>\n"

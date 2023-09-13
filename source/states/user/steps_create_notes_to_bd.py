@@ -1,7 +1,7 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class WriteMenuItemsToBd(StatesGroup):
+class StepsWriteMenuItemsToBd(StatesGroup):
     set_sender = State()
     set_queue_menu_items = State()
     set_volume_operation = State()
@@ -10,7 +10,7 @@ class WriteMenuItemsToBd(StatesGroup):
     pass_load_check = State()
 
 
-class WriteIssuanceReport(StatesGroup):
+class StepsWriteIssuanceReport(StatesGroup):
     select_ip = State()
     select_worker = State()
     set_volume = State()
@@ -18,7 +18,14 @@ class WriteIssuanceReport(StatesGroup):
     select_notify_group = State()
 
 
-class ReturnIssuanceMeans(StatesGroup):
+class StepsReturnIssuanceMeans(StatesGroup):
     select_ip = State()
     set_volume = State()
     select_payment_method = State()
+
+
+class StepsWriteTransfer(StatesGroup):
+    select_organization = State()
+    set_volume = State()
+    select_wallet_sender = State()
+    select_wallet_recipient = State()

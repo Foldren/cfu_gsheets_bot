@@ -8,7 +8,7 @@ from handlers.admins.manage_menu_items import get_list_menu_items, add_menu_item
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, issuance_of_report, \
-    return_issuance_means
+    return_issuance_means, make_transfer
 from handlers.users.write_menu_item_to_bd import browse_menu_items, write_menu_item_to_bd, choose_write_menu_item_sender
 from handlers.members import join_to_notification_group, confirm_issuance_report
 from init_db import init_db
@@ -24,7 +24,7 @@ admin_routers = [
 
 user_routers = [
     start_user.rt, browse_menu_items.rt, write_menu_item_to_bd.rt, issuance_of_report.rt,
-    return_issuance_means.rt, choose_write_menu_item_sender.rt
+    return_issuance_means.rt, choose_write_menu_item_sender.rt, make_transfer.rt
 ]
 
 member_routers = [

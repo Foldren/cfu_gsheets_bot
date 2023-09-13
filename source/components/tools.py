@@ -370,3 +370,5 @@ async def get_confirm_issuance_keyb_button(id_issuance_report: int):
         ]
     ]
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+

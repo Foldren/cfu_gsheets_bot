@@ -66,7 +66,8 @@ class GoogleTable:
                              ])
 
     async def add_issuance_report_to_bd(self, table_url: str, chat_id_worker: int, fullname_recipient: str,
-                                        volume_op: str, payment_method: str, org_name: str, return_issuance: bool = False):
+                                        volume_op: str, payment_method: str, org_name: str,
+                                        return_issuance: bool = False):
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
         ws = await ss.worksheet("БД")
@@ -86,11 +87,25 @@ class GoogleTable:
             name_sender = "ЮР Лицо"
             name_recipient = surname_fstname
 
-        row_1 = [str(chat_id_worker), name_sender, frmt_date_time, "Расход", payment_method, volume_with_sign, org_name, text_operation_str_1]
-        row_2 = [str(chat_id_worker), name_recipient, frmt_date_time, "Доход", payment_method, volume_op, org_name, text_operation_str_2]
+        row_1 = [str(chat_id_worker), name_sender, frmt_date_time, "Расход", payment_method, volume_with_sign, org_name,
+                 text_operation_str_1]
+        row_2 = [str(chat_id_worker), name_recipient, frmt_date_time, "Доход", payment_method, volume_op, org_name,
+                 text_operation_str_2]
 
         await ws.append_rows([row_1, row_2])
 
+    async def add_transfer_to_bd(self, table_url: str, chat_id_worker: int, volume_op: str,
+                                 wallet_sender: str, wallet_recipient: str, org_name: str):
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_url)
+        ws = await ss.worksheet("БД")
 
+        frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
+        volume_with_sign = f"-{volume_op}"
 
+        row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", wallet_sender, volume_with_sign, org_name,
+                 "Перевод"]
+        row_2 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Доход", wallet_recipient, volume_op, org_name,
+                 "Перевод"]
 
+        await ws.append_rows([row_1, row_2])

@@ -7,7 +7,7 @@ from services.models_extends.menu_item import MenuItemApi
 from components.tools import get_inline_keyb_markup, get_msg_queue, get_callb_content, \
     get_inline_keyb_profit_cost, answer_or_edit_message, get_inline_keyb_str_back_to_parent_items_u, \
     get_str_format_queue
-from states.user.steps_create_notes_to_bd import WriteMenuItemsToBd
+from states.user.steps_create_notes_to_bd import StepsWriteMenuItemsToBd
 
 rt = Router()
 
@@ -17,9 +17,9 @@ rt.callback_query.filter(IsUserFilter())
 
 
 # Вывод дочерних пунктов меню
-@rt.callback_query(WriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("user_menu_item"))
+@rt.callback_query(StepsWriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("user_menu_item"))
 async def next_to_nested_items_u(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(WriteMenuItemsToBd.set_queue_menu_items)
+    await state.set_state(StepsWriteMenuItemsToBd.set_queue_menu_items)
 
     message = callback.message
     selected_item_id = await get_callb_content(callback.data)
@@ -54,7 +54,7 @@ async def next_to_nested_items_u(callback: CallbackQuery, state: FSMContext):
 
 
 # Возврат назад к родительским пунктам меню
-@rt.callback_query(WriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("back_to_upper_level_u"))
+@rt.callback_query(StepsWriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("back_to_upper_level_u"))
 async def back_to_parent_items_u(callback: CallbackQuery):
     selected_item_id = await get_callb_content(callback.data)
     selected_item = await MenuItemApi.get_by_id(selected_item_id)
