@@ -65,7 +65,7 @@ class GoogleTable:
                              ])
 
     async def add_issuance_report_to_bd(self, table_url: str, chat_id_worker: int, fullname_recipient: str,
-                                        volume_op: str, payment_method: str):
+                                        volume_op: str, payment_method: str, org_name: str, return_issuance: bool = False):
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
         ws = await ss.worksheet("БД")
@@ -73,8 +73,20 @@ class GoogleTable:
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         volume_with_sign = f"-{volume_op}"
         surname_fstname = fullname_recipient.split(" ")[1] + " " + fullname_recipient.split(" ")[0]
-        row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", payment_method, volume_with_sign, "Выдача под отчет"]
-        row_2 = [str(chat_id_worker), surname_fstname, frmt_date_time, "Доход", payment_method, volume_op, "Получение под отчет"]
+
+        if return_issuance:
+            text_operation_str_1 = "Возврат подотчётных средств"
+            text_operation_str_2 = "Получение подотчётных средств"
+            name_sender = surname_fstname
+            name_recipient = "ЮР Лицо"
+        else:
+            text_operation_str_1 = "Выдача под отчет"
+            text_operation_str_2 = "Получение под отчет"
+            name_sender = "ЮР Лицо"
+            name_recipient = surname_fstname
+
+        row_1 = [str(chat_id_worker), name_sender, frmt_date_time, "Расход", payment_method, volume_with_sign, org_name, text_operation_str_1]
+        row_2 = [str(chat_id_worker), name_recipient, frmt_date_time, "Доход", payment_method, volume_op, org_name, text_operation_str_2]
 
         await ws.append_rows([row_1, row_2])
 

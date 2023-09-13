@@ -49,7 +49,7 @@ class NotifyGroup(Model):
 
 class IssuanceReport(Model):
     id = BigIntField(pk=True)
-    ip = TextField(maxlength=100, null=True),
+    org_name = TextField(maxlength=100, null=True)
     selected_user_nickname = TextField(maxlength=150, null=True)
     selected_user_id = BigIntField()
     volume = BigIntField(null=False)

@@ -3,9 +3,9 @@ from models import IssuanceReport
 
 class IssuanceReportApi:
     @staticmethod
-    async def add_new_issuance_report(user_id: int, ip: str, selected_user_nickname: str, volume: int,
+    async def add_new_issuance_report(user_id: int, org_name: str, selected_user_nickname: str, volume: int,
                                       payment_method: str, selected_notify_group_id: int, selected_user_id: int):
-        return await IssuanceReport.create(user_id=user_id, ip=ip, selected_user_nickname=selected_user_nickname,
+        return await IssuanceReport.create(user_id=user_id, org_name=org_name, selected_user_nickname=selected_user_nickname,
                                            volume=volume, payment_method=payment_method,
                                            notify_group_id=selected_notify_group_id, selected_user_id=selected_user_id)
 

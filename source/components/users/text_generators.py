@@ -17,10 +17,20 @@ async def get_text_start_user(name_user: str) -> str:
            f"подтверждения сотрудником"
 
 
-async def get_msg_notify_new_issuance_of_report(profession_worker: str, fullname_worker: str, ip: str, nickname_second_worker: str,
+async def get_msg_notify_new_issuance_of_report(profession_worker: str, fullname_worker: str, ip: str,
+                                                nickname_second_worker: str,
                                                 volume: str, payment_method: str):
     return f"🆙 {profession_worker.title()} - <b>{fullname_worker}</b>, только что,\nвыдал под отчет новую запись для " \
            f"подтверждения, сотруднику - {nickname_second_worker}\n" \
+           f"<u>ЮР Лицо</u>: <b>{ip}</b>\n" \
+           f"<u>Сумма</u>: <b>{volume}</b>\n" \
+           f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
+
+
+async def get_msg_notify_new_return_issuance(profession_worker: str, fullname_worker: str, ip: str,
+                                             volume: str, payment_method: str):
+    return f"↩️ {profession_worker.title()} - <b>{fullname_worker}</b>, только что,\nоформил возврат " \
+           f"подотчетных средств\n" \
            f"<u>ЮР Лицо</u>: <b>{ip}</b>\n" \
            f"<u>Сумма</u>: <b>{volume}</b>\n" \
            f"<u>Кошелек</u>: <b>{payment_method}</b>\n"

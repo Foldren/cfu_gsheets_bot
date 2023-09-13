@@ -17,3 +17,9 @@ class WriteIssuanceReport(StatesGroup):
     set_volume = State()
     select_payment_method = State()
     select_notify_group = State()
+
+
+class ReturnIssuanceMeans(StatesGroup):
+    select_ip = State()
+    set_volume = State()
+    select_payment_method = State()

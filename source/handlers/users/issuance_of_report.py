@@ -2,8 +2,7 @@ from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter
-from components.tools import get_callb_content, get_inline_keyb_markup, send_multiply_messages, \
-    get_confirm_issuance_keyb_button
+from components.tools import get_callb_content, get_inline_keyb_markup, get_confirm_issuance_keyb_button
 from components.users.text_generators import get_msg_notify_new_issuance_of_report
 from components.users.texts import text_invalid_volume_operation, text_start_issuance, text_select_worker_issuance, \
     text_set_volume_issuance, text_select_payment_method_issuance, text_no_notify_groups, text_end_issuance, \
@@ -153,7 +152,7 @@ async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSM
     # Создаем запись о новой выдаче под отчет в бд ---------------------------------------------------------------------
     issuance_report = await IssuanceReportApi.add_new_issuance_report(
         user_id=callback.message.chat.id,
-        ip=st_data['selected_ip_id'],
+        org_name=st_data['selected_ip_name'],
         selected_user_nickname=st_data['selected_worker_nickname'],
         selected_user_id=st_data['selected_worker_id'],
         volume=st_data['specified_volume'],

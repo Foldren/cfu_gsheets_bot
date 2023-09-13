@@ -15,15 +15,23 @@ keyb_start_admin = [
 
 keyb_start_user = [
     [
-        KeyboardButton(text="Новая запись"),
-        KeyboardButton(text="Выдача под отчет")
+        KeyboardButton(text="Обычная запись"),
+        KeyboardButton(text="Запись от ЮР Лица"),
+    ],
+    [
+        KeyboardButton(text="Выдача под отчет"),
+        KeyboardButton(text="Возврат подотчетных средств")
     ]
 ]
 
 keyb_start_user_admin = [
     [
-        KeyboardButton(text="Новая запись"),
-        KeyboardButton(text="Выдача под отчет")
+        KeyboardButton(text="Обычная запись"),
+        KeyboardButton(text="Запись от ЮР Лица"),
+    ],
+    [
+        KeyboardButton(text="Выдача под отчет"),
+        KeyboardButton(text="Возврат подотчетных средств")
     ],
     [
         KeyboardButton(text="Режим: Юзер 🙎‍♂️")

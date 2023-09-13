@@ -25,7 +25,8 @@ async def confirm_issuance_report(callback: CallbackQuery, gt_object: GoogleTabl
         chat_id_worker=issuance_report.user_id,
         fullname_recipient=recipient.fullname,
         volume_op=issuance_report.volume,
-        payment_method=issuance_report.payment_method
+        payment_method=issuance_report.payment_method,
+        org_name=issuance_report.org_name
     )
 
     # Удаляем сообщение

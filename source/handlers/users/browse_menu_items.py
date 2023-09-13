@@ -18,7 +18,7 @@ rt.callback_query.filter(IsUserFilter())
 
 
 # Вывод дочерних пунктов меню
-@rt.message(F.text == "Новая запись")
+@rt.message(F.text == "Обычная запись")
 @rt.callback_query(BrowseMenuItems.get_list_menu_items, F.data.startswith("user_menu_item"))
 async def next_to_nested_items_u(callb_or_msg: Union[Message, CallbackQuery], state: FSMContext):
     await state.clear()
