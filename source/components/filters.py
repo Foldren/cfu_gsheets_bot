@@ -40,11 +40,12 @@ class IsSenderGroupExistFilter(BaseFilter):
 
 # Фильтр на проверку кто подтверждает выдачу под отчет
 class IsConfirmFromNecUser(BaseFilter):
-    async def __call__(self, callback: CallbackQuery) -> bool:
-        username = "@" + callback.message.from_user.username
-        id_report = await get_callb_content(callback.data)
-        return await IssuanceReportApi.check_issuance_report_by_nickname_and_id(
-            recipient_nickname=username,
+    async def __call__(self, message: Message) -> bool:
+        user_id = message.from_user.id
+        id_report = await get_callb_content(message.data)
+
+        return await IssuanceReportApi.check_issuance_report_by_id(
+            recipient_id=user_id,
             id_issuance_report=id_report
         )
 

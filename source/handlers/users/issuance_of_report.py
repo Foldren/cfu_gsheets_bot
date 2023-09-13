@@ -155,6 +155,7 @@ async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSM
         user_id=callback.message.chat.id,
         ip=st_data['selected_ip_id'],
         selected_user_nickname=st_data['selected_worker_nickname'],
+        selected_user_id=st_data['selected_worker_id'],
         volume=st_data['specified_volume'],
         payment_method=st_data['selected_payment_method'],
         selected_notify_group_id=selected_notify_group_chat_id
