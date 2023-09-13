@@ -6,7 +6,7 @@ from components.admins.texts import text_start_add_user, text_end_add_user, text
 from components.tools import get_msg_user_data
 from services.models_extends.user import UserApi
 from services.redis_extends.registrations import RedisRegistration
-from states.steps_manage_users import StepsGetListUsers, StepsAddUser
+from states.admin.steps_manage_users import StepsGetListUsers, StepsAddUser
 
 rt = Router()
 

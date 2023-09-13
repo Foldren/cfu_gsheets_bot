@@ -13,7 +13,7 @@ from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.models_extends.user import UserApi
 from services.redis_extends.user import RedisUser
-from states.steps_create_notes_to_bd import WriteIssuanceReport
+from states.user.steps_create_notes_to_bd import WriteIssuanceReport
 
 rt = Router()
 

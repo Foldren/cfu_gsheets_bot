@@ -1,6 +1,5 @@
-from typing import Union
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery
 from aiogram import Router, F
 from components.filters import IsUserFilter
 from components.users.texts import text_get_user_list_mi, text_no_menu_items_u
@@ -8,7 +7,7 @@ from services.models_extends.menu_item import MenuItemApi
 from components.tools import get_inline_keyb_markup, get_msg_queue, get_callb_content, \
     get_inline_keyb_profit_cost, answer_or_edit_message, get_inline_keyb_str_back_to_parent_items_u, \
     get_str_format_queue
-from states.steps_create_notes_to_bd import BrowseMenuItems
+from states.user.steps_create_notes_to_bd import WriteMenuItemsToBd
 
 rt = Router()
 
@@ -18,32 +17,16 @@ rt.callback_query.filter(IsUserFilter())
 
 
 # Вывод дочерних пунктов меню
-@rt.message(F.text == "Обычная запись")
-@rt.callback_query(BrowseMenuItems.get_list_menu_items, F.data.startswith("user_menu_item"))
-async def next_to_nested_items_u(callb_or_msg: Union[Message, CallbackQuery], state: FSMContext):
-    await state.clear()
-    await state.set_state(BrowseMenuItems.get_list_menu_items)
+@rt.callback_query(WriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("user_menu_item"))
+async def next_to_nested_items_u(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(WriteMenuItemsToBd.set_queue_menu_items)
 
-    # Проверка message или callback ------------------------------------------------------------------------------------
-    if hasattr(callb_or_msg, "data"):
-        main_menu = False  # Проверяем верхний ли это уровень
-        message = callb_or_msg.message  # Берем объект message
-
-    else:
-        main_menu = True
-        message = callb_or_msg  # Берем объект message
-
-    # Проверка уровня меню ---------------------------------------------------------------------------------------------
-    if main_menu:
-        selected_item_id = None
-        menu_items = await MenuItemApi.get_user_upper_items(callb_or_msg.from_user.id)
-        msg_queue = await get_msg_queue(level=0)
-    else:
-        selected_item_id = await get_callb_content(callb_or_msg.data)
-        selected_item = await MenuItemApi.get_by_id(selected_item_id)
-        menu_items = await MenuItemApi.get_user_items_by_parent_id(callb_or_msg.from_user.id, parent_id=selected_item.id)
-        queue = await get_str_format_queue(selected_item_id)
-        msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
+    message = callback.message
+    selected_item_id = await get_callb_content(callback.data)
+    selected_item = await MenuItemApi.get_by_id(selected_item_id)
+    menu_items = await MenuItemApi.get_user_items_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
+    queue = await get_str_format_queue(selected_item_id)
+    msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
 
     dict_mi_names_ids = {'names': [], "ids": []}
 
@@ -59,28 +42,19 @@ async def next_to_nested_items_u(callb_or_msg: Union[Message, CallbackQuery], st
             list_data=dict_mi_names_ids['ids'],
             callback_str="user_menu_item",
             number_cols=2,
-            add_keyb_to_start=None if main_menu else await get_inline_keyb_str_back_to_parent_items_u(selected_item_id)
+            add_keyb_to_start=await get_inline_keyb_str_back_to_parent_items_u(selected_item_id)
         )
 
-        await answer_or_edit_message(
-            message=message,
-            flag_answer=main_menu,
-            text=text_get_user_list_mi + msg_queue if main_menu else msg_queue,
-            keyboard=keyboard
-        )
+        await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode="html")
 
     else:
-        if hasattr(callb_or_msg, "data"):
-            # Если последняя категория и это колбек, добавляем кнопки расход и доход
-            keyboard = await get_inline_keyb_profit_cost(selected_item_id)
-            await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode="html")
-        else:
-            # Если это кнопка "новая запись" и нет элементов
-            await message.answer(text=text_no_menu_items_u, parse_mode="html")
+        # Если последняя категория и это колбек, добавляем кнопки расход и доход
+        keyboard = await get_inline_keyb_profit_cost(selected_item_id)
+        await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode="html")
 
 
 # Возврат назад к родительским пунктам меню
-@rt.callback_query(BrowseMenuItems.get_list_menu_items, F.data.startswith("back_to_upper_level_u"))
+@rt.callback_query(WriteMenuItemsToBd.set_queue_menu_items, F.data.startswith("back_to_upper_level_u"))
 async def back_to_parent_items_u(callback: CallbackQuery):
     selected_item_id = await get_callb_content(callback.data)
     selected_item = await MenuItemApi.get_by_id(selected_item_id)

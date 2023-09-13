@@ -6,7 +6,7 @@ from components.keyboards import cf_keyb_empty_user_list, keyb_str_user_list
 from components.admins.texts import text_get_list_users
 from components.tools import get_inline_users_keyb_markup
 from services.models_extends.user import UserApi
-from states.steps_manage_users import StepsGetListUsers
+from states.admin.steps_manage_users import StepsGetListUsers
 
 rt = Router()
 

@@ -8,7 +8,7 @@ from components.tools import get_callb_content, get_inline_keyb_markup, get_msg_
     get_str_format_queue
 from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.user import UserApi
-from states.steps_manage_menu_items import StepsGetListMenu, StepsAddMenuItem
+from states.admin.steps_manage_menu_items import StepsGetListMenu, StepsAddMenuItem
 
 rt = Router()
 

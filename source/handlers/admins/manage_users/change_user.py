@@ -7,7 +7,7 @@ from components.admins.texts import text_start_change_user, text_change_user, te
 from components.tools import get_inline_users_keyb_markup, get_callb_content, get_inline_keyb_change_user, \
     get_msg_user_data, set_memory_data, get_memory_data
 from services.models_extends.user import UserApi
-from states.steps_manage_users import StepsGetListUsers, StepsChangeUser
+from states.admin.steps_manage_users import StepsGetListUsers, StepsChangeUser
 
 rt = Router()
 

@@ -15,8 +15,8 @@ keyb_start_admin = [
 
 keyb_start_user = [
     [
-        KeyboardButton(text="Обычная запись"),
-        KeyboardButton(text="Запись от ЮР Лица"),
+        KeyboardButton(text="Операция с категориями"),
+        KeyboardButton(text="Перевод")
     ],
     [
         KeyboardButton(text="Выдача под отчет"),
@@ -26,8 +26,8 @@ keyb_start_user = [
 
 keyb_start_user_admin = [
     [
-        KeyboardButton(text="Обычная запись"),
-        KeyboardButton(text="Запись от ЮР Лица"),
+        KeyboardButton(text="Операция с категориями"),
+        KeyboardButton(text="Перевод")
     ],
     [
         KeyboardButton(text="Выдача под отчет"),
@@ -80,6 +80,13 @@ keyb_end_delete_u = [
     ]
 ]
 
+keyb_choose_write_menu_sender = [
+    [
+        InlineKeyboardButton(text="От своего имени", callback_data="choose_write_menu_sender:me"),
+        InlineKeyboardButton(text="От ЮР Лица", callback_data="choose_write_menu_sender:org")
+    ]
+]
+
 
 # Конфигурации ---------------------------------------------------------------------------------------------------------
 
@@ -104,6 +111,8 @@ cf_key_end_delete_mi = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_mi)
 cf_key_end_delete_u = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_u)
 
 cf_keyb_empty_user_list = InlineKeyboardMarkup(inline_keyboard=keyb_empty_user_list)
+
+cf_keyb_choose_write_menu_sender = InlineKeyboardMarkup(inline_keyboard=keyb_choose_write_menu_sender)
 
 
 

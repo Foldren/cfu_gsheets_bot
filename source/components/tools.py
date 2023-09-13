@@ -236,17 +236,18 @@ async def get_inline_keyb_str_back_to_parent_items_u(selected_item_id: int = Non
 
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):
     if flag_answer:
-        await message.answer(
+        message = await message.answer(
             text=text,
             reply_markup=keyboard,
             parse_mode="html"
         )
     else:
-        await message.edit_text(
+        message = await message.edit_text(
             text=text,
             reply_markup=keyboard,
             parse_mode="html"
         )
+    return message
 
 
 async def get_current_frmt_datetime():
@@ -267,8 +268,9 @@ async def send_multiply_messages(bot: Bot, msg_text: str, list_chat_ids: list[in
 
 
 async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, queue: str,
-                                     volume_op: str, payment_method: str):
-    return f"📳 Пользователь <b>{fullname_worker}</b>, только что, оформил: {last_queue_e}\n" \
+                                     volume_op: str, payment_method: str, sender_is_org: bool = False):
+    org_sender_txt = " от имени ЮР Лица" if sender_is_org else ""
+    return f"📳 Пользователь <b>{fullname_worker}</b>, только что, оформил{org_sender_txt}: {last_queue_e}\n" \
            f"<u>Очередь операции</u>: <b>{queue}</b>\n" \
            f"<u>Сумма</u>: <b>{volume_op}</b>\n" \
            f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
@@ -285,16 +287,20 @@ async def get_gt_url_keyb_markup(google_table_url, google_drive_url):
 
 
 async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMContext, bot_object: Bot,
-                                               gt_object: GoogleTable, gd_object: GoogleDrive, file_id: str):
+                                               gt_object: GoogleTable, gd_object: GoogleDrive, file_id: str = None):
     current_user = await UserApi.get_by_id(message.chat.id)
     admin_id = await UserApi.get_user_admin_id(message.chat.id)
-    file_name = await get_current_frmt_datetime() + ".png"
-    file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
     admin_info = await UserApi.get_admin_info(admin_id)
     state_data = await state.get_data()
     keyboard_end_write = await get_gt_url_keyb_markup(admin_info.google_table_url, admin_info.google_drive_dir_url)
+    sender_org_flag = True if state_data['sender'] == "org" else False
 
-    message = await message.answer('Добавляю запись в вашу гугл таблицу 🔄 \n\n🟩🟩🟩◻◻◻◻◻◻◻')
+    message = await answer_or_edit_message(
+        message=message,
+        flag_answer=not sender_org_flag,
+        text='Добавляю запись в вашу гугл таблицу 🔄 \n\n🟩🟩🟩◻◻◻◻◻◻◻'
+    )
+
     # Добавляем запись в google
     await gt_object.add_new_str_to_bd(
         table_url=admin_info.google_table_url,
@@ -304,19 +310,25 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
         queue_op=state_data['item_queue'],
         type_op=state_data['operation_type'],
         payment_method=state_data['payment_method'],
+        sender_is_org=sender_org_flag
     )
 
     message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
 
-    # Сохраняем чек на сервере
-    await bot_object.download(file=file_id, destination=file_path)
+    # Если не юр лицо
+    if not sender_org_flag:
+        file_name = await get_current_frmt_datetime() + ".png"
+        file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
 
-    # Отправляем файл в папку google drive клиента
-    await gd_object.upload_check_too_google_drive_dir(
-        file_path=file_path,
-        google_dir_url=admin_info.google_drive_dir_url,
-        file_name_on_gd=file_name
-    )
+        # Сохраняем чек на сервере если не от юр лица
+        await bot_object.download(file=file_id, destination=file_path)
+
+        # Отправляем файл в папку google drive клиента
+        await gd_object.upload_check_too_google_drive_dir(
+            file_path=file_path,
+            google_dir_url=admin_info.google_drive_dir_url,
+            file_name_on_gd=file_name
+        )
 
     await state.clear()
 
@@ -333,7 +345,8 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
             last_queue_e=operation_name,
             queue=state_data['item_queue'],
             volume_op=state_data['volume_operation'],
-            payment_method=state_data['payment_method']
+            payment_method=state_data['payment_method'],
+            sender_is_org=sender_org_flag
         )
 
         await send_multiply_messages(

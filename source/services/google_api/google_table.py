@@ -20,11 +20,12 @@ class GoogleTable:
         self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
 
     async def add_new_str_to_bd(self, table_url: str, chat_id_worker: int, fullname_worker: str, volume_op: str,
-                                queue_op: str, type_op: str, payment_method: str):
+                                queue_op: str, type_op: str, payment_method: str, sender_is_org: bool = False):
         """
         Функция для добавления новой строки (записи) в гугл таблицу в лист БД
         Параметр type_op = profit или cost
 
+        :param sender_is_org: флаг, что исполнитель - юр лицо
         :param table_url: ссылка на гугл таблицу
         :param chat_id_worker: chat_id сотрудника в телеграм, который производит запись
         :param fullname_worker: полное имя сотрудника
@@ -51,7 +52,7 @@ class GoogleTable:
             i += 1
 
         await ws.append_row([str(chat_id_worker),
-                             surname_fstname,
+                             "ЮР Лицо" if sender_is_org else surname_fstname,
                              frmt_date_time,
                              type_op,
                              payment_method,

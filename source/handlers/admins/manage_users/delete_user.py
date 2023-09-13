@@ -9,8 +9,8 @@ from components.tools import get_callb_content, get_inline_keyb_markup, \
     generate_zero_array, get_sure_delete_usr_msg
 from services.models_extends.user import UserApi
 from services.redis_extends.user import RedisUser
-from states.steps_manage_menu_items import StepsDeleteMenuItem
-from states.steps_manage_users import StepsGetListUsers, StepsDeleteUser
+from states.admin.steps_manage_menu_items import StepsDeleteMenuItem
+from states.admin.steps_manage_users import StepsGetListUsers, StepsDeleteUser
 
 rt = Router()
 

@@ -9,7 +9,7 @@ from components.admins.texts import text_start_change_menu_item, \
 from components.tools import get_callb_content, get_msg_queue, get_inline_keyb_change_menu_item, get_inline_keyb_markup, \
     generate_observers_list, get_str_format_queue
 from services.models_extends.menu_item import MenuItemApi
-from states.steps_manage_menu_items import StepsChangeMenuItem, StepsGetListMenu
+from states.admin.steps_manage_menu_items import StepsChangeMenuItem, StepsGetListMenu
 
 rt = Router()
 

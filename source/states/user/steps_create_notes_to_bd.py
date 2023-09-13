@@ -1,14 +1,13 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class BrowseMenuItems(StatesGroup):
-    get_list_menu_items = State()
-
-
 class WriteMenuItemsToBd(StatesGroup):
+    set_sender = State()
+    set_queue_menu_items = State()
     set_volume_operation = State()
     choose_bank = State()
     load_check = State()
+    pass_load_check = State()
 
 
 class WriteIssuanceReport(StatesGroup):
