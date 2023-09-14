@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from components.filters import IsAdminFilter
+from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards import keyb_str_change_observers_mi
 from components.admins.texts import text_start_change_menu_item, \
     text_choose_param_to_change_menu_item, text_change_name_menu_item, text_end_change_name_menu_item, \
@@ -14,7 +14,7 @@ from states.admin.steps_manage_menu_items import StepsChangeMenuItem, StepsGetLi
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsAdminFilter())
 
 

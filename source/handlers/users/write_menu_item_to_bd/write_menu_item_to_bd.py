@@ -1,7 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from components.filters import IsUserFilter
+from components.filters import IsUserFilter, IsNotMainMenuMessage
 from components.users.texts import text_start_add_mi_to_bd, text_invalid_volume_operation, text_send_check_photo, \
     text_invalid_check_photo, text_choose_bank
 from components.tools import get_callb_content, get_inline_keyb_markup, add_new_note_to_bd_handler_algorithm, \
@@ -9,12 +9,13 @@ from components.tools import get_callb_content, get_inline_keyb_markup, add_new_
 from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
+from services.redis_extends.wallets import RedisUserWallets
 from states.user.steps_create_notes_to_bd import StepsWriteMenuItemsToBd
 
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsUserFilter())
+rt.message.filter(IsUserFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsUserFilter())
 
 
@@ -36,7 +37,7 @@ async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext)
 
 
 @rt.message(StepsWriteMenuItemsToBd.set_volume_operation)
-async def choose_bank(message: Message, state: FSMContext):
+async def choose_bank(message: Message, state: FSMContext, redis_wallets: RedisUserWallets):
     await state.set_state(StepsWriteMenuItemsToBd.choose_bank)
 
     try:
@@ -46,9 +47,11 @@ async def choose_bank(message: Message, state: FSMContext):
         await message.answer(text=text_invalid_volume_operation, parse_mode="html")
         return
 
+    wallets_list = await redis_wallets.get_wallets_list(message.from_user.id)
+
     keyboard = await get_inline_keyb_markup(
-        list_names=BANKS_UPRAVLYAIKA,
-        list_data=BANKS_UPRAVLYAIKA,
+        list_names=wallets_list,
+        list_data=wallets_list,
         callback_str="bank_operation",
         number_cols=2,
     )

@@ -1,7 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F, Bot
-from components.filters import IsAdminFilter
+from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.admins.texts import text_start_change_user, text_change_user, text_end_change_user, text_get_id_user, \
     text_invalid_user_id, text_end_change_id_user
 from components.tools import get_inline_users_keyb_markup, get_callb_content, get_inline_keyb_change_user, \
@@ -12,7 +12,7 @@ from states.admin.steps_manage_users import StepsGetListUsers, StepsChangeUser
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsAdminFilter())
 
 

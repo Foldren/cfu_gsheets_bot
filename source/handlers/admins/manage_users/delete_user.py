@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
-from components.filters import IsAdminFilter
+from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards import keyb_str_delete_u, cf_key_end_delete_u
 from components.admins.texts import text_start_delete_users, text_stop_delete_u, \
     text_end_delete_u
@@ -15,7 +15,7 @@ from states.admin.steps_manage_users import StepsGetListUsers, StepsDeleteUser
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsAdminFilter())
 
 

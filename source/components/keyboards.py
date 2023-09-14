@@ -16,27 +16,64 @@ keyb_start_admin = [
 keyb_start_user = [
     [
         KeyboardButton(text="Операция с категориями"),
-        KeyboardButton(text="Перевод")
+        KeyboardButton(text="Операция с подотчетами")
     ],
     [
-        KeyboardButton(text="Выдача под отчет"),
-        KeyboardButton(text="Возврат подотчетных средств")
+        KeyboardButton(text="Кошельки"),
+        KeyboardButton(text="Отчеты")
     ]
 ]
 
 keyb_start_user_admin = [
     [
         KeyboardButton(text="Операция с категориями"),
-        KeyboardButton(text="Перевод")
+        KeyboardButton(text="Операция с подотчетами")
+
     ],
     [
-        KeyboardButton(text="Выдача под отчет"),
-        KeyboardButton(text="Возврат подотчетных средств")
+        KeyboardButton(text="Кошельки"),
+        KeyboardButton(text="Отчеты")
     ],
     [
         KeyboardButton(text="Режим: Юзер 🙎‍♂️")
     ]
 ]
+
+keyb_operation_under_stats = [
+    [
+        KeyboardButton(text="Выдача в подотчет"),
+        KeyboardButton(text="Возврат подотчета")
+    ],
+    [
+        KeyboardButton(text="⬅️ Назад в главное меню")
+    ]
+]
+
+keyb_wallets = [
+    [
+        KeyboardButton(text="Перевод на кошелек"),
+        KeyboardButton(text="Изменить кошельки")
+    ],
+    [
+        KeyboardButton(text="⬅️ Назад в главное меню")
+    ]
+]
+
+keyb_operation_stats = [
+    [
+        KeyboardButton(text="Ежедневный"),
+        KeyboardButton(text="Еженедельный"),
+
+    ],
+    [
+        KeyboardButton(text="Ежемесячный")
+    ],
+    [
+        KeyboardButton(text="⬅️ Назад в главное меню")
+    ]
+]
+
+# Inline keyboards -----------------------------------------------------------------------------------------------------
 
 keyb_empty_user_list = [
     [
@@ -82,9 +119,13 @@ keyb_end_delete_u = [
 
 keyb_choose_write_menu_sender = [
     [
-        InlineKeyboardButton(text="От своего имени", callback_data="choose_write_menu_sender:me"),
+        InlineKeyboardButton(text="Из подотчета", callback_data="choose_write_menu_sender:me"),
         InlineKeyboardButton(text="От ЮР Лица", callback_data="choose_write_menu_sender:org")
     ]
+]
+
+keyb_str_change_wallets_list = [
+    InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_change_wallet_list")
 ]
 
 
@@ -105,6 +146,21 @@ cf_keyb_start_user_admin = ReplyKeyboardMarkup(
     resize_keyboard=True,  # меняем размер клавиатуры
 )
 
+cf_keyb_operation_under_stats = ReplyKeyboardMarkup(
+    keyboard=keyb_operation_under_stats,
+    resize_keyboard=True,  # меняем размер клавиатуры
+)
+
+cf_keyb_operation_stats = ReplyKeyboardMarkup(
+    keyboard=keyb_operation_stats,
+    resize_keyboard=True,  # меняем размер клавиатуры
+)
+
+cf_keyb_wallets = ReplyKeyboardMarkup(
+    keyboard=keyb_wallets,
+    resize_keyboard=True,  # меняем размер клавиатуры
+)
+
 
 cf_key_end_delete_mi = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_mi)
 
@@ -113,6 +169,8 @@ cf_key_end_delete_u = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_u)
 cf_keyb_empty_user_list = InlineKeyboardMarkup(inline_keyboard=keyb_empty_user_list)
 
 cf_keyb_choose_write_menu_sender = InlineKeyboardMarkup(inline_keyboard=keyb_choose_write_menu_sender)
+
+
 
 
 

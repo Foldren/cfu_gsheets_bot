@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from components.filters import IsAdminFilter
+from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.admins.texts import text_start_add_user, text_end_add_user, text_user_exists
 from components.tools import get_msg_user_data
 from services.models_extends.user import UserApi
@@ -11,7 +11,7 @@ from states.admin.steps_manage_users import StepsGetListUsers, StepsAddUser
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsAdminFilter())
 
 

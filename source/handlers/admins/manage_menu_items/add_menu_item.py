@@ -1,7 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F
-from components.filters import IsAdminFilter
+from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards import keyb_str_pass_add_users_to_mi
 from components.admins.texts import text_start_add_menu_item, text_choose_observers_menu_item, text_end_add_menu_item
 from components.tools import get_callb_content, get_inline_keyb_markup, get_msg_queue, generate_zero_array, \
@@ -13,7 +13,7 @@ from states.admin.steps_manage_menu_items import StepsGetListMenu, StepsAddMenuI
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsAdminFilter())
 
 

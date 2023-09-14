@@ -3,6 +3,7 @@ from aiogram.types import Message, ChatMemberUpdated, CallbackQuery
 from aioredis import Redis
 
 from components.tools import get_callb_content
+from config import MAIN_MENU_MSGS
 from services.models_extends.issuance_report import IssuanceReportApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.redis_extends.registrations import RedisRegistration
@@ -49,3 +50,7 @@ class IsConfirmFromNecUser(BaseFilter):
             id_issuance_report=id_report
         )
 
+
+class IsNotMainMenuMessage(BaseFilter):
+    async def __call__(self, message: Message) -> bool:
+        return message.text not in MAIN_MENU_MSGS

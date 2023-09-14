@@ -6,7 +6,7 @@ from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from components.users.texts import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE, CHECKS_PATH
+from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA
 from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.models_extends.user import UserApi
@@ -201,6 +201,15 @@ async def generate_observers_list(users: dict):
         observers_list.append(1 if u['observer'] else 0)
 
     return observers_list
+
+
+async def generate_wallets_status_list(wallets: list):
+    wallets_status_list = list()
+
+    for w in BANKS_UPRAVLYAIKA:
+        wallets_status_list.append(1 if (w in wallets) else 0)
+
+    return wallets_status_list
 
 
 async def get_sure_delete_mi_msg(list_menu_items: list):

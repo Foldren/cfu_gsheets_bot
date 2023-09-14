@@ -1,7 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from components.filters import IsUserFilter
+from components.filters import IsUserFilter, IsNotMainMenuMessage
 from components.tools import get_callb_content, get_inline_keyb_markup, get_confirm_issuance_keyb_button
 from components.users.text_generators import get_msg_notify_new_issuance_of_report
 from components.users.texts import text_invalid_volume_operation, text_start_issuance, text_select_worker_issuance, \
@@ -13,6 +13,7 @@ from services.models_extends.menu_item import MenuItemApi
 from services.models_extends.notify_group import NotifyGroupApi
 from services.models_extends.user import UserApi
 from services.redis_extends.user import RedisUser
+from services.redis_extends.wallets import RedisUserWallets
 from states.user.steps_create_notes_to_bd import StepsWriteIssuanceReport
 
 rt = Router()
@@ -22,7 +23,7 @@ rt.message.filter(IsUserFilter())
 rt.callback_query.filter(IsUserFilter())
 
 
-@rt.message(F.text == "Выдача под отчет")
+@rt.message(F.text == "Выдача в подотчет")
 async def start_write_issuance_of_report_to_bd(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
     await state.set_state(StepsWriteIssuanceReport.select_ip)
@@ -87,8 +88,8 @@ async def set_volume_for_issuance(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(text=text_set_volume_issuance, parse_mode="html")
 
 
-@rt.message(StepsWriteIssuanceReport.set_volume)
-async def select_payment_method_issuance(message: Message, state: FSMContext):
+@rt.message(StepsWriteIssuanceReport.set_volume, IsNotMainMenuMessage())
+async def select_payment_method_issuance(message: Message, state: FSMContext, redis_wallets: RedisUserWallets):
     await state.set_state(StepsWriteIssuanceReport.select_payment_method)
 
     try:
@@ -102,9 +103,11 @@ async def select_payment_method_issuance(message: Message, state: FSMContext):
         'specified_volume': volume_op
     })
 
+    wallets_list = await redis_wallets.get_wallets_list(message.from_user.id)
+
     keyboard = await get_inline_keyb_markup(
-        list_names=BANKS_UPRAVLYAIKA,
-        list_data=BANKS_UPRAVLYAIKA,
+        list_names=wallets_list,
+        list_data=wallets_list,
         callback_str="select_payment_method_issuance",
         number_cols=2
     )

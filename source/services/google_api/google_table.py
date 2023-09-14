@@ -37,7 +37,7 @@ class GoogleTable:
 
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
-        ws = await ss.worksheet("БД")
+        ws = await ss.worksheet("БД (не редактировать)")
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         queue_items = queue_op.split(" → ")
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
@@ -70,7 +70,7 @@ class GoogleTable:
                                         return_issuance: bool = False):
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
-        ws = await ss.worksheet("БД")
+        ws = await ss.worksheet("БД (не редактировать)")
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         volume_with_sign = f"-{volume_op}"
@@ -98,7 +98,7 @@ class GoogleTable:
                                  wallet_sender: str, wallet_recipient: str, org_name: str):
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
-        ws = await ss.worksheet("БД")
+        ws = await ss.worksheet("БД (не редактировать)")
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         volume_with_sign = f"-{volume_op}"

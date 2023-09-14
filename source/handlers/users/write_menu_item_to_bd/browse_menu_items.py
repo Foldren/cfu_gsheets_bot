@@ -1,18 +1,18 @@
+from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
-from aiogram import Router, F
-from components.filters import IsUserFilter
-from components.users.texts import text_get_user_list_mi, text_no_menu_items_u
-from services.models_extends.menu_item import MenuItemApi
+from components.filters import IsUserFilter, IsNotMainMenuMessage
 from components.tools import get_inline_keyb_markup, get_msg_queue, get_callb_content, \
-    get_inline_keyb_profit_cost, answer_or_edit_message, get_inline_keyb_str_back_to_parent_items_u, \
+    get_inline_keyb_profit_cost, get_inline_keyb_str_back_to_parent_items_u, \
     get_str_format_queue
+from components.users.texts import text_get_user_list_mi
+from services.models_extends.menu_item import MenuItemApi
 from states.user.steps_create_notes_to_bd import StepsWriteMenuItemsToBd
 
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsUserFilter())
+rt.message.filter(IsUserFilter(), IsNotMainMenuMessage())
 rt.callback_query.filter(IsUserFilter())
 
 
