@@ -23,7 +23,7 @@ async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str
         keyboard[number_str_keyboard].append(InlineKeyboardButton(
             text=list_names[i],
             callback_data=f"{callback_str}:{list_data[i]}"))
-        if i % number_cols != 0 and i != (len(list_data) - 1):
+        if ((i+1) % number_cols) == 0:
             number_str_keyboard += 1
             keyboard.append([])
 

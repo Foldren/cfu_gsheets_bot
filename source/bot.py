@@ -58,6 +58,9 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
+    # При добавлении нового админа нужно добавить ему хотя бы один кошелек
+    # в redis_wallets_users и запись со статусом в redis_status_users
+
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot,
                            bot_object=bot,
