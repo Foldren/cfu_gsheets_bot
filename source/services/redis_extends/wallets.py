@@ -6,7 +6,7 @@ class RedisUserWallets:
     selected_bd: int
     __slots__ = ('redis_wallets', 'selected_bd')
 
-    def __init__(self, redis_wallets):
+    def __init__(self, redis_wallets: Redis):
         self.selected_bd = 2
         self.redis_wallets = redis_wallets
 

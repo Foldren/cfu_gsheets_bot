@@ -3,6 +3,18 @@ from models import User, AdminInfo
 
 class UserApi:
     @staticmethod
+    async def get_user_periods_stats_list(user_chat_id):
+        user = await User.get(chat_id=user_chat_id)
+        p_stats = await user.periods_stats.all().values_list("name", flat=True)
+        return p_stats
+
+    @staticmethod
+    async def get_admin_stats_urls(admin_chat_id):
+        admin = await User.get(chat_id=admin_chat_id)
+        admin_info = await admin.admin_info
+        return [admin_info.gt_day_stat_url, admin_info.gt_week_stat_url, admin_info.gt_month_stat_url]
+
+    @staticmethod
     async def get_table_url(admin_chat_id):
         admin = await User.get(chat_id=admin_chat_id)
         admin_info = await admin.admin_info

@@ -1,5 +1,4 @@
-from aioredis import Redis, from_url
-from config import REDIS_URL
+from aioredis import Redis
 
 
 class RedisUser:
@@ -7,7 +6,7 @@ class RedisUser:
     selected_bd: int
     __slots__ = ('redis_users', 'selected_bd')
 
-    def __init__(self, redis_users):
+    def __init__(self, redis_users: Redis):
         self.selected_bd = 0
         self.redis_users = redis_users
 

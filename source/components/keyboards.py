@@ -1,12 +1,13 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-# Клавиатуры -----------------------------------------------------------------------------------------------------------
+# ReplyKeyboards -------------------------------------------------------------------------------------------------------
 
 keyb_start_admin = [
     [
         KeyboardButton(text="Меню"),
         KeyboardButton(text="Сотрудники"),
+        KeyboardButton(text="Отчеты"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼")
@@ -59,27 +60,38 @@ keyb_wallets = [
     ]
 ]
 
-keyb_operation_stats = [
-    [
-        KeyboardButton(text="Ежедневный"),
-        KeyboardButton(text="Еженедельный"),
 
-    ],
-    [
-        KeyboardButton(text="Ежемесячный")
-    ],
-    [
-        KeyboardButton(text="⬅️ Назад в главное меню")
-    ]
-]
-
-# Inline keyboards -----------------------------------------------------------------------------------------------------
+# InlineKeyboards ------------------------------------------------------------------------------------------------------
 
 keyb_empty_user_list = [
     [
         InlineKeyboardButton(text="➕", callback_data="add_user")
     ]
 ]
+
+keyb_end_delete_mi = [
+    [
+        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_menu_item"),
+        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_menu_item")
+    ]
+]
+
+keyb_end_delete_u = [
+    [
+        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_users"),
+        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_users")
+    ]
+]
+
+keyb_choose_write_menu_sender = [
+    [
+        InlineKeyboardButton(text="Из подотчета", callback_data="choose_write_menu_sender:me"),
+        InlineKeyboardButton(text="От ЮР Лица", callback_data="choose_write_menu_sender:org")
+    ]
+]
+
+
+# InlineStringsForKeyboards --------------------------------------------------------------------------------------------
 
 keyb_str_user_list = [
     InlineKeyboardButton(text="➕", callback_data=f"add_user"),
@@ -99,37 +111,20 @@ keyb_str_delete_mi = [
     InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_menu_item")
 ]
 
-keyb_end_delete_mi = [
-    [
-        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_menu_item"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_menu_item")
-    ]
-]
-
 keyb_str_delete_u = [
     InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_users")
-]
-
-keyb_end_delete_u = [
-    [
-        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_users"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_users")
-    ]
-]
-
-keyb_choose_write_menu_sender = [
-    [
-        InlineKeyboardButton(text="Из подотчета", callback_data="choose_write_menu_sender:me"),
-        InlineKeyboardButton(text="От ЮР Лица", callback_data="choose_write_menu_sender:org")
-    ]
 ]
 
 keyb_str_change_wallets_list = [
     InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_change_wallet_list")
 ]
 
+keyb_str_change_observers_ps = [
+    InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_change_observers_ps")
+]
 
-# Конфигурации ---------------------------------------------------------------------------------------------------------
+
+# ReplyButton конфигурации ---------------------------------------------------------------------------------------------
 
 cf_keyb_start_admin = ReplyKeyboardMarkup(
     keyboard=keyb_start_admin,
@@ -151,16 +146,13 @@ cf_keyb_operation_under_stats = ReplyKeyboardMarkup(
     resize_keyboard=True,  # меняем размер клавиатуры
 )
 
-cf_keyb_operation_stats = ReplyKeyboardMarkup(
-    keyboard=keyb_operation_stats,
-    resize_keyboard=True,  # меняем размер клавиатуры
-)
-
 cf_keyb_wallets = ReplyKeyboardMarkup(
     keyboard=keyb_wallets,
     resize_keyboard=True,  # меняем размер клавиатуры
 )
 
+
+# InlineButton конфигурации --------------------------------------------------------------------------------------------
 
 cf_key_end_delete_mi = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_mi)
 

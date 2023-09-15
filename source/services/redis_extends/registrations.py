@@ -1,6 +1,4 @@
-from asyncio import run
-from aioredis import Redis, from_url
-from config import REDIS_URL
+from aioredis import Redis
 
 
 class RedisRegistration:

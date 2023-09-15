@@ -3,12 +3,12 @@ import logging
 from aiogram import Bot, Dispatcher
 from aioredis import from_url
 from tortoise import run_async
-from handlers.admins import start_admin, change_mode
+from handlers.admins import start_admin, change_mode, manage_users_stats
 from handlers.admins.manage_menu_items import get_list_menu_items, add_menu_item, change_menu_item, delete_menu_item
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, issuance_of_report, \
-    return_issuance_means, make_transfer, open_nested_menu, change_wallets_list
+    return_issuance_means, make_transfer, open_nested_menu, change_wallets_list, show_user_stats
 from handlers.users.write_menu_item_to_bd import browse_menu_items, write_menu_item_to_bd, \
     choose_write_menu_item_sender
 from handlers.members import join_to_notification_group, confirm_issuance_report
@@ -21,13 +21,14 @@ from services.redis_extends.wallets import RedisUserWallets
 
 admin_routers = [
     start_admin.rt, get_list_menu_items.rt, add_menu_item.rt, get_list_users.rt, add_user.rt,
-    change_user.rt, change_menu_item.rt, delete_menu_item.rt, delete_user.rt, change_mode.rt
+    change_user.rt, change_menu_item.rt, delete_menu_item.rt, delete_user.rt, change_mode.rt,
+    manage_users_stats.rt
 ]
 
 user_routers = [
     start_user.rt, browse_menu_items.rt, write_menu_item_to_bd.rt, issuance_of_report.rt,
     return_issuance_means.rt, choose_write_menu_item_sender.rt, make_transfer.rt, open_nested_menu.rt,
-    change_wallets_list.rt
+    change_wallets_list.rt, show_user_stats.rt
 ]
 
 member_routers = [
@@ -58,8 +59,12 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
-    # При добавлении нового админа нужно добавить ему хотя бы один кошелек
+    # ЮЗЕР: При добавлении нового админа нужно добавить ему хотя бы один кошелек
     # в redis_wallets_users и запись со статусом в redis_status_users
+    #
+    # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
+    # определить для него ссылки на гугл таблицы и гугл драйв, добавить ему один кошелек в redis_wallets_users и
+    # добавить ему все 3 периода по отчетам в sql periods_stats
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot,

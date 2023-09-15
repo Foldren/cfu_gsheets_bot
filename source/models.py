@@ -9,6 +9,8 @@ class User(Model):
                                                         related_name="workers", null=True)
     menu_items: ManyToManyRelation['MenuItem'] = ManyToManyField('models.MenuItem', on_delete=OnDelete.CASCADE,
                                                                  related_name="observers", through="user_menu_item")
+    periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
+                                                                 related_name="observers", through="user_period_stat")
     workers: ReverseRelation["User"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
@@ -69,6 +71,19 @@ class AdminInfo(Model):
                                                     related_name="admin_info", pk=True)
     google_table_url = TextField(maxlength=500, null=False)
     google_drive_dir_url = TextField(maxlength=500, null=False)
+    gt_day_stat_url = TextField(maxlength=500, null=False)
+    gt_week_stat_url = TextField(maxlength=500, null=False)
+    gt_month_stat_url = TextField(maxlength=500, null=False)
 
     class Meta:
         table = "admin_info"
+
+
+class PeriodStat(Model):
+    id = BigIntField(pk=True)
+    name = TextField(maxlength=100, null=False)
+    observers: ManyToManyRelation['User']
+
+    class Meta:
+        table = "periods_stats"
+

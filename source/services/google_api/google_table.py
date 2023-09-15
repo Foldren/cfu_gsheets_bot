@@ -88,9 +88,9 @@ class GoogleTable:
             name_recipient = surname_fstname
 
         row_1 = [str(chat_id_worker), name_sender, frmt_date_time, "Расход", payment_method, volume_with_sign, org_name,
-                 text_operation_str_1]
+                 "Техническая операция", text_operation_str_1]
         row_2 = [str(chat_id_worker), name_recipient, frmt_date_time, "Доход", payment_method, volume_op, org_name,
-                 text_operation_str_2]
+                 "Техническая операция", text_operation_str_2]
 
         await ws.append_rows([row_1, row_2])
 
@@ -104,8 +104,8 @@ class GoogleTable:
         volume_with_sign = f"-{volume_op}"
 
         row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", wallet_sender, volume_with_sign, org_name,
-                 "Перевод"]
+                 "Техническая операция", "Перевод"]
         row_2 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Доход", wallet_recipient, volume_op, org_name,
-                 "Перевод"]
+                 "Техническая операция", "Перевод"]
 
         await ws.append_rows([row_1, row_2])

@@ -15,14 +15,15 @@ from services.google_api.google_table import GoogleTable
 
 
 async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str: str, number_cols: int,
-                                 add_keyb_to_start=None):
+                                 urls_list: str = None, add_keyb_to_start=None):
     keyboard: list = [[]]
 
     number_str_keyboard = 0
     for i in range(0, len(list_data)):
         keyboard[number_str_keyboard].append(InlineKeyboardButton(
             text=list_names[i],
-            callback_data=f"{callback_str}:{list_data[i]}"))
+            callback_data=f"{callback_str}:{list_data[i]}",
+            url=urls_list[i] if urls_list is not None else None))
         if ((i+1) % number_cols) == 0:
             number_str_keyboard += 1
             keyboard.append([])
