@@ -64,7 +64,7 @@ async def main():
     #
     # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
     # определить для него ссылки на гугл таблицы и гугл драйв, добавить ему один кошелек в redis_wallets_users и
-    # добавить ему все 3 периода по отчетам в sql periods_stats
+    # добавить ему все 3 периода по отчетам в sql periods_stats, также создать папку для чеков в misc
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot,

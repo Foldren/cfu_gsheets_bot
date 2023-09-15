@@ -1,7 +1,5 @@
 from aiogram.filters import BaseFilter
-from aiogram.types import Message, ChatMemberUpdated, CallbackQuery
-from aioredis import Redis
-
+from aiogram.types import Message, ChatMemberUpdated
 from components.tools import get_callb_content
 from config import MAIN_MENU_MSGS
 from services.models_extends.issuance_report import IssuanceReportApi

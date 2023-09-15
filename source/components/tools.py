@@ -1,4 +1,5 @@
 from datetime import datetime
+from aiofiles.os import remove
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
 from aiogram.fsm.context import FSMContext
@@ -339,6 +340,9 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
             google_dir_url=admin_info.google_drive_dir_url,
             file_name_on_gd=file_name
         )
+
+        # Удаляем файл с помощью aiofiles
+        await remove(file_path)
 
     await state.clear()
 
