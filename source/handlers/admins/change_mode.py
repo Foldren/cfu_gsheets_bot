@@ -1,11 +1,12 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from components.admins.text_generators import get_text_start_admin
-from components.admins.texts import text_start_admin_user
+from components.text_generators.admins import get_text_start_admin
+from components.texts.admins.manage_users import text_start_admin_user
 from components.filters import IsAdminFilter
-from components.keyboards import cf_keyb_start_user_admin, cf_keyb_start_admin
-from services.redis_extends.user import RedisUser
+from components.keyboards_components.configurations.reply import cf_keyb_start_admin, \
+    cf_keyb_start_user_admin
+from services.redis_models.user import RedisUser
 
 rt = Router()
 

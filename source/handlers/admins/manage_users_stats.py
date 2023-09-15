@@ -1,14 +1,15 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from components.admins.texts import text_start_manage_stats, text_choose_observers_stats, \
+from components.texts.admins.manage_user_stats import text_start_manage_stats, text_choose_observers_stats, \
     text_end_change_observers_p_stats
 from components.filters import IsAdminFilter, IsAdminModeFilter
-from components.keyboards import keyb_str_change_observers_ps
-from components.tools import get_callb_content, get_inline_keyb_markup, generate_observers_list
+from components.keyboards_components.strings.inline import keyb_str_change_observers_ps
+from components.tools import get_callb_content, generate_observers_list
+from components.keyboards_components.generators import get_inline_keyb_markup
 from config import STATS_UPRAVLYAIKA
-from services.models_extends.period_stat import PeriodStatApi
-from services.models_extends.user import UserApi
+from services.sql_models_extends.period_stat import PeriodStatExtend
+from services.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users_stats import StepsManageUsersStats
 
 rt = Router()
@@ -37,8 +38,8 @@ async def start_manage_users_stats(message: Message, state: FSMContext):
 async def change_wallets_list(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsManageUsersStats.change_stats_observers)
     choose_period_stat_name = await get_callb_content(callback.data)
-    admin_id = await UserApi.get_user_admin_id(callback.from_user.id)
-    users_and_obs = await PeriodStatApi.get_period_stat_users_with_flag_observer(choose_period_stat_name, admin_id)
+    admin_id = await UserExtend.get_user_admin_id(callback.from_user.id)
+    users_and_obs = await PeriodStatExtend.get_period_stat_users_with_flag_observer(choose_period_stat_name, admin_id)
     status_list = await generate_observers_list(users_and_obs)
     list_index_users = []
     list_buttons_name = []
@@ -121,7 +122,7 @@ async def end_change_observers_menu_item(callback: CallbackQuery, state: FSMCont
     # Добавляем id админа
     list_id_users.append(callback.message.chat.id)
 
-    await PeriodStatApi.update_observers_by_name(
+    await PeriodStatExtend.update_observers_by_name(
         ps_name=data_state['period_stat_name'],
         observers_id_list=list_id_users
     )

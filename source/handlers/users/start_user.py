@@ -3,12 +3,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import Router
 from components.filters import IsUserFilter, IsRegistration
-from components.keyboards import cf_keyb_start_user
-from components.users.text_generators import get_text_fst_start_user, get_text_start_user
-from services.models_extends.user import UserApi
-from services.redis_extends.registrations import RedisRegistration
-from services.redis_extends.user import RedisUser
-from services.redis_extends.wallets import RedisUserWallets
+from components.keyboards_components.configurations.reply import cf_keyb_start_user
+from components.text_generators.users import get_text_fst_start_user, get_text_start_user
+from services.sql_models_extends.user import UserExtend
+from services.redis_models.registrations import RedisRegistration
+from services.redis_models.user import RedisUser
+from services.redis_models.wallets import RedisUserWallets
 
 rt = Router()
 
@@ -34,7 +34,7 @@ async def register_user(message: Message, state: FSMContext,
     await redis_regs.remove_registration(message.from_user.username)
 
     # Добавляем данные нового пользователя в бд sql
-    await UserApi.add(
+    await UserExtend.add(
             chat_id=message.from_user.id,
             nickname="@" + user_params['nickname'],
             fullname=user_params['fullname'],

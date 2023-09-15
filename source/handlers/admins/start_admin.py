@@ -2,9 +2,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import Router
-from components.admins.text_generators import get_text_start_admin
+from components.text_generators.admins import get_text_start_admin
 from components.filters import IsAdminFilter
-from components.keyboards import cf_keyb_start_admin
+from components.keyboards_components.configurations.reply import cf_keyb_start_admin
 
 rt = Router()
 

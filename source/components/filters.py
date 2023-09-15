@@ -2,10 +2,10 @@ from aiogram.filters import BaseFilter
 from aiogram.types import Message, ChatMemberUpdated
 from components.tools import get_callb_content
 from config import MAIN_MENU_MSGS
-from services.models_extends.issuance_report import IssuanceReportApi
-from services.models_extends.notify_group import NotifyGroupApi
-from services.redis_extends.registrations import RedisRegistration
-from services.redis_extends.user import RedisUser
+from services.sql_models_extends.issuance_report import IssuanceReportExtend
+from services.sql_models_extends.notify_group import NotifyGroupExtend
+from services.redis_models.registrations import RedisRegistration
+from services.redis_models.user import RedisUser
 
 
 class IsAdminFilter(BaseFilter):
@@ -40,7 +40,7 @@ class IsSenderMemberFilter(BaseFilter):
 
 class IsSenderGroupExistFilter(BaseFilter):
     async def __call__(self, event: ChatMemberUpdated) -> bool:
-        return await NotifyGroupApi.check_exists_by_chat_id_group(chat_id_group=event.chat.id)
+        return await NotifyGroupExtend.check_exists_by_chat_id_group(chat_id_group=event.chat.id)
 
 
 # Фильтр на проверку кто подтверждает выдачу под отчет
@@ -49,7 +49,7 @@ class IsConfirmFromNecUser(BaseFilter):
         user_id = message.from_user.id
         id_report = await get_callb_content(message.data)
 
-        return await IssuanceReportApi.check_issuance_report_by_id(
+        return await IssuanceReportExtend.check_issuance_report_by_id(
             recipient_id=user_id,
             id_issuance_report=id_report
         )

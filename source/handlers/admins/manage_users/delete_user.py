@@ -2,14 +2,15 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards import keyb_str_delete_u, cf_key_end_delete_u
-from components.admins.texts import text_start_delete_users, text_stop_delete_u, \
-    text_end_delete_u
-from components.tools import get_callb_content, get_inline_keyb_markup, \
-    generate_zero_array, get_sure_delete_usr_msg
-from services.models_extends.user import UserApi
-from services.redis_extends.user import RedisUser
-from states.admin.steps_manage_menu_items import StepsDeleteMenuItem
+from components.keyboards_components.configurations.inline import cf_key_end_delete_u
+from components.keyboards_components.strings.inline import keyb_str_delete_u
+from components.texts.admins.manage_users import text_start_delete_users
+from components.texts.admins.manage_categories import text_stop_delete_u, text_end_delete_u
+from components.tools import get_callb_content, generate_zero_array, get_sure_delete_usr_msg
+from components.keyboards_components.generators import get_inline_keyb_markup
+from services.sql_models_extends.user import UserExtend
+from services.redis_models.user import RedisUser
+from states.admin.steps_manage_categories import StepsDeleteCategories
 from states.admin.steps_manage_users import StepsGetListUsers, StepsDeleteUser
 
 rt = Router()
@@ -24,7 +25,7 @@ async def start_delete_users(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsDeleteUser.start_delete_users)
 
-    users = await UserApi.get_admin_users(callback.message.chat.id)
+    users = await UserExtend.get_admin_users(callback.message.chat.id)
 
     status_list = await generate_zero_array(len(users))
     list_index_users = []
@@ -86,7 +87,7 @@ async def change_delete_users_list(callback: CallbackQuery, state: FSMContext):
 # Предупреждающее сообщение --------------------------------------------------------------------------------------------
 @rt.callback_query(StepsDeleteUser.start_delete_users, F.data == "next_step_delete_users")
 async def sure_msg_delete_user(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(StepsDeleteMenuItem.sure_msg_delete_item)
+    await state.set_state(StepsDeleteCategories.sure_msg_delete_categories)
     state_data = await state.get_data()
     choose_items_names = []
 
@@ -99,13 +100,13 @@ async def sure_msg_delete_user(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(text=sure_msg, reply_markup=cf_key_end_delete_u, parse_mode="html")
 
 
-@rt.callback_query(StepsDeleteMenuItem.sure_msg_delete_item, F.data == "cancel_delete_users")
+@rt.callback_query(StepsDeleteCategories.sure_msg_delete_categories, F.data == "cancel_delete_users")
 async def cancel_delete_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.message.edit_text(text=text_stop_delete_u, parse_mode="html")
 
 
-@rt.callback_query(StepsDeleteMenuItem.sure_msg_delete_item, F.data == "end_delete_users")
+@rt.callback_query(StepsDeleteCategories.sure_msg_delete_categories, F.data == "end_delete_users")
 async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext, redis_users: RedisUser):
     state_data = await state.get_data()
     await state.clear()
@@ -117,7 +118,7 @@ async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext, redis
             choose_users_chat_id_list.append(state_data['users'][i]['chat_id'])
 
     # Удаляем их из mysql
-    await UserApi.delete_users_by_chat_ids(choose_users_chat_id_list)
+    await UserExtend.delete_users_by_chat_ids(choose_users_chat_id_list)
 
     # Удаляем их из redis
     await redis_users.delete_users(choose_users_chat_id_list)

@@ -5,108 +5,15 @@ from aiogram.exceptions import TelegramForbiddenError
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from components.users.texts import text_end_add_mi_to_bd
+from aiogram.types import InlineKeyboardMarkup, Message
+from components.keyboards_components.generators import get_gt_url_keyb_markup
+from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
 from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA
-from services.models_extends.menu_item import MenuItemApi
-from services.models_extends.notify_group import NotifyGroupApi
-from services.models_extends.user import UserApi
+from services.sql_models_extends.category import CategoryExtend
+from services.sql_models_extends.notify_group import NotifyGroupExtend
+from services.sql_models_extends.user import UserExtend
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
-
-
-async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str: str, number_cols: int,
-                                 urls_list: str = None, add_keyb_to_start=None):
-    keyboard: list = [[]]
-
-    number_str_keyboard = 0
-    for i in range(0, len(list_data)):
-        keyboard[number_str_keyboard].append(InlineKeyboardButton(
-            text=list_names[i],
-            callback_data=f"{callback_str}:{list_data[i]}",
-            url=urls_list[i] if urls_list is not None else None))
-        if ((i+1) % number_cols) == 0:
-            number_str_keyboard += 1
-            keyboard.append([])
-
-    if add_keyb_to_start is not None:
-        keyboard.insert(0, add_keyb_to_start)
-
-    return InlineKeyboardMarkup(inline_keyboard=keyboard)
-
-
-# Метод генерации inline клавиатуры с пользователями
-async def get_inline_users_keyb_markup(list_fullnames: list, list_names: list, number_cols: int,
-                                       add_keyb_to_start=None, callb="empty", url=True):
-    keyboard: list = [[]]
-
-    number_str_keyboard = 0
-    for i in range(0, len(list_fullnames)):
-        if url:
-            keyboard[number_str_keyboard].append(InlineKeyboardButton(
-                text=list_fullnames[i],
-                callback_data=callb,
-                url=f"https://t.me/{list_names[i].replace('@', '')}"))
-        else:
-            keyboard[number_str_keyboard].append(InlineKeyboardButton(
-                text=list_fullnames[i],
-                callback_data=f"{callb}:{list_names[i]}"))
-        if i % number_cols != 0 and i != (len(list_fullnames) - 1):
-            number_str_keyboard += 1
-            keyboard.append([])
-
-    if add_keyb_to_start is not None:
-        keyboard.insert(0, add_keyb_to_start)
-
-    return InlineKeyboardMarkup(inline_keyboard=keyboard)
-
-
-# Получить inline клавиатуру с кнопками управления (если нет элементов)
-async def get_inline_keyb_markup_empty(selected_item_id: int = None) -> InlineKeyboardMarkup:
-    if selected_item_id is not None:
-        keyb = [
-            [
-                InlineKeyboardButton(text="⬅️", callback_data=f"back_to_upper_level:{selected_item_id}"),
-                InlineKeyboardButton(text="➕", callback_data=f"add_menu_item:{selected_item_id}")
-            ]
-        ]
-    else:
-        keyb = [
-            [
-                InlineKeyboardButton(text="➕", callback_data="add_upper_menu_item")
-            ]
-        ]
-
-    return InlineKeyboardMarkup(inline_keyboard=keyb)
-
-
-# Получить inline клавиатуру с кнопками управления
-async def get_inline_keyb_str_full(selected_item_id: int = None, upper: bool = False) -> list[InlineKeyboardButton]:
-    if (upper is False) and (selected_item_id is not None):
-        keyb_line = [
-            InlineKeyboardButton(text="⬅️", callback_data=f"back_to_upper_level:{selected_item_id}"),
-            InlineKeyboardButton(text="➕", callback_data=f"add_menu_item:{selected_item_id}"),
-            InlineKeyboardButton(text="✏️", callback_data=f"change_menu_items:{selected_item_id}"),
-            InlineKeyboardButton(text="❌", callback_data=f"delete_menu_items:{selected_item_id}")
-        ]
-    else:
-        keyb_line = [
-            InlineKeyboardButton(text="➕", callback_data=f"add_upper_menu_item"),
-            InlineKeyboardButton(text="✏️", callback_data=f"change_upper_menu_items"),
-            InlineKeyboardButton(text="❌", callback_data=f"delete_upper_menu_items")
-        ]
-
-    return keyb_line
-
-
-# Получить клавиатуру редактирования пользователя
-async def get_inline_keyb_change_user(id_user: str):
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Изменить данные", callback_data=f"change_data_user:{id_user}"),
-            InlineKeyboardButton(text="Изменить id", callback_data=f"change_id_user:{id_user}")
-        ]
-    ])
 
 
 # Получить текст с очередью элементов и уровнем в эмоджи
@@ -180,22 +87,6 @@ async def generate_zero_array(length: int):
     return array_zero_str
 
 
-# Получить клавиатуру редактирования пункта меню
-async def get_inline_keyb_change_menu_item(id_menu_item: str, status_menu_item: bool):
-    status_menu_item = "Скрытый 💤" if status_menu_item == 0 else "Активный ✅"
-
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Название", callback_data=f"change_name_menu_item:{id_menu_item}"),
-            InlineKeyboardButton(text="Наблюдатели", callback_data=f"start_change_observers_menu_item:{id_menu_item}")
-        ],
-        [
-            InlineKeyboardButton(text=f"Статус: {status_menu_item}",
-                                 callback_data=f"change_status_menu_item:{id_menu_item}")
-        ]
-    ])
-
-
 async def generate_observers_list(users: dict):
     observers_list = list()
 
@@ -223,26 +114,6 @@ async def get_sure_delete_usr_msg(list_users: list):
     return f"Вы уверены что хотите забрать доступ у:\n<b>{', '.join(str(u) for u in list_users)}</b> ❓\n\n" \
            f"При удалении исчезнут все определенные пользователям права видимости к определенным пунктам меню, " \
            f"а доступ пользователей к боту будет анулирован 🤔‼️"
-
-
-# Получить inline клавиатуру с кнопками дохода и расхода по категории для юзера (если нет элементов)
-async def get_inline_keyb_profit_cost(selected_item_id: int = None) -> InlineKeyboardMarkup:
-    keyb = [
-        [
-            InlineKeyboardButton(text="Назад ⬅️", callback_data=f"back_to_upper_level_u:{selected_item_id}"),
-            InlineKeyboardButton(text="Доход ➕", callback_data=f"profit_item:{selected_item_id}"),
-            InlineKeyboardButton(text="Расход ➖", callback_data=f"cost_item:{selected_item_id}")
-        ]
-    ]
-    return InlineKeyboardMarkup(inline_keyboard=keyb)
-
-
-async def get_inline_keyb_str_back_to_parent_items_u(selected_item_id: int = None) -> list[InlineKeyboardButton]:
-    keyb = [
-        InlineKeyboardButton(text="Назад ⬅️", callback_data=f"back_to_upper_level_u:{selected_item_id}")
-    ]
-
-    return keyb
 
 
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):
@@ -275,7 +146,7 @@ async def send_multiply_messages(bot: Bot, msg_text: str, list_chat_ids: list[in
                 reply_markup=keyboard_markup,
             )
         except TelegramForbiddenError:
-            await NotifyGroupApi.detach_group_from_admin(chat_id)
+            await NotifyGroupExtend.detach_group_from_admin(chat_id)
 
 
 async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, queue: str,
@@ -287,21 +158,11 @@ async def get_msg_notify_new_note_bd(fullname_worker: str, last_queue_e: str, qu
            f"<u>Кошелек</u>: <b>{payment_method}</b>\n"
 
 
-async def get_gt_url_keyb_markup(google_table_url, google_drive_url):
-    keyboard = [
-        [
-            InlineKeyboardButton(text="Ссылка на таблицу", url=google_table_url),
-            InlineKeyboardButton(text="Ссылка на чеки", url=google_drive_url)
-        ]
-    ]
-    return InlineKeyboardMarkup(inline_keyboard=keyboard)
-
-
 async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMContext, bot_object: Bot,
                                                gt_object: GoogleTable, gd_object: GoogleDrive, file_id: str = None):
-    current_user = await UserApi.get_by_id(message.chat.id)
-    admin_id = await UserApi.get_user_admin_id(message.chat.id)
-    admin_info = await UserApi.get_admin_info(admin_id)
+    current_user = await UserExtend.get_by_id(message.chat.id)
+    admin_id = await UserExtend.get_user_admin_id(message.chat.id)
+    admin_info = await UserExtend.get_admin_info(admin_id)
     state_data = await state.get_data()
     keyboard_end_write = await get_gt_url_keyb_markup(admin_info.google_table_url, admin_info.google_drive_dir_url)
     sender_org_flag = True if state_data['sender'] == "org" else False
@@ -347,11 +208,11 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
     await state.clear()
 
     # Рассылаем уведомление по группам админа
-    check_admin_empty_groups = await NotifyGroupApi.check_admin_groups_empty(admin_id)
+    check_admin_empty_groups = await NotifyGroupExtend.check_admin_groups_empty(admin_id)
 
     if not check_admin_empty_groups:
         message = await message.edit_text('Включен, отправляю уведомления в группы 📩 \n\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩')
-        list_ngroups_ids = await NotifyGroupApi.get_admin_notify_groups_chat_ids(admin_id)
+        list_ngroups_ids = await NotifyGroupExtend.get_admin_notify_groups_chat_ids(admin_id)
         operation_name = state_data['item_queue'].split(" → ")[-1]
 
         msg_in_group = await get_msg_notify_new_note_bd(
@@ -373,16 +234,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 
 
 async def get_str_format_queue(selected_item_id) -> str:
-    menu_items_names_list = await MenuItemApi.get_parent_items_names(selected_item_id)
+    menu_items_names_list = await CategoryExtend.get_parent_items_names(selected_item_id)
     return " → ".join(menu_items_names_list)
-
-
-async def get_confirm_issuance_keyb_button(id_issuance_report: int):
-    keyboard = [
-        [
-            InlineKeyboardButton(text="Подтвердить  ✅", callback_data=f"confirm_issuance:{id_issuance_report}")
-        ]
-    ]
-    return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 

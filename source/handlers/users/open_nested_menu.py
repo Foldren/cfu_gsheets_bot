@@ -2,11 +2,11 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from components.filters import IsUserFilter
-from components.keyboards import cf_keyb_operation_under_stats, cf_keyb_start_user_admin, cf_keyb_start_user, \
-    cf_keyb_wallets
-from components.users.texts import text_back_to_main_menu, text_open_wallets_menu, \
-    text_open_under_stats_menu
-from services.models_extends.user import UserApi
+from components.keyboards_components.configurations.reply import cf_keyb_start_user, \
+    cf_keyb_start_user_admin, cf_keyb_operation_under_stats, cf_keyb_wallets
+from components.texts.users.change_menu import text_open_under_stats_menu, text_open_wallets_menu, \
+    text_back_to_main_menu
+from services.sql_models_extends.user import UserExtend
 
 rt = Router()
 
@@ -32,7 +32,7 @@ async def open_menu_operation_with_stats(message: Message, state: FSMContext):
     await state.clear()
 
     user_id = message.chat.id
-    admin_id = await UserApi.get_user_admin_id(user_id)
+    admin_id = await UserExtend.get_user_admin_id(user_id)
 
     if user_id == admin_id:
         keyboard = cf_keyb_start_user_admin

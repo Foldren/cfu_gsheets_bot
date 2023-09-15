@@ -1,6 +1,5 @@
 import json
 import mimetypes
-from asyncio import run
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
 

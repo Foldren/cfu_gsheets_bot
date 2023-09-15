@@ -13,7 +13,7 @@ MYSQL_URL = getenv('MYSQL_URL') if IS_THIS_LOCAL else env("MYSQL_URL")  # getenv
 
 # К сожалению для миграций придется указывать ссылку напрямую
 AERICH_CONFIG = {
-    "connections": {"default": getenv('MYSQL_URL')},
+    "connections": {"default": "mysql://root:KLyXjPfvDL1tKbNHK8_sVwUBrdTFER@158.160.105.173:3306/upravlyaika_db"},
     "apps": {
         "models": {
             "models": ["source.models", "aerich.models"],

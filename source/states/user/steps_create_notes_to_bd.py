@@ -1,9 +1,9 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class StepsWriteMenuItemsToBd(StatesGroup):
+class StepsWriteCategoriesToBd(StatesGroup):
     set_sender = State()
-    set_queue_menu_items = State()
+    set_queue_categories = State()
     set_volume_operation = State()
     choose_bank = State()
     load_check = State()

@@ -2,10 +2,10 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.admins.texts import text_start_add_user, text_end_add_user, text_user_exists
+from components.texts.admins.manage_users import text_start_add_user, text_end_add_user, text_user_exists
 from components.tools import get_msg_user_data
-from services.models_extends.user import UserApi
-from services.redis_extends.registrations import RedisRegistration
+from services.sql_models_extends.user import UserExtend
+from services.redis_models.registrations import RedisRegistration
 from states.admin.steps_manage_users import StepsGetListUsers, StepsAddUser
 
 rt = Router()
@@ -29,7 +29,7 @@ async def end_add_user(message: Message, state: FSMContext, redis_regs: RedisReg
     msg_data = await get_msg_user_data(message.text)
 
     # Проверяем добавлен ли пользователь в бота по нику ----------------------------------------------------------------
-    user = await UserApi.get_by_nickname(msg_data['nickname'])
+    user = await UserExtend.get_by_nickname(msg_data['nickname'])
 
     if user:
         final_text = text_user_exists

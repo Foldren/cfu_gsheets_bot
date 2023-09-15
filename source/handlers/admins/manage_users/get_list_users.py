@@ -2,10 +2,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import Router, F
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards import cf_keyb_empty_user_list, keyb_str_user_list
-from components.admins.texts import text_get_list_users
-from components.tools import get_inline_users_keyb_markup
-from services.models_extends.user import UserApi
+from components.keyboards_components.configurations.inline import cf_keyb_empty_user_list
+from components.keyboards_components.strings.inline import keyb_str_user_list
+from components.texts.admins.manage_users import text_get_list_users
+from components.keyboards_components.generators import get_inline_users_keyb_markup
+from services.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users import StepsGetListUsers
 
 rt = Router()
@@ -21,7 +22,7 @@ async def get_list_users(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsGetListUsers.get_list_users)
 
-    users = await UserApi.get_admin_users(message.from_user.id)
+    users = await UserExtend.get_admin_users(message.from_user.id)
 
     if users:
         keyboard = await get_inline_users_keyb_markup(

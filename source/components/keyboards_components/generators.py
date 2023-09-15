@@ -1,0 +1,144 @@
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+
+async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str: str, number_cols: int,
+                                 urls_list: str = None, add_keyb_to_start=None):
+    keyboard: list = [[]]
+
+    number_str_keyboard = 0
+    for i in range(0, len(list_data)):
+        keyboard[number_str_keyboard].append(InlineKeyboardButton(
+            text=list_names[i],
+            callback_data=f"{callback_str}:{list_data[i]}",
+            url=urls_list[i] if urls_list is not None else None))
+        if ((i+1) % number_cols) == 0:
+            number_str_keyboard += 1
+            keyboard.append([])
+
+    if add_keyb_to_start is not None:
+        keyboard.insert(0, add_keyb_to_start)
+
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+async def get_inline_users_keyb_markup(list_fullnames: list, list_names: list, number_cols: int,
+                                       add_keyb_to_start=None, callb="empty", url=True):
+    keyboard: list = [[]]
+
+    number_str_keyboard = 0
+    for i in range(0, len(list_fullnames)):
+        if url:
+            keyboard[number_str_keyboard].append(InlineKeyboardButton(
+                text=list_fullnames[i],
+                callback_data=callb,
+                url=f"https://t.me/{list_names[i].replace('@', '')}"))
+        else:
+            keyboard[number_str_keyboard].append(InlineKeyboardButton(
+                text=list_fullnames[i],
+                callback_data=f"{callb}:{list_names[i]}"))
+        if i % number_cols != 0 and i != (len(list_fullnames) - 1):
+            number_str_keyboard += 1
+            keyboard.append([])
+
+    if add_keyb_to_start is not None:
+        keyboard.insert(0, add_keyb_to_start)
+
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+async def get_inline_keyb_markup_empty(selected_item_id: int = None) -> InlineKeyboardMarkup:
+    if selected_item_id is not None:
+        keyb = [
+            [
+                InlineKeyboardButton(text="⬅️", callback_data=f"back_to_upper_level:{selected_item_id}"),
+                InlineKeyboardButton(text="➕", callback_data=f"add_menu_item:{selected_item_id}")
+            ]
+        ]
+    else:
+        keyb = [
+            [
+                InlineKeyboardButton(text="➕", callback_data="add_upper_menu_item")
+            ]
+        ]
+
+    return InlineKeyboardMarkup(inline_keyboard=keyb)
+
+
+async def get_inline_keyb_str_full(selected_item_id: int = None, upper: bool = False) -> list[InlineKeyboardButton]:
+    if (upper is False) and (selected_item_id is not None):
+        keyb_line = [
+            InlineKeyboardButton(text="⬅️", callback_data=f"back_to_upper_level:{selected_item_id}"),
+            InlineKeyboardButton(text="➕", callback_data=f"add_menu_item:{selected_item_id}"),
+            InlineKeyboardButton(text="✏️", callback_data=f"change_menu_items:{selected_item_id}"),
+            InlineKeyboardButton(text="❌", callback_data=f"delete_menu_items:{selected_item_id}")
+        ]
+    else:
+        keyb_line = [
+            InlineKeyboardButton(text="➕", callback_data=f"add_upper_menu_item"),
+            InlineKeyboardButton(text="✏️", callback_data=f"change_upper_menu_items"),
+            InlineKeyboardButton(text="❌", callback_data=f"delete_upper_menu_items")
+        ]
+
+    return keyb_line
+
+
+async def get_inline_keyb_change_user(id_user: str):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Изменить данные", callback_data=f"change_data_user:{id_user}"),
+            InlineKeyboardButton(text="Изменить id", callback_data=f"change_id_user:{id_user}")
+        ]
+    ])
+
+
+async def get_inline_keyb_change_menu_item(id_menu_item: str, status_menu_item: bool):
+    status_menu_item = "Скрытый 💤" if status_menu_item == 0 else "Активный ✅"
+
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Название", callback_data=f"change_name_menu_item:{id_menu_item}"),
+            InlineKeyboardButton(text="Наблюдатели", callback_data=f"start_change_observers_menu_item:{id_menu_item}")
+        ],
+        [
+            InlineKeyboardButton(text=f"Статус: {status_menu_item}",
+                                 callback_data=f"change_status_menu_item:{id_menu_item}")
+        ]
+    ])
+
+
+async def get_inline_keyb_profit_cost(selected_item_id: int = None) -> InlineKeyboardMarkup:
+    keyb = [
+        [
+            InlineKeyboardButton(text="Назад ⬅️", callback_data=f"back_to_upper_level_u:{selected_item_id}"),
+            InlineKeyboardButton(text="Доход ➕", callback_data=f"profit_item:{selected_item_id}"),
+            InlineKeyboardButton(text="Расход ➖", callback_data=f"cost_item:{selected_item_id}")
+        ]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=keyb)
+
+
+async def get_inline_keyb_str_back_to_parent_items_u(selected_item_id: int = None) -> list[InlineKeyboardButton]:
+    keyb = [
+        InlineKeyboardButton(text="Назад ⬅️", callback_data=f"back_to_upper_level_u:{selected_item_id}")
+    ]
+
+    return keyb
+
+
+async def get_gt_url_keyb_markup(google_table_url, google_drive_url):
+    keyboard = [
+        [
+            InlineKeyboardButton(text="Ссылка на таблицу", url=google_table_url),
+            InlineKeyboardButton(text="Ссылка на чеки", url=google_drive_url)
+        ]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+async def get_confirm_issuance_keyb_button(id_issuance_report: int):
+    keyboard = [
+        [
+            InlineKeyboardButton(text="Подтвердить  ✅", callback_data=f"confirm_issuance:{id_issuance_report}")
+        ]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)

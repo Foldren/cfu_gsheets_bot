@@ -2,11 +2,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F, Bot
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.admins.texts import text_start_change_user, text_change_user, text_end_change_user, text_get_id_user, \
-    text_invalid_user_id, text_end_change_id_user
-from components.tools import get_inline_users_keyb_markup, get_callb_content, get_inline_keyb_change_user, \
-    get_msg_user_data, set_memory_data, get_memory_data
-from services.models_extends.user import UserApi
+from components.texts.admins.manage_users import text_get_id_user, text_invalid_user_id, text_start_change_user, \
+    text_change_user, text_end_change_user, text_end_change_id_user
+from components.tools import get_callb_content, get_msg_user_data, set_memory_data, get_memory_data
+from components.keyboards_components.generators import get_inline_users_keyb_markup, get_inline_keyb_change_user
+from services.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users import StepsGetListUsers, StepsChangeUser
 
 rt = Router()
@@ -21,7 +21,7 @@ async def start_change_user(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsChangeUser.start_change_user)
 
-    users = await UserApi.get_admin_users(callback.message.chat.id)
+    users = await UserExtend.get_admin_users(callback.message.chat.id)
 
     keyboard = await get_inline_users_keyb_markup(
         list_fullnames=[e["fullname"].split(" ")[1] + " - " + e["profession"] for e in users],
@@ -40,7 +40,7 @@ async def choose_new_data_user(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsChangeUser.choose_new_data_user)
 
     id_user = await get_callb_content(callback.data)
-    user = await UserApi.get_by_id(id_user)
+    user = await UserExtend.get_by_id(id_user)
 
     msg_text = f"<b>Chat_id</b> - {user.chat_id}\n" \
                f"<b>Полное имя</b> - {user.fullname}\n" \
@@ -60,7 +60,7 @@ async def set_new_main_data_user(callback: CallbackQuery, state: FSMContext, bot
     await state.set_state(StepsChangeUser.set_new_main_data_user)
 
     id_user = await get_callb_content(callback.data)
-    user = await UserApi.get_by_id(id_user)
+    user = await UserExtend.get_by_id(id_user)
 
     msg_text = f"<u>Пользователь:</u> {user.nickname}\n<b>{user.fullname}</b> - {user.profession} \n\n"
     example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}</code>"
@@ -77,7 +77,7 @@ async def end_set_new_main_data_user(message: Message, state: FSMContext, bot_ob
     msg_data = await get_msg_user_data(message.text)
     memory_data = await get_memory_data(bot_object, message)
 
-    await UserApi.update_by_id(
+    await UserExtend.update_by_id(
         chat_id=memory_data['id_change_u'],
         nickname=msg_data['nickname'],
         fullname=msg_data['fullname'],
@@ -96,7 +96,7 @@ async def change_id_user(callback: CallbackQuery, state: FSMContext, bot_object:
     await state.set_state(StepsChangeUser.set_new_id_user)
 
     id_user = await get_callb_content(callback.data)
-    user = await UserApi.get_by_id(id_user)
+    user = await UserExtend.get_by_id(id_user)
 
     msg_text = f"<code>Пользователь:</code> <b>{user.fullname}</b> - {user.profession} ({user.nickname})\n\n"
 
@@ -122,7 +122,7 @@ async def end_add_user(message: Message, state: FSMContext, bot_object: Bot):
 
     data_user = await get_memory_data(bot_object, message)
 
-    await UserApi.update_by_id(
+    await UserExtend.update_by_id(
         chat_id=data_user['id_change_u'],
         new_chat_id=user_chat_id
     )

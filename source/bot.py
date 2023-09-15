@@ -4,35 +4,36 @@ from aiogram import Bot, Dispatcher
 from aioredis import from_url
 from tortoise import run_async
 from handlers.admins import start_admin, change_mode, manage_users_stats
-from handlers.admins.manage_menu_items import get_list_menu_items, add_menu_item, change_menu_item, delete_menu_item
+from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
-from handlers.users import start_user, issuance_of_report, \
-    return_issuance_means, make_transfer, open_nested_menu, change_wallets_list, show_user_stats
-from handlers.users.write_menu_item_to_bd import browse_menu_items, write_menu_item_to_bd, \
-    choose_write_menu_item_sender
-from handlers.members import join_to_notification_group, confirm_issuance_report
+from handlers.users import start_user, open_nested_menu, show_user_stats
+from handlers.users.issuance_operations import write_issuance_of_report_to_bd, write_return_issuance_means_to_bd
+from handlers.users.wallets_operations import change_wallets_list, write_transfer_to_wallet_to_bd
+from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
+    choose_write_category_sender
+from handlers.members import check_events_notification_groups, confirm_issuance_report
 from init_db import init_db
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
-from services.redis_extends.registrations import RedisRegistration
-from services.redis_extends.user import RedisUser
-from services.redis_extends.wallets import RedisUserWallets
+from services.redis_models.registrations import RedisRegistration
+from services.redis_models.user import RedisUser
+from services.redis_models.wallets import RedisUserWallets
 
 admin_routers = [
-    start_admin.rt, get_list_menu_items.rt, add_menu_item.rt, get_list_users.rt, add_user.rt,
-    change_user.rt, change_menu_item.rt, delete_menu_item.rt, delete_user.rt, change_mode.rt,
+    start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
+    change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
     manage_users_stats.rt
 ]
 
 user_routers = [
-    start_user.rt, browse_menu_items.rt, write_menu_item_to_bd.rt, issuance_of_report.rt,
-    return_issuance_means.rt, choose_write_menu_item_sender.rt, make_transfer.rt, open_nested_menu.rt,
+    start_user.rt, browse_categories.rt, write_chosen_category_to_bd.rt, write_issuance_of_report_to_bd.rt,
+    write_return_issuance_means_to_bd.rt, choose_write_category_sender.rt, write_transfer_to_wallet_to_bd.rt, open_nested_menu.rt,
     change_wallets_list.rt, show_user_stats.rt
 ]
 
 member_routers = [
-    join_to_notification_group.rt, confirm_issuance_report.rt
+    check_events_notification_groups.rt, confirm_issuance_report.rt
 ]
 
 
@@ -48,6 +49,7 @@ async def main():
     dp.include_routers(*admin_routers, *user_routers, *member_routers)
 
     google_table = GoogleTable()
+
     google_drive = GoogleDrive()
 
     redis_status_users = RedisUser(await from_url(REDIS_URL, db=0, decode_responses=True))
