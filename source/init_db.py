@@ -10,5 +10,6 @@ async def init_db():
         db_url=MYSQL_URL,  # 'sqlite://upravlyaika.db'
         modules={'models': ["models"]},
     )
+
     # Generate the schema
     # await Tortoise.generate_schemas(safe=True)

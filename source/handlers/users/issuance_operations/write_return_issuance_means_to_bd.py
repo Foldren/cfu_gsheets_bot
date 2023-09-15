@@ -32,7 +32,7 @@ async def start_return_issuance_means(message: Message, state: FSMContext, redis
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
 
-    ips = await CategoryExtend.get_user_upper_items(admin_id)
+    ips = await CategoryExtend.get_user_upper_categories(admin_id)
 
     keyboard = await get_inline_keyb_markup(
         list_names=[ip['name'] for ip in ips],

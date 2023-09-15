@@ -25,7 +25,7 @@ async def start_change_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsChangeCategory.start_change_category)
 
     parent_item_id = await get_callb_content(callback.data) if "change_upper_menu_items" not in callback.data else None
-    menu_items = await CategoryExtend.get_user_items_by_parent_id(callback.message.chat.id, parent_item_id)
+    menu_items = await CategoryExtend.get_user_categories_by_parent_id(callback.message.chat.id, parent_item_id)
     parent_item = await CategoryExtend.get_by_id(parent_item_id)
     queue = await get_str_format_queue(parent_item_id) if parent_item_id is not None else ""
 
@@ -102,7 +102,7 @@ async def end_change_name_menu_item(message: Message, state: FSMContext):
     state_data = await state.get_data()
     await state.clear()
 
-    await CategoryExtend.update_by_id(item_id=state_data['id_menu_item'], name=message.text)
+    await CategoryExtend.update_by_id(category_id=state_data['id_menu_item'], name=message.text)
 
     await message.answer(text=text_end_change_name_menu_item, parse_mode="html")
 
@@ -115,7 +115,7 @@ async def start_change_observers_menu_item(callback: CallbackQuery, state: FSMCo
     data_state = await state.get_data()
     item_id = await get_callb_content(callback.data)
     users_and_obs = await CategoryExtend.get_admin_users_with_flag_observer(admin_id=callback.message.chat.id,
-                                                                            item_id=item_id)
+                                                                            category_id=item_id)
     status_list = await generate_observers_list(users_and_obs)
     list_index_users = []
     list_buttons_name = []
@@ -199,7 +199,7 @@ async def end_change_observers_menu_item(callback: CallbackQuery, state: FSMCont
     # Добавляем id админа
     list_id_users.append(callback.message.chat.id)
 
-    await CategoryExtend.update_by_id(item_id=data_state['id_menu_item'], observers_id_list=list_id_users)
+    await CategoryExtend.update_by_id(category_id=data_state['id_menu_item'], observers_id_list=list_id_users)
 
     await callback.message.edit_text(
         text=text_end_change_observers_menu_item,

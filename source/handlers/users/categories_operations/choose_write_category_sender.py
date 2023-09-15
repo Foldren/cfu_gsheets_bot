@@ -37,7 +37,7 @@ async def choose_write_menu_item_sender(callback: CallbackQuery, state: FSMConte
     await state.set_state(StepsWriteCategoriesToBd.set_queue_categories)
 
     message = callback.message
-    menu_items = await CategoryExtend.get_user_upper_items(callback.message.chat.id)
+    menu_items = await CategoryExtend.get_user_upper_categories(callback.message.chat.id)
     msg_queue = await get_msg_queue(level=0)
     dict_mi_names_ids = {'names': [], "ids": []}
 

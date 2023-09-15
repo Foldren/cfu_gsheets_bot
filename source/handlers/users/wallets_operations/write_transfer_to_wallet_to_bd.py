@@ -31,7 +31,7 @@ async def start_write_transfer_to_bd(message: Message, state: FSMContext, redis_
     await state.set_state(StepsWriteTransfer.select_organization)
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
-    organizations = await CategoryExtend.get_user_upper_items(admin_id)
+    organizations = await CategoryExtend.get_user_upper_categories(admin_id)
 
     keyboard = await get_inline_keyb_markup(
         list_names=[org['name'] for org in organizations],

@@ -38,12 +38,12 @@ async def next_to_nested_items(callb_or_msg: Union[Message, CallbackQuery], stat
     if upper_menu:
         selected_item_id = None
         selected_item = None
-        menu_items = await CategoryExtend.get_user_upper_items(callb_or_msg.from_user.id)
+        menu_items = await CategoryExtend.get_user_upper_categories(callb_or_msg.from_user.id)
         msg_queue = await get_msg_queue(level=0)
     else:
         selected_item_id = await get_callb_content(callb_or_msg.data)
         selected_item = await CategoryExtend.get_by_id(selected_item_id)
-        menu_items = await CategoryExtend.get_user_items_by_parent_id(callb_or_msg.from_user.id, parent_id=selected_item.id)
+        menu_items = await CategoryExtend.get_user_categories_by_parent_id(callb_or_msg.from_user.id, parent_id=selected_item.id)
         queue = await get_str_format_queue(selected_item_id)
         msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
 
@@ -77,7 +77,7 @@ async def next_to_nested_items(callb_or_msg: Union[Message, CallbackQuery], stat
 async def back_to_parent_items(callback: CallbackQuery):
     selected_item_id = await get_callb_content(callback.data)
     selected_item = await CategoryExtend.get_by_id(selected_item_id)
-    menu_items = await CategoryExtend.get_parent_items_by_chat_id(selected_item_id, callback.message.chat.id)
+    menu_items = await CategoryExtend.get_parent_categories_by_chat_id(selected_item_id, callback.message.chat.id)
     old_queue = await get_str_format_queue(selected_item_id)
     new_queue = old_queue[:old_queue.rfind('→')-1]
     parent_item = await selected_item.parent

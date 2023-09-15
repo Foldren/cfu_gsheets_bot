@@ -39,7 +39,7 @@ async def start_delete_menu_item(callback: CallbackQuery, state: FSMContext):
 
     msg_queue = await get_msg_queue(level=level_item, selected_item_name=name_item, queue=queue_item)
 
-    menu_items = await CategoryExtend.get_user_items_by_parent_id(
+    menu_items = await CategoryExtend.get_user_categories_by_parent_id(
         user_id=callback.message.chat.id,
         parent_id=parent_item_id
     )
@@ -68,7 +68,7 @@ async def start_delete_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.set_data({
         'list_index_menu_items': list_index_menu_items,
         'status_list': status_list,
-        'menu_items': menu_items,
+        'child_categories': menu_items,
         'queue_text': msg_queue
     })
 
@@ -91,10 +91,10 @@ async def change_delete_menu_items_list(callback: CallbackQuery, state: FSMConte
         'status_list': new_data['status_list'],
     })
 
-    for i in range(0, len(new_data['menu_items'])):
+    for i in range(0, len(new_data['child_categories'])):
         status_emoji = '' if new_data['status_list'][i] == 0 else '☑️'
-        status_menu_item = "  💤" if new_data["menu_items"][i]["status"] == 0 else ""
-        new_name_btn = " ".join([status_emoji, new_data["menu_items"][i]["name"], status_menu_item])
+        status_menu_item = "  💤" if new_data["child_categories"][i]["status"] == 0 else ""
+        new_name_btn = " ".join([status_emoji, new_data["child_categories"][i]["name"], status_menu_item])
         list_names.append(new_name_btn)
 
     keyboard_menu_items = await get_inline_keyb_markup(
@@ -119,9 +119,9 @@ async def sure_msg_delete_menu_item(callback: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     choose_items_names = []
 
-    for i in range(0, len(state_data['menu_items'])):
+    for i in range(0, len(state_data['child_categories'])):
         if state_data['status_list'][i] == 1:
-            choose_items_names.append(state_data['menu_items'][i]['name'])
+            choose_items_names.append(state_data['child_categories'][i]['name'])
 
     sure_msg = await get_sure_delete_mi_msg(choose_items_names)
 
@@ -141,10 +141,10 @@ async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext):
 
     choose_items_id_list = []
 
-    for i in range(0, len(state_data['menu_items'])):
+    for i in range(0, len(state_data['child_categories'])):
         if state_data['status_list'][i] == 1:
-            choose_items_id_list.append(state_data['menu_items'][i]['id'])
+            choose_items_id_list.append(state_data['child_categories'][i]['id'])
 
-    await CategoryExtend.delete_menu_items_by_ids(choose_items_id_list)
+    await CategoryExtend.delete_categories_by_ids(choose_items_id_list)
 
     await callback.message.edit_text(text=text_end_delete_menu_item, parse_mode="html")

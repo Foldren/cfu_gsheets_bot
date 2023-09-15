@@ -30,7 +30,7 @@ async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext)
 
     await state.update_data({
         'item_queue': queue,
-        'item_id': item_id,
+        'category_id': item_id,
         'operation_type': 'cost' if "cost_item" in callback.data else "profit"
     })
 

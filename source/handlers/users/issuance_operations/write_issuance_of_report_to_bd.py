@@ -36,7 +36,7 @@ async def start_write_issuance_of_report_to_bd(message: Message, state: FSMConte
     if check_admin_empty_groups:
         await message.answer(text=text_no_notify_groups, parse_mode="html")
     else:
-        ips = await CategoryExtend.get_user_upper_items(admin_id)
+        ips = await CategoryExtend.get_user_upper_categories(admin_id)
 
         keyboard = await get_inline_keyb_markup(
             list_names=[ip['name'] for ip in ips],

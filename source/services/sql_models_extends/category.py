@@ -1,14 +1,14 @@
-from models import User, MenuItem
+from models import User, Category
 
 
 class CategoryExtend:
     __slots__ = {}
 
     @staticmethod
-    async def get_admin_users_with_flag_observer(admin_id, item_id):
+    async def get_admin_users_with_flag_observer(admin_id, category_id):
         users = await User.filter(admin_id=admin_id).all().values("nickname", "fullname", "profession", "chat_id")
-        menu_item = await MenuItem.get(id=item_id)
-        observers = await menu_item.observers
+        category = await Category.get(id=category_id)
+        observers = await category.observers
 
         # Убираем админа из списка наблюдателей пункта меню
         for i in range(0, len(observers)):
@@ -31,79 +31,79 @@ class CategoryExtend:
         return users
 
     @staticmethod
-    async def get_parent_items_names(item_id: int):
-        mi1 = await MenuItem.get(id=item_id).prefetch_related()
-        items_names_list = []
+    async def get_parent_categories_names(category_id: int):
+        mi1 = await Category.get(id=category_id).prefetch_related()
+        categories_names_list = []
 
         parent = mi1
         while parent is not None:
-            items_names_list.append(parent.name)
+            categories_names_list.append(parent.name)
             parent = await parent.parent
 
-        items_names_list.reverse()
+        categories_names_list.reverse()
 
-        return items_names_list
+        return categories_names_list
 
     @staticmethod
-    async def update_by_id(item_id: int, name: str = None, observers_id_list: list = None):
-        menu_item = await MenuItem.get(id=item_id)
+    async def update_by_id(category_id: int, name: str = None, observers_id_list: list = None):
+        category = await Category.get(id=category_id)
 
         if name is not None:
-            menu_item.name = name
+            category.name = name
 
         if observers_id_list is not None:
             users = await User.filter(chat_id__in=observers_id_list)
-            await menu_item.observers.clear()  # Удаляем текущих наблюдателей
-            await menu_item.observers.add(*users)  # Добавляем новых наблюдателей
+            await category.observers.clear()  # Удаляем текущих наблюдателей
+            await category.observers.add(*users)  # Добавляем новых наблюдателей
 
-        await menu_item.save()
+        await category.save()
 
     @staticmethod
-    async def add(name_item: str, lvl_item: int,
-                  parent_menu_item_id: MenuItem, observers_id_list: list):
+    async def add(name_category: str, lvl_item: int,
+                  parent_category_id: Category, observers_id_list: list):
         users = await User.filter(chat_id__in=observers_id_list)
 
-        # Создаем пункт меню
-        menu_item = await MenuItem.create(
-            name=name_item,
+        # Создаем категорию
+        category = await Category.create(
+            name=name_category,
             level=lvl_item,
-            parent_id=parent_menu_item_id,
+            parent_id=parent_category_id,
         )
 
-        await menu_item.observers.add(*users)
+        await category.observers.add(*users)
 
     @staticmethod
-    async def get_by_id(item_id):
-        return await MenuItem.filter(id=item_id).first()
+    async def get_by_id(category_id):
+        return await Category.filter(id=category_id).first()
 
     @staticmethod
-    async def get_user_upper_items(user_id):
+    async def get_user_upper_categories(user_id):
         user = await User.filter(chat_id=user_id).first()
-        return await user.menu_items.filter(level=1).all().values("id", "name", "status", "level")
+        return await user.categories.filter(level=1).all().values("id", "name", "status", "level")
 
     @staticmethod
-    async def get_user_items_by_parent_id(user_id, parent_id):
+    async def get_user_categories_by_parent_id(user_id, parent_id):
         user = await User.filter(chat_id=user_id).first()
-        return await user.menu_items.filter(parent_id=parent_id).all().values("id", "name", "status", "level")
+        return await user.categories.filter(parent_id=parent_id).all().values("id", "name", "status", "level")
 
     @staticmethod
-    async def get_parent_items(item_id):
-        parent = await MenuItem.filter(id=item_id).first().values("parent_id")
-        return await MenuItem.filter(parent_id=parent['parent_id']).all().\
+    async def get_parent_items(category_id):
+        parent = await Category.filter(id=category_id).first().values("parent_id")
+        return await Category.filter(parent_id=parent['parent_id']).all().\
             values("id", "name", "parent_id", "status", "level")
 
     @staticmethod
-    async def get_parent_items_by_chat_id(item_id, user_id):
-        parent = await MenuItem.filter(id=item_id).first().values("parent_id")
-        return await MenuItem.filter(parent_id=parent['parent_id'], observers__chat_id__contains=user_id).all().\
+    async def get_parent_categories_by_chat_id(category_id, user_id):
+        parent = await Category.filter(id=category_id).first().values("parent_id")
+        return await Category.filter(parent_id=parent['parent_id'], observers__chat_id__contains=user_id).all().\
             values("id", "name", "parent_id", "status", "level")
 
     @staticmethod
-    async def invert_status(menu: MenuItem):
-        menu.status = 0 if menu.status == 1 else 1
-        await menu.save()
+    async def invert_status(category: Category):
+        category.status = 0 if category.status == 1 else 1
+        await category.save()
 
     @staticmethod
-    async def delete_menu_items_by_ids(ids_items_list: list):
-        await MenuItem.filter(id__in=ids_items_list).delete()
+    async def delete_categories_by_ids(ids_categories_list: list):
+        await Category.filter(id__in=ids_categories_list).delete()
 

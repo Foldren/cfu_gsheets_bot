@@ -234,7 +234,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 
 
 async def get_str_format_queue(selected_item_id) -> str:
-    menu_items_names_list = await CategoryExtend.get_parent_items_names(selected_item_id)
+    menu_items_names_list = await CategoryExtend.get_parent_categories_names(selected_item_id)
     return " → ".join(menu_items_names_list)
 
 

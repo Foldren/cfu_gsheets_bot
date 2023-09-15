@@ -25,7 +25,7 @@ async def next_to_nested_items_u(callback: CallbackQuery, state: FSMContext):
     message = callback.message
     selected_item_id = await get_callb_content(callback.data)
     selected_item = await CategoryExtend.get_by_id(selected_item_id)
-    menu_items = await CategoryExtend.get_user_items_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
+    menu_items = await CategoryExtend.get_user_categories_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
     queue = await get_str_format_queue(selected_item_id)
     msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
 
@@ -61,7 +61,7 @@ async def back_to_parent_items_u(callback: CallbackQuery):
     selected_item = await CategoryExtend.get_by_id(selected_item_id)
     parent_item = await selected_item.parent
     parent_item_name = parent_item.name if parent_item is not None else None
-    menu_items = await CategoryExtend.get_parent_items_by_chat_id(selected_item_id, callback.message.chat.id)
+    menu_items = await CategoryExtend.get_parent_categories_by_chat_id(selected_item_id, callback.message.chat.id)
     old_queue = await get_str_format_queue(selected_item_id)
     new_queue = old_queue[:old_queue.rfind('→') - 1]
     msg_queue = await get_msg_queue(selected_item.level-1, parent_item_name, new_queue)

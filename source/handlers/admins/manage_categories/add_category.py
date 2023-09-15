@@ -131,9 +131,9 @@ async def save_add_menu_item(callback: CallbackQuery, state: FSMContext):
     list_id_users.append(callback.message.chat.id)
 
     await CategoryExtend.add(
-        name_item=data_menu_item['name_new_item'],
+        name_category=data_menu_item['name_new_item'],
         lvl_item=data_menu_item['level_new_menu'],
-        parent_menu_item_id=data_menu_item['id_parent_menu'],
+        parent_category_id=data_menu_item['id_parent_menu'],
         observers_id_list=list_id_users
     )
 

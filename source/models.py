@@ -7,8 +7,8 @@ class User(Model):
     chat_id = BigIntField(pk=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="workers", null=True)
-    menu_items: ManyToManyRelation['MenuItem'] = ManyToManyField('models.MenuItem', on_delete=OnDelete.CASCADE,
-                                                                 related_name="observers", through="user_menu_item")
+    categories: ManyToManyRelation['Category'] = ManyToManyField('models.Category', on_delete=OnDelete.CASCADE,
+                                                                 related_name="observers", through="user_category")
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
                                                                  related_name="observers", through="user_period_stat")
     workers: ReverseRelation["User"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
@@ -24,18 +24,18 @@ class User(Model):
         table = "users"
 
 
-class MenuItem(Model):
+class Category(Model):
     id = BigIntField(pk=True)
-    parent: ForeignKeyRelation['MenuItem'] = ForeignKeyField('models.MenuItem', on_delete=OnDelete.CASCADE,
-                                                             related_name="child_items", null=True)
-    child_items: ReverseRelation["MenuItem"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
+    parent: ForeignKeyRelation['Category'] = ForeignKeyField('models.Category', on_delete=OnDelete.CASCADE,
+                                                             related_name="child_categories", null=True)
+    child_categories: ReverseRelation["Category"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
     observers: ManyToManyRelation['User']
     name = TextField(maxlength=100, null=False)
     status = BooleanField(default=1)
     level = IntField(default=1, null=False)
 
     class Meta:
-        table = "menu_items"
+        table = "categories"
 
 
 class NotifyGroup(Model):
