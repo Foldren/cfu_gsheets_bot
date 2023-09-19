@@ -185,25 +185,28 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
         sender_is_org=sender_org_flag
     )
 
-    message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
+    if file_id is not None:
+        message = await message.edit_text('Сохраняю чек, проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
 
-    # Если не юр лицо
-    if not sender_org_flag:
-        file_name = await get_current_frmt_datetime() + ".png"
-        file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
+        # Если не юр лицо
+        if not sender_org_flag:
+            file_name = await get_current_frmt_datetime() + ".png"
+            file_path = CHECKS_PATH + str(admin_id) + "/" + file_name
 
-        # Сохраняем чек на сервере если не от юр лица
-        await bot_object.download(file=file_id, destination=file_path)
+            # Сохраняем чек на сервере если не от юр лица
+            await bot_object.download(file=file_id, destination=file_path)
 
-        # Отправляем файл в папку google drive клиента
-        await gd_object.upload_check_too_google_drive_dir(
-            file_path=file_path,
-            google_dir_url=admin_info.google_drive_dir_url,
-            file_name_on_gd=file_name
-        )
+            # Отправляем файл в папку google drive клиента
+            await gd_object.upload_check_too_google_drive_dir(
+                file_path=file_path,
+                google_dir_url=admin_info.google_drive_dir_url,
+                file_name_on_gd=file_name
+            )
 
-        # Удаляем файл с помощью aiofiles
-        await remove(file_path)
+            # Удаляем файл с помощью aiofiles
+            await remove(file_path)
+    else:
+        message = await message.edit_text('Проверяю включен ли я в ваши группы 🧐 \n\n🟩🟩🟩🟩🟩🟩◻◻◻◻')
 
     await state.clear()
 

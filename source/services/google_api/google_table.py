@@ -51,7 +51,7 @@ class GoogleTable:
             menu_item_lvls[i] = e
             i += 1
 
-        await ws.append_row([str(chat_id_worker),
+        await ws.append_row([int(chat_id_worker),
                              "ЮР Лицо" if sender_is_org else surname_fstname,
                              frmt_date_time,
                              type_op,
@@ -63,7 +63,8 @@ class GoogleTable:
                              menu_item_lvls[3],
                              menu_item_lvls[4],
                              menu_item_lvls[5]
-                             ])
+                             ], value_input_option='USER_ENTERED')
+        # value_input_option='USER_ENTERED' решает проблему с апострофом который появляется в таблице
 
     async def add_issuance_report_to_bd(self, table_url: str, chat_id_worker: int, fullname_recipient: str,
                                         volume_op: str, payment_method: str, org_name: str,
@@ -87,12 +88,12 @@ class GoogleTable:
             name_sender = "ЮР Лицо"
             name_recipient = surname_fstname
 
-        row_1 = [str(chat_id_worker), name_sender, frmt_date_time, "Расход", payment_method, volume_with_sign, org_name,
-                 "Техническая операция", text_operation_str_1]
-        row_2 = [str(chat_id_worker), name_recipient, frmt_date_time, "Доход", payment_method, volume_op, org_name,
-                 "Техническая операция", text_operation_str_2]
+        row_1 = [int(chat_id_worker), name_sender, str(frmt_date_time), "Расход", payment_method, volume_with_sign,
+                 org_name, "Техническая операция", text_operation_str_1]
+        row_2 = [int(chat_id_worker), name_recipient, str(frmt_date_time), "Доход", payment_method, volume_op,
+                 org_name, "Техническая операция", text_operation_str_2]
 
-        await ws.append_rows([row_1, row_2])
+        await ws.append_rows([row_1, row_2], value_input_option='USER_ENTERED')
 
     async def add_transfer_to_bd(self, table_url: str, chat_id_worker: int, volume_op: str,
                                  wallet_sender: str, wallet_recipient: str, org_name: str):
@@ -103,9 +104,9 @@ class GoogleTable:
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         volume_with_sign = -int(volume_op)
 
-        row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", wallet_sender, volume_with_sign, org_name,
+        row_1 = [int(chat_id_worker), "ЮР Лицо", str(frmt_date_time), "Расход", wallet_sender, volume_with_sign, org_name,
                  "Техническая операция", "Перевод"]
-        row_2 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Доход", wallet_recipient, volume_op, org_name,
+        row_2 = [int(chat_id_worker), "ЮР Лицо", str(frmt_date_time), "Доход", wallet_recipient, volume_op, org_name,
                  "Техническая операция", "Перевод"]
 
-        await ws.append_rows([row_1, row_2])
+        await ws.append_rows([row_1, row_2], value_input_option='USER_ENTERED')

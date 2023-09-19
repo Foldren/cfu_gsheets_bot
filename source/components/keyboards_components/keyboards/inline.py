@@ -23,3 +23,8 @@ keyb_choose_write_menu_sender = [
         InlineKeyboardButton(text="От ЮР Лица", callback_data="choose_write_menu_sender:org")
     ]
 ]
+keyb_pass_check_load = [
+    [
+        InlineKeyboardButton(text="Пропустить  ⏩", callback_data=f"pass_check_load")
+    ]
+]

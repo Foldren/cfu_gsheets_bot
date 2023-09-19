@@ -9,7 +9,6 @@ from components.texts.users.write_return_issuance_of_report_to_bd import text_se
     text_select_payment_method_return_issuance, text_end_return_issuance
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
 from components.texts.users.write_category_to_bd import text_invalid_volume_operation
-from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_table import GoogleTable
 from services.sql_models_extends.category import CategoryExtend
 from services.sql_models_extends.notify_group import NotifyGroupExtend

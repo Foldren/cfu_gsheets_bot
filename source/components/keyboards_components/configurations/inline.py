@@ -1,9 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup
 from components.keyboards_components.keyboards.inline import keyb_end_delete_mi, keyb_end_delete_u, \
-    keyb_empty_user_list, keyb_choose_write_menu_sender
+    keyb_empty_user_list, keyb_choose_write_menu_sender, keyb_pass_check_load
 
 
 cf_key_end_delete_mi = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_mi)
 cf_key_end_delete_u = InlineKeyboardMarkup(inline_keyboard=keyb_end_delete_u)
 cf_keyb_empty_user_list = InlineKeyboardMarkup(inline_keyboard=keyb_empty_user_list)
 cf_keyb_choose_write_menu_sender = InlineKeyboardMarkup(inline_keyboard=keyb_choose_write_menu_sender)
+cf_keyb_pass_check_load = InlineKeyboardMarkup(inline_keyboard=keyb_pass_check_load)

@@ -1,7 +1,10 @@
+from typing import Union
+
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter, IsNotMainMenuMessage
+from components.keyboards_components.configurations.inline import cf_keyb_pass_check_load
 from components.texts.users.write_category_to_bd import text_start_add_mi_to_bd, text_choose_bank, \
     text_invalid_volume_operation, text_send_check_photo, text_invalid_check_photo
 from components.tools import get_callb_content, add_new_note_to_bd_handler_algorithm, \
@@ -76,9 +79,15 @@ async def load_or_pass_load_check(callback: CallbackQuery, state: FSMContext, bo
 
     if st_data['sender'] == "me":
         await state.set_state(StepsWriteCategoriesToBd.load_check)
-        await callback.message.edit_text(text=text_send_check_photo, parse_mode="html")
+        await callback.message.edit_text(text=text_send_check_photo, reply_markup=cf_keyb_pass_check_load, parse_mode="html")
     else:
         await add_new_note_to_bd_handler_algorithm(callback.message, state, bot_object, gt_object, gd_object)
+
+
+@rt.callback_query(StepsWriteCategoriesToBd.load_check, F.data.startswith("pass_check_load"))
+async def end_write_new_note_pass_load_check(callback: CallbackQuery, state: FSMContext,
+                                             bot_object: Bot, gt_object: GoogleTable, gd_object: GoogleDrive):
+    await add_new_note_to_bd_handler_algorithm(callback.message, state, bot_object, gt_object, gd_object)
 
 
 @rt.message(StepsWriteCategoriesToBd.load_check)
