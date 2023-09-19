@@ -37,7 +37,7 @@ class GoogleTable:
 
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
-        ws = await ss.worksheet("БД (не редактировать)")
+        ws = await ss.get_worksheet(0) #worksheet("БД (не редактировать)")
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         queue_items = queue_op.split(" → ")
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
