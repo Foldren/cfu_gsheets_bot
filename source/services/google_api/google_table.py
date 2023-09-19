@@ -43,7 +43,7 @@ class GoogleTable:
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
         profit_or_cost = type_op == "profit"
         type_op = "Доход" if profit_or_cost else "Расход"
-        volume_with_sign = volume_op if profit_or_cost else f"-{volume_op}"
+        volume_with_sign = volume_op if profit_or_cost else -int(volume_op)
         surname_fstname = fullname_worker.split(" ")[1] + " " + fullname_worker.split(" ")[0]
 
         i = 0
@@ -73,7 +73,7 @@ class GoogleTable:
         ws = await ss.worksheet("БД (не редактировать)")
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
-        volume_with_sign = f"-{volume_op}"
+        volume_with_sign = -int(volume_op)
         surname_fstname = fullname_recipient.split(" ")[1] + " " + fullname_recipient.split(" ")[0]
 
         if return_issuance:
@@ -101,7 +101,7 @@ class GoogleTable:
         ws = await ss.worksheet("БД (не редактировать)")
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
-        volume_with_sign = f"-{volume_op}"
+        volume_with_sign = -int(volume_op)
 
         row_1 = [str(chat_id_worker), "ЮР Лицо", frmt_date_time, "Расход", wallet_sender, volume_with_sign, org_name,
                  "Техническая операция", "Перевод"]

@@ -91,9 +91,7 @@ async def choose_menu_item_params_to_change(callback: CallbackQuery, state: FSMC
 @rt.callback_query(StepsChangeCategory.start_change_category, F.data.startswith("change_name_menu_item"))
 async def start_change_name_menu_item(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsChangeCategory.change_name_category)
-
     state_data = await state.get_data()
-
     await callback.message.edit_text(text=state_data['queue_text'] + text_change_name_menu_item, parse_mode="html")
 
 
@@ -101,9 +99,7 @@ async def start_change_name_menu_item(callback: CallbackQuery, state: FSMContext
 async def end_change_name_menu_item(message: Message, state: FSMContext):
     state_data = await state.get_data()
     await state.clear()
-
     await CategoryExtend.update_by_id(category_id=state_data['id_menu_item'], name=message.text)
-
     await message.answer(text=text_end_change_name_menu_item, parse_mode="html")
 
 
@@ -200,7 +196,6 @@ async def end_change_observers_menu_item(callback: CallbackQuery, state: FSMCont
     list_id_users.append(callback.message.chat.id)
 
     await CategoryExtend.update_by_id(category_id=data_state['id_menu_item'], observers_id_list=list_id_users)
-
     await callback.message.edit_text(
         text=text_end_change_observers_menu_item,
         parse_mode="html"
