@@ -23,9 +23,9 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
 
     if level == 0:
         if only_queue:
-            return f"<u>Вложенность</u>:  <b>Юр. Лица</b>\n"
+            return f"<u>Вложенность</u>:  <b>Главные категории</b>\n"
         else:
-            return f"<u>Уровень</u>: 0️⃣ <b>Юр. Лица</b>\n"
+            return f"<u>Уровень</u>: 0️⃣ <b>Главные категории</b>\n"
     elif level == 1:
         if only_queue:
             return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
@@ -78,6 +78,10 @@ async def get_msg_user_data(msg_data: str) -> dict:
     }
 
 
+async def get_msg_list_data(msg_data: str) -> list:
+    return msg_data.split("\n")
+
+
 async def generate_zero_array(length: int):
     array_zero_str = list()
 
@@ -106,8 +110,15 @@ async def generate_wallets_status_list(wallets: list):
 
 
 async def get_sure_delete_mi_msg(list_menu_items: list):
-    return f"Вы уверены что хотите удалить:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
-           f"При удалении, исчезнут все вложенные категории а также определенные пользователям доступы к этим категориям 🤔‼️"
+    return f"Вы уверены что хотите удалить категории:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
+           f"При удалении, исчезнут все вложенные подкатегории а также определенные пользователям доступы к этим подкатегориям 🤔‼️"
+
+
+async def get_sure_delete_org_msg(list_menu_items: list):
+    return f"Вы уверены что хотите удалить ЮР Лица:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
+           f"При удалении исчезнут все определенные пользователям доступы к этим ЮР Лицам, а также, " \
+           f"если вы привязали банки к системе и определили эти ЮР Лица для определенных категорий - система " \
+           f"перестанет подгружать данные о новых операциях по этим категориям из банка 🤔‼️"
 
 
 async def get_sure_delete_usr_msg(list_users: list):
@@ -239,5 +250,3 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 async def get_str_format_queue(selected_item_id) -> str:
     menu_items_names_list = await CategoryExtend.get_parent_categories_names(selected_item_id)
     return " → ".join(menu_items_names_list)
-
-

@@ -6,6 +6,8 @@ from tortoise import run_async
 from handlers.admins import start_admin, change_mode, manage_users_stats
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from config import TOKEN, REDIS_URL
+from handlers.admins.manage_organizations import get_list_organizations, add_organization, change_organization, \
+    delete_organization
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, open_nested_menu, show_user_stats
 from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
@@ -24,7 +26,8 @@ from services.redis_models.wallets import RedisUserWallets
 admin_routers = [
     start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
-    manage_users_stats.rt
+    manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, change_organization.rt,
+    delete_organization.rt
 ]
 
 user_routers = [

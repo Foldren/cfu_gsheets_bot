@@ -8,9 +8,15 @@ class User(Model):
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="workers", null=True)
     categories: ManyToManyRelation['Category'] = ManyToManyField('models.Category', on_delete=OnDelete.CASCADE,
-                                                                 related_name="observers", through="user_category")
+                                                                 related_name="observers", through="category_observers")
+    organizations: ManyToManyRelation['Organization'] = ManyToManyField('models.Organization',
+                                                                        on_delete=OnDelete.CASCADE,
+                                                                        related_name="observers",
+                                                                        through="organization_observers")
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
-                                                                 related_name="observers", through="user_period_stat")
+                                                                      related_name="observers",
+                                                                      through="period_stat_observers")
+    admin_organizations: ReverseRelation["Organization"]
     workers: ReverseRelation["User"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
@@ -30,12 +36,30 @@ class Category(Model):
                                                              related_name="child_categories", null=True)
     child_categories: ReverseRelation["Category"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
     observers: ManyToManyRelation['User']
+    bank_reload_organizations: ReverseRelation['Organization']
     name = TextField(maxlength=100, null=False)
     status = BooleanField(default=1)
     level = IntField(default=1, null=False)
 
     class Meta:
         table = "categories"
+
+
+class Organization(Model):
+    id = BigIntField(pk=True)
+    bank_reload_category: ForeignKeyRelation['Category'] = ForeignKeyField('models.Category',
+                                                                           on_delete=OnDelete.SET_NULL,
+                                                                           related_name="bank_reload_organizations",
+                                                                           null=True)
+    admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                        related_name="admin_organizations", null=False)
+    observers: ManyToManyRelation['User']
+    inn = BigIntField(null=False)
+    name = TextField(maxlength=100, null=False)
+    status = BooleanField(default=1)
+
+    class Meta:
+        table = "organizations"
 
 
 class NotifyGroup(Model):
@@ -60,7 +84,7 @@ class IssuanceReport(Model):
     user: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                        related_name="issuance_reports", null=False)
     notify_group: ForeignKeyRelation['NotifyGroup'] = ForeignKeyField('models.NotifyGroup', on_delete=OnDelete.CASCADE,
-                                                       related_name="issuance_reports", null=False)
+                                                                      related_name="issuance_reports", null=False)
 
     class Meta:
         table = "issuance_reports"
@@ -87,7 +111,7 @@ class AdminBank(Model):
     api_key = TextField(maxlength=500, null=False)
     number_or_name_account = TextField(maxlength=500, null=True)
     first_date_load_statement = DateField(null=False)
-    last_date_reload_statement = DateField(null=False)
+    last_date_reload_statement = DateField(null=True)
 
     class Meta:
         table = "admin_banks"
@@ -100,4 +124,3 @@ class PeriodStat(Model):
 
     class Meta:
         table = "periods_stats"
-

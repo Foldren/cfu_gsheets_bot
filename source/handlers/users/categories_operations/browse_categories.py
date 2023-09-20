@@ -19,59 +19,59 @@ rt.callback_query.filter(IsUserFilter())
 
 # Вывод дочерних пунктов меню
 @rt.callback_query(StepsWriteCategoriesToBd.set_queue_categories, F.data.startswith("user_menu_item"))
-async def next_to_nested_items_u(callback: CallbackQuery, state: FSMContext):
+async def next_to_nested_categories_u(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsWriteCategoriesToBd.set_queue_categories)
 
     message = callback.message
-    selected_item_id = await get_callb_content(callback.data)
-    selected_item = await CategoryExtend.get_by_id(selected_item_id)
-    menu_items = await CategoryExtend.get_user_categories_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
-    queue = await get_str_format_queue(selected_item_id)
+    selected_category_id = await get_callb_content(callback.data)
+    selected_item = await CategoryExtend.get_by_id(selected_category_id)
+    categories = await CategoryExtend.get_user_categories_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
+    queue = await get_str_format_queue(selected_category_id)
     msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
 
-    dict_mi_names_ids = {'names': [], "ids": []}
+    dict_c_names_ids = {'names': [], "ids": []}
 
     # Заполняем дикт списки названиями кнопок и данными колбеков, пропускаем скрытые (id mi)
-    for e in menu_items:
+    for e in categories:
         if e['status'] == 1:
-            dict_mi_names_ids['names'].append(e['name'])
-            dict_mi_names_ids['ids'].append(e['id'])
+            dict_c_names_ids['names'].append(e['name'])
+            dict_c_names_ids['ids'].append(e['id'])
 
-    if dict_mi_names_ids['names']:
+    if dict_c_names_ids['names']:
         keyboard = await get_inline_keyb_markup(
-            list_names=dict_mi_names_ids['names'],
-            list_data=dict_mi_names_ids['ids'],
+            list_names=dict_c_names_ids['names'],
+            list_data=dict_c_names_ids['ids'],
             callback_str="user_menu_item",
             number_cols=2,
-            add_keyb_to_start=await get_inline_keyb_str_back_to_parent_items_u(selected_item_id)
+            add_keyb_to_start=await get_inline_keyb_str_back_to_parent_items_u(selected_category_id)
         )
 
         await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode="html")
 
     else:
         # Если последняя категория и это колбек, добавляем кнопки расход и доход
-        keyboard = await get_inline_keyb_profit_cost(selected_item_id)
+        keyboard = await get_inline_keyb_profit_cost(selected_category_id)
         await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode="html")
 
 
 # Возврат назад к родительским пунктам меню
 @rt.callback_query(StepsWriteCategoriesToBd.set_queue_categories, F.data.startswith("back_to_upper_level_u"))
-async def back_to_parent_items_u(callback: CallbackQuery):
-    selected_item_id = await get_callb_content(callback.data)
-    selected_item = await CategoryExtend.get_by_id(selected_item_id)
-    parent_item = await selected_item.parent
-    parent_item_name = parent_item.name if parent_item is not None else None
-    menu_items = await CategoryExtend.get_parent_categories_by_chat_id(selected_item_id, callback.message.chat.id)
-    old_queue = await get_str_format_queue(selected_item_id)
+async def back_to_parent_categories_u(callback: CallbackQuery):
+    selected_category_id = await get_callb_content(callback.data)
+    selected_category = await CategoryExtend.get_by_id(selected_category_id)
+    parent_category = await selected_category.parent
+    parent_category_name = parent_category.name if parent_category is not None else None
+    categories = await CategoryExtend.get_parent_categories_by_chat_id(selected_category_id, callback.message.chat.id)
+    old_queue = await get_str_format_queue(selected_category_id)
     new_queue = old_queue[:old_queue.rfind('→') - 1]
-    msg_queue = await get_msg_queue(selected_item.level-1, parent_item_name, new_queue)
-    upper_level = menu_items[0]['parent_id'] is None
+    msg_queue = await get_msg_queue(selected_category.level-1, parent_category_name, new_queue)
+    upper_level = categories[0]['parent_id'] is None
     final_msg = text_get_user_list_mi + msg_queue if upper_level else msg_queue
-    selected_upper_item_id = selected_item.parent_id
+    selected_upper_item_id = selected_category.parent_id
     dict_mi_names_ids = {'names': [], "ids": []}
 
     # Заполняем дикт списки названиями кнопок и данными колбеков, пропускаем скрытые (id mi)
-    for e in menu_items:
+    for e in categories:
         if e['status'] == 1:
             dict_mi_names_ids['names'].append(e['name'])
             dict_mi_names_ids['ids'].append(e['id'])

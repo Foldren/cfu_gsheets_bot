@@ -18,14 +18,14 @@ rt.callback_query.filter(IsUserFilter())
 
 
 @rt.message(F.text == "Операция с категориями")
-async def choose_write_menu_item_sender(message: Message, state: FSMContext):
+async def start_choose_write_category_sender(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsWriteCategoriesToBd.set_sender)
     await message.answer(text=text_choose_sender_write_item, reply_markup=cf_keyb_choose_write_menu_sender, parse_mode="html")
 
 
 @rt.callback_query(StepsWriteCategoriesToBd.set_sender, F.data.startswith("choose_write_menu_sender"))
-async def choose_write_menu_item_sender(callback: CallbackQuery, state: FSMContext):
+async def end_choose_write_category_sender(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsWriteCategoriesToBd.set_queue_categories)
 
     callb_data = await get_callb_content(callback.data)
@@ -37,20 +37,20 @@ async def choose_write_menu_item_sender(callback: CallbackQuery, state: FSMConte
     await state.set_state(StepsWriteCategoriesToBd.set_queue_categories)
 
     message = callback.message
-    menu_items = await CategoryExtend.get_user_upper_categories(callback.message.chat.id)
+    categories = await CategoryExtend.get_user_upper_categories(callback.message.chat.id)
     msg_queue = await get_msg_queue(level=0)
-    dict_mi_names_ids = {'names': [], "ids": []}
+    dict_c_names_ids = {'names': [], "ids": []}
 
     # Заполняем дикт списки названиями кнопок и данными колбеков, пропускаем скрытые (id mi)
-    for e in menu_items:
+    for e in categories:
         if e['status'] == 1:
-            dict_mi_names_ids['names'].append(e['name'])
-            dict_mi_names_ids['ids'].append(e['id'])
+            dict_c_names_ids['names'].append(e['name'])
+            dict_c_names_ids['ids'].append(e['id'])
 
-    if dict_mi_names_ids['names']:
+    if dict_c_names_ids['names']:
         keyboard = await get_inline_keyb_markup(
-            list_names=dict_mi_names_ids['names'],
-            list_data=dict_mi_names_ids['ids'],
+            list_names=dict_c_names_ids['names'],
+            list_data=dict_c_names_ids['ids'],
             callback_str="user_menu_item",
             number_cols=2
         )

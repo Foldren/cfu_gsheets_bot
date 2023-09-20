@@ -23,3 +23,20 @@ keyb_str_change_wallets_list = [
 keyb_str_change_observers_ps = [
     InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_change_observers_ps")
 ]
+
+keyb_str_get_full_list_organizations = [
+    InlineKeyboardButton(text="➕", callback_data=f"add_organization"),
+    InlineKeyboardButton(text="❌", callback_data=f"delete_organizations")
+]
+
+keyb_str_pass_add_users_to_org = [
+    InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_new_organization")
+]
+
+keyb_str_change_observers_org = [
+    InlineKeyboardButton(text="Сохранить изменения ✅", callback_data="save_change_obs_organization")
+]
+
+keyb_str_delete_org = [
+    InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_organization")
+]

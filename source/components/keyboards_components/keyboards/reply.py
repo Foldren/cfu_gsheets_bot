@@ -2,9 +2,12 @@ from aiogram.types import KeyboardButton
 
 keyb_start_admin = [
     [
-        KeyboardButton(text="Меню"),
         KeyboardButton(text="Сотрудники"),
         KeyboardButton(text="Отчеты"),
+    ],
+    [
+        KeyboardButton(text="Категории"),
+        KeyboardButton(text="ЮР Лица"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼")

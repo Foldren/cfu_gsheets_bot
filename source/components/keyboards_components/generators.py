@@ -11,7 +11,7 @@ async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str
             text=list_names[i],
             callback_data=f"{callback_str}:{list_data[i]}",
             url=urls_list[i] if urls_list is not None else None))
-        if ((i+1) % number_cols) == 0:
+        if ((i + 1) % number_cols) == 0:
             number_str_keyboard += 1
             keyboard.append([])
 
@@ -106,6 +106,20 @@ async def get_inline_keyb_change_menu_item(id_menu_item: str, status_menu_item: 
     ])
 
 
+async def get_inline_keyb_change_organization(id: str, status: bool):
+    status = "Скрытый 💤" if status == 0 else "Активный ✅"
+
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Параметры", callback_data=f"change_params_organization:{id}"),
+            InlineKeyboardButton(text="Наблюдатели", callback_data=f"start_change_observers_organization:{id}")
+        ],
+        [
+            InlineKeyboardButton(text=f"Статус: {status}", callback_data=f"change_status_organization:{id}")
+        ]
+    ])
+
+
 async def get_inline_keyb_profit_cost(selected_item_id: int = None) -> InlineKeyboardMarkup:
     keyb = [
         [
@@ -142,4 +156,3 @@ async def get_confirm_issuance_keyb_button(id_issuance_report: int):
         ]
     ]
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
-

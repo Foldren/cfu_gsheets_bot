@@ -1,16 +1,13 @@
-from typing import Union
-
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter, IsNotMainMenuMessage
 from components.keyboards_components.configurations.inline import cf_keyb_pass_check_load
+from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.write_category_to_bd import text_start_add_mi_to_bd, text_choose_bank, \
     text_invalid_volume_operation, text_send_check_photo, text_invalid_check_photo
 from components.tools import get_callb_content, add_new_note_to_bd_handler_algorithm, \
     get_str_format_queue
-from components.keyboards_components.generators import get_inline_keyb_markup
-from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_drive import GoogleDrive
 from services.google_api.google_table import GoogleTable
 from services.redis_models.wallets import RedisUserWallets
@@ -28,12 +25,12 @@ rt.callback_query.filter(IsUserFilter())
 async def start_write_new_note_to_bd(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsWriteCategoriesToBd.set_volume_operation)
 
-    item_id = await get_callb_content(callback.data)
-    queue = await get_str_format_queue(item_id)
+    category_id = await get_callb_content(callback.data)
+    queue = await get_str_format_queue(category_id)
 
     await state.update_data({
         'item_queue': queue,
-        'category_id': item_id,
+        'organization_id': category_id,
         'operation_type': 'cost' if "cost_item" in callback.data else "profit"
     })
 

@@ -21,33 +21,33 @@ rt.callback_query.filter(IsAdminFilter())
 
 # Сообщение с просьбой указать название нового пункта меню (категории)
 @rt.callback_query(StepsGetCategoriesList.get_list_categories, F.data.startswith("add_menu_item") | (F.data == 'add_upper_menu_item'))
-async def start_add_menu_item(callback: CallbackQuery, state: FSMContext):
+async def start_add_category(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsAddCategory.start_add_category)
 
-    id_parent_menu = await get_callb_content(callback.data) if "add_menu_item" in callback.data else None
-    menu = await CategoryExtend.get_by_id(id_parent_menu) if id_parent_menu is not None else None
-    queue = await get_str_format_queue(id_parent_menu) if id_parent_menu is not None else ""
+    id_parent_category = await get_callb_content(callback.data) if "add_menu_item" in callback.data else None
+    category = await CategoryExtend.get_by_id(id_parent_category) if id_parent_category is not None else None
+    queue = await get_str_format_queue(id_parent_category) if id_parent_category is not None else ""
 
     text_lvl = await get_msg_queue(
-        level=menu.level if id_parent_menu is not None else 0,
-        selected_item_name=menu.name if id_parent_menu is not None else "",
+        level=category.level if id_parent_category is not None else 0,
+        selected_item_name=category.name if id_parent_category is not None else "",
         queue=queue,
         only_queue=True,
     )
 
     # Сохраняем id родительского меню и уровень в стейт
     await state.set_data({
-        'id_parent_menu': id_parent_menu,
+        'id_category': id_parent_category,
         'text_level': text_lvl,
-        'level_new_menu': (menu.level + 1) if menu is not None else 1
+        'level_category': (category.level + 1) if category is not None else 1
     })
 
     await callback.message.edit_text(text=text_lvl + text_start_add_menu_item, parse_mode="html")
 
 
 @rt.message(StepsAddCategory.start_add_category)
-async def choose_observers_menu_item(message: Message, state: FSMContext):
+async def choose_observers_category(message: Message, state: FSMContext):
     md = await state.get_data()
     users = await UserExtend.get_admin_users(message.from_user.id)
     status_list = await generate_zero_array(len(users))
@@ -118,22 +118,22 @@ async def change_observers_list(callback: CallbackQuery, state: FSMContext):
 
 # Сохранение изменений -------------------------------------------------------------------------------------------------
 @rt.callback_query(StepsAddCategory.choose_observers_category, F.data.startswith("save_new_menu_item"))
-async def save_add_menu_item(callback: CallbackQuery, state: FSMContext):
-    data_menu_item = await state.get_data()
+async def save_add_category(callback: CallbackQuery, state: FSMContext):
+    data_category = await state.get_data()
     list_id_users = []
 
     # Генерируем список выбранных пользователей
-    for i in range(0, len(data_menu_item['users'])):
-        if data_menu_item['status_list'][i] == 1:
-            list_id_users.append(int(data_menu_item['users'][i]['chat_id']))
+    for i in range(0, len(data_category['users'])):
+        if data_category['status_list'][i] == 1:
+            list_id_users.append(int(data_category['users'][i]['chat_id']))
 
     # Добавляем id админа
     list_id_users.append(callback.message.chat.id)
 
     await CategoryExtend.add(
-        name_category=data_menu_item['name_new_item'],
-        lvl_item=data_menu_item['level_new_menu'],
-        parent_category_id=data_menu_item['id_parent_menu'],
+        name_category=data_category['name_new_item'],
+        lvl_item=data_category['level_new_menu'],
+        parent_category_id=data_category['id_parent_menu'],
         observers_id_list=list_id_users
     )
 

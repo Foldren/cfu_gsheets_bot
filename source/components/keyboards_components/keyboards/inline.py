@@ -28,3 +28,16 @@ keyb_pass_check_load = [
         InlineKeyboardButton(text="Пропустить  ⏩", callback_data=f"pass_check_load")
     ]
 ]
+
+keyb_get_empty_list_organizations = [
+    [
+        InlineKeyboardButton(text="➕", callback_data=f"add_organization")
+    ]
+]
+
+keyb_end_delete_org = [
+    [
+        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_organizations"),
+        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_organizations")
+    ]
+]
