@@ -8,7 +8,7 @@ from components.text_generators.users import get_msg_notify_new_return_issuance
 from components.texts.users.write_return_issuance_of_report_to_bd import text_set_volume_return_issuance, \
     text_select_payment_method_return_issuance, text_end_return_issuance
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
-from components.texts.users.write_category_to_bd import text_invalid_volume_operation
+from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
 from services.google_api.google_table import GoogleTable
 from services.sql_models_extends.notify_group import NotifyGroupExtend
 from services.sql_models_extends.organization import OrganizationExtend
@@ -33,18 +33,19 @@ async def start_return_issuance_means(message: Message, state: FSMContext, redis
 
     organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
 
-    keyboard = await get_inline_keyb_markup(
-        list_names=[org['name'] for org in organizations],
-        list_data=[f"{org['id']}:{org['name']}" for org in organizations],
-        callback_str="ip_to_issuance",
-        number_cols=2
-    )
-
-    await state.set_data({
-        'admin_id': admin_id,
-    })
-
-    await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+    if organizations:
+        keyboard = await get_inline_keyb_markup(
+            list_names=[org['name'] for org in organizations],
+            list_data=[f"{org['id']}:{org['name']}" for org in organizations],
+            callback_str="ip_to_issuance",
+            number_cols=2
+        )
+        await state.set_data({
+            'admin_id': admin_id,
+        })
+        await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+    else:
+        await message.answer(text=text_no_menu_items_orgs, parse_mode="html")
 
 
 @rt.callback_query(StepsReturnIssuanceMeans.select_organization, F.data.startswith("ip_to_issuance"))

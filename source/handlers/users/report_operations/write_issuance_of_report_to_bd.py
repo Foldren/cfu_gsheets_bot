@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter, IsNotMainMenuMessage
 from components.keyboards_components.generators import get_inline_keyb_markup, get_confirm_issuance_keyb_button
 from components.text_generators.users import get_msg_notify_new_issuance_of_report
-from components.texts.users.write_category_to_bd import text_invalid_volume_operation
+from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance, text_select_worker_issuance, \
     text_set_volume_issuance, text_select_payment_method_issuance, text_no_notify_groups, \
     text_select_notify_group_issuance, text_end_issuance
@@ -37,18 +37,19 @@ async def start_write_issuance_of_report_to_bd(message: Message, state: FSMConte
     else:
         organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
 
-        keyboard = await get_inline_keyb_markup(
-            list_names=[org['name'] for org in organizations],
-            list_data=[f"{org['id']}:{org['name']}" for org in organizations],
-            callback_str="organization_to_issuance",
-            number_cols=2
-        )
-
-        await state.set_data({
-            'admin_id': admin_id,
-        })
-
-        await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+        if organizations:
+            keyboard = await get_inline_keyb_markup(
+                list_names=[org['name'] for org in organizations],
+                list_data=[f"{org['id']}:{org['name']}" for org in organizations],
+                callback_str="organization_to_issuance",
+                number_cols=2
+            )
+            await state.set_data({
+                'admin_id': admin_id,
+            })
+            await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+        else:
+            await message.answer(text=text_no_menu_items_orgs, parse_mode="html")
 
 
 @rt.callback_query(StepsWriteIssuanceReport.select_organization, F.data.startswith("organization_to_issuance"))

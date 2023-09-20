@@ -8,7 +8,7 @@ from components.text_generators.users import get_msg_notify_new_transfer
 from components.texts.users.write_transfer_to_wallet_to_bd import text_set_volume_transfer, text_select_wallet_sender, \
     text_select_wallet_recipient, text_end_transfer
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
-from components.texts.users.write_category_to_bd import text_invalid_volume_operation
+from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
 from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_table import GoogleTable
 from services.sql_models_extends.category import CategoryExtend
@@ -33,19 +33,25 @@ async def start_write_transfer_to_bd(message: Message, state: FSMContext, redis_
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
     organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
+    org_names = []
 
-    keyboard = await get_inline_keyb_markup(
-        list_names=[org['name'] for org in organizations],
-        list_data=[org['name'] for org in organizations],
-        callback_str="org_to_transfer",
-        number_cols=2
-    )
+    for org in organizations:
+        if org['status'] == 1:
+            org_names.append(org['name'])
 
-    await state.set_data({
-        'admin_id': admin_id,
-    })
-
-    await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+    if organizations:
+        keyboard = await get_inline_keyb_markup(
+            list_names=org_names,
+            list_data=org_names,
+            callback_str="org_to_transfer",
+            number_cols=2
+        )
+        await state.set_data({
+            'admin_id': admin_id,
+        })
+        await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+    else:
+        await message.answer(text=text_no_menu_items_orgs, parse_mode="html")
 
 
 @rt.callback_query(StepsWriteTransfer.select_organization, F.data.startswith("org_to_transfer"))

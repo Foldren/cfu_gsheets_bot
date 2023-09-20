@@ -21,7 +21,7 @@ async def get_organizations_list(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsGetOrganizationsList.get_list_organizations)
 
-    organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
+    organizations = await OrganizationExtend.get_admin_organizations(message.from_user.id)
 
     if organizations:
         keyboard = await get_inline_keyb_markup(

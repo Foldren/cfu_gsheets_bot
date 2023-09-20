@@ -67,7 +67,14 @@ class OrganizationExtend:
     @staticmethod
     async def get_user_organizations(user_chat_id):
         user = await User.filter(chat_id=user_chat_id).first()
-        return await user.organizations.all().values("id", "name", "inn", "status")
+        organizations = await user.organizations.all().values("id", "name", "inn", "status")
+        result_organizations = []
+
+        for org in organizations:
+            if org['status'] == 1:
+                result_organizations.append(org)
+
+        return result_organizations
 
     @staticmethod
     async def get_admin_organizations(admin_chat_id):
