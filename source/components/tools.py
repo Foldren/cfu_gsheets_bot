@@ -190,6 +190,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
         chat_id_worker=message.chat.id,
         fullname_worker=current_user.fullname,
         volume_op=state_data['volume_operation'],
+        org_op=state_data['organization_name'],
         queue_op=state_data['item_queue'],
         type_op=state_data['operation_type'],
         payment_method=state_data['payment_method'],

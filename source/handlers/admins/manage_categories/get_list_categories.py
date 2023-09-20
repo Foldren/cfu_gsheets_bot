@@ -54,7 +54,7 @@ async def next_to_nested_categories(callb_or_msg: Union[Message, CallbackQuery],
             number_cols=2,
             add_keyb_to_start=await get_inline_keyb_str_full(selected_category_id, upper=main_category)
         )
-        if categories[0]['level'] == 6:
+        if categories[0]['level'] == 5:
             msg_queue += "\n Вы достигли максимального уровня 🆙"
 
     else:

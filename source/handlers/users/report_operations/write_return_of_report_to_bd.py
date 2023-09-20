@@ -10,8 +10,8 @@ from components.texts.users.write_return_issuance_of_report_to_bd import text_se
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
 from components.texts.users.write_category_to_bd import text_invalid_volume_operation
 from services.google_api.google_table import GoogleTable
-from services.sql_models_extends.category import CategoryExtend
 from services.sql_models_extends.notify_group import NotifyGroupExtend
+from services.sql_models_extends.organization import OrganizationExtend
 from services.sql_models_extends.user import UserExtend
 from services.redis_models.user import RedisUser
 from services.redis_models.wallets import RedisUserWallets
@@ -27,15 +27,15 @@ rt.callback_query.filter(IsUserFilter())
 @rt.message(F.text == "Возврат подотчета")
 async def start_return_issuance_means(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
-    await state.set_state(StepsReturnIssuanceMeans.select_ip)
+    await state.set_state(StepsReturnIssuanceMeans.select_organization)
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
 
-    ips = await CategoryExtend.get_user_upper_categories(admin_id)
+    organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
 
     keyboard = await get_inline_keyb_markup(
-        list_names=[ip['name'] for ip in ips],
-        list_data=[f"{ip['id']}:{ip['name']}" for ip in ips],
+        list_names=[org['name'] for org in organizations],
+        list_data=[f"{org['id']}:{org['name']}" for org in organizations],
         callback_str="ip_to_issuance",
         number_cols=2
     )
@@ -47,14 +47,14 @@ async def start_return_issuance_means(message: Message, state: FSMContext, redis
     await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
 
 
-@rt.callback_query(StepsReturnIssuanceMeans.select_ip, F.data.startswith("ip_to_issuance"))
+@rt.callback_query(StepsReturnIssuanceMeans.select_organization, F.data.startswith("ip_to_issuance"))
 async def set_volume_for_return_issuance(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsReturnIssuanceMeans.set_volume)
-    selected_ip_params = await get_callb_content(callback.data, multiply_values=True)
+    selected_org_params = await get_callb_content(callback.data, multiply_values=True)
 
     await state.update_data({
-        'selected_ip_id': selected_ip_params[1],
-        'selected_ip_name': selected_ip_params[2],
+        'selected_org_id': selected_org_params[1],
+        'selected_org_name': selected_org_params[2],
     })
 
     await callback.message.edit_text(text=text_set_volume_return_issuance, parse_mode="html")
@@ -108,7 +108,7 @@ async def end_write_return_issuance_to_bd(callback: CallbackQuery, state: FSMCon
         msg_in_group = await get_msg_notify_new_return_issuance(
             profession_worker=user.profession,
             fullname_worker=user.fullname,
-            ip=st_data['selected_ip_name'],
+            ip=st_data['selected_org_name'],
             volume=st_data['specified_volume'],
             payment_method=selected_payment_method
         )
@@ -122,7 +122,7 @@ async def end_write_return_issuance_to_bd(callback: CallbackQuery, state: FSMCon
         fullname_recipient=user.fullname,
         volume_op=st_data['specified_volume'],
         payment_method=selected_payment_method,
-        org_name=st_data['selected_ip_name'],
+        org_name=st_data['selected_org_name'],
         return_issuance=True
     )
 

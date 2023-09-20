@@ -3,6 +3,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 class StepsWriteCategoriesToBd(StatesGroup):
     set_sender = State()
+    set_organization_name = State()
     set_queue_categories = State()
     set_volume_operation = State()
     choose_bank = State()
@@ -11,7 +12,7 @@ class StepsWriteCategoriesToBd(StatesGroup):
 
 
 class StepsWriteIssuanceReport(StatesGroup):
-    select_ip = State()
+    select_organization = State()
     select_worker = State()
     set_volume = State()
     select_payment_method = State()
@@ -19,7 +20,7 @@ class StepsWriteIssuanceReport(StatesGroup):
 
 
 class StepsReturnIssuanceMeans(StatesGroup):
-    select_ip = State()
+    select_organization = State()
     set_volume = State()
     select_payment_method = State()
 

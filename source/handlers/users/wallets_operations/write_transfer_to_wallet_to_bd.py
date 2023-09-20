@@ -13,6 +13,7 @@ from config import BANKS_UPRAVLYAIKA
 from services.google_api.google_table import GoogleTable
 from services.sql_models_extends.category import CategoryExtend
 from services.sql_models_extends.notify_group import NotifyGroupExtend
+from services.sql_models_extends.organization import OrganizationExtend
 from services.sql_models_extends.user import UserExtend
 from services.redis_models.user import RedisUser
 from services.redis_models.wallets import RedisUserWallets
@@ -31,7 +32,7 @@ async def start_write_transfer_to_bd(message: Message, state: FSMContext, redis_
     await state.set_state(StepsWriteTransfer.select_organization)
 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
-    organizations = await CategoryExtend.get_user_upper_categories(admin_id)
+    organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
 
     keyboard = await get_inline_keyb_markup(
         list_names=[org['name'] for org in organizations],

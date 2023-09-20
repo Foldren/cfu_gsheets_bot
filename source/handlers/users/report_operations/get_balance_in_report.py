@@ -17,12 +17,12 @@ rt.callback_query.filter(IsUserFilter())
 @rt.message(F.text == "Остаток в подотчете")
 async def get_balance_in_report(message: Message, state: FSMContext, gt_object: GoogleTable, redis_users: RedisUser):
     await state.clear()
-    # admin_id = await redis_users.get_user_admin_id(message.from_user.id)
-    # admin_info = await UserExtend.get_admin_info(admin_id)
+    admin_id = await redis_users.get_user_admin_id(message.from_user.id)
+    admin_info = await UserExtend.get_admin_info(admin_id)
     text_balances = text_user_balances + "\n"
 
     balances = await gt_object.get_balance_in_report_by_fullname(
-        table_url="https://docs.google.com/spreadsheets/d/1cgYN8sJuEqxOy6eOKXMpgjywCG10MOk5us6o4r-bTRo/edit#gid=1288929243",
+        table_url=admin_info.google_table_url,
         chat_id_user=message.from_user.id
     )
 
