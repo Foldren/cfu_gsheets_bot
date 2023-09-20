@@ -35,34 +35,16 @@ async def start_change_user(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.callback_query(StepsChangeUser.start_change_user, F.data.startswith("change_this_user"))
-async def choose_new_data_user(callback: CallbackQuery, state: FSMContext):
+async def set_new_data_user(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
     await state.clear()
     await state.set_state(StepsChangeUser.choose_new_data_user)
 
     id_user = await get_callb_content(callback.data)
     user = await UserExtend.get_by_id(id_user)
 
-    msg_text = f"<b>Chat_id</b> - {user.chat_id}\n" \
-               f"<b>Полное имя</b> - {user.fullname}\n" \
-               f"<b>Никнейм</b> - {user.nickname}\n" \
-               f"<b>Профессия</b> - {user.profession}"
-
-    await callback.message.edit_text(
-        text=msg_text,
-        reply_markup=await get_inline_keyb_change_user(id_user),
-        parse_mode="html")
-
-
-# Изменение основных данных --------------------------------------------------------------------------------------------
-@rt.callback_query(StepsChangeUser.choose_new_data_user, F.data.startswith("change_data_user"))
-async def set_new_main_data_user(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
-    await state.clear()
-    await state.set_state(StepsChangeUser.set_new_main_data_user)
-
-    id_user = await get_callb_content(callback.data)
-    user = await UserExtend.get_by_id(id_user)
-
-    msg_text = f"<u>Пользователь:</u> {user.nickname}\n<b>{user.fullname}</b> - {user.profession} \n\n"
+    msg_text = f"<b>Выбран пользователь</b> 👇\n" \
+               f"<b>Chat_id:</b> {user.chat_id}\n" \
+               f"<b>Полное имя:</b> {user.fullname}\n\n"
     example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}</code>"
 
     await set_memory_data(bot_object, callback.message, {
@@ -72,7 +54,7 @@ async def set_new_main_data_user(callback: CallbackQuery, state: FSMContext, bot
     await callback.message.edit_text(text=msg_text + text_change_user + example_text, parse_mode="html")
 
 
-@rt.message(StepsChangeUser.set_new_main_data_user)
+@rt.message(StepsChangeUser.choose_new_data_user)
 async def end_set_new_main_data_user(message: Message, state: FSMContext, bot_object: Bot):
     msg_data = await get_msg_user_data(message.text)
     memory_data = await get_memory_data(bot_object, message)
@@ -87,48 +69,5 @@ async def end_set_new_main_data_user(message: Message, state: FSMContext, bot_ob
 
     await state.clear()
     await message.answer(text=text_end_change_user, parse_mode="html")
-
-
-# Изменение id ---------------------------------------------------------------------------------------------------------
-@rt.callback_query(StepsChangeUser.choose_new_data_user, F.data.startswith("change_id_user"))
-async def change_id_user(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
-    await state.clear()
-    await state.set_state(StepsChangeUser.set_new_id_user)
-
-    id_user = await get_callb_content(callback.data)
-    user = await UserExtend.get_by_id(id_user)
-
-    msg_text = f"<code>Пользователь:</code> <b>{user.fullname}</b> - {user.profession} ({user.nickname})\n\n"
-
-    await set_memory_data(bot_object, callback.message, {
-        'id_change_u': id_user
-    })
-
-    await callback.message.edit_text(text=msg_text + text_get_id_user, parse_mode="html")
-
-
-@rt.message(StepsChangeUser.set_new_id_user)
-async def end_add_user(message: Message, state: FSMContext, bot_object: Bot):
-    # Проверка сообщения (forward или send) ----------------------------------------------------------------------------
-    try:
-        user_chat_id = message.forward_from.id
-    except Exception:
-        # Проверка id пользователя (если не число то все плохо)
-        try:
-            user_chat_id = int(message.text)
-        except Exception:
-            await message.answer(text=text_invalid_user_id, parse_mode="html")
-            return
-
-    data_user = await get_memory_data(bot_object, message)
-
-    await UserExtend.update_by_id(
-        chat_id=data_user['id_change_u'],
-        new_chat_id=user_chat_id
-    )
-
-    await state.clear()
-    await message.answer(text=text_end_change_id_user, parse_mode="html")
-
 
 

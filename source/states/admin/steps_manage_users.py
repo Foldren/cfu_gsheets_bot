@@ -12,8 +12,6 @@ class StepsAddUser(StatesGroup):
 class StepsChangeUser(StatesGroup):
     start_change_user = State()
     choose_new_data_user = State()
-    set_new_main_data_user = State()
-    set_new_id_user = State()
 
 
 class StepsDeleteUser(StatesGroup):

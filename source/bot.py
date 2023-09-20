@@ -8,7 +8,8 @@ from handlers.admins.manage_categories import get_list_categories, add_category,
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, open_nested_menu, show_user_stats
-from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd
+from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
+    get_balance_in_report
 from handlers.users.wallets_operations import change_wallets_list, write_transfer_to_wallet_to_bd
 from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
     choose_write_category_sender
@@ -28,8 +29,8 @@ admin_routers = [
 
 user_routers = [
     start_user.rt, browse_categories.rt, write_chosen_category_to_bd.rt, write_issuance_of_report_to_bd.rt,
-    write_return_of_report_to_bd.rt, choose_write_category_sender.rt, write_transfer_to_wallet_to_bd.rt, open_nested_menu.rt,
-    change_wallets_list.rt, show_user_stats.rt
+    write_return_of_report_to_bd.rt, choose_write_category_sender.rt, write_transfer_to_wallet_to_bd.rt,
+    open_nested_menu.rt, change_wallets_list.rt, show_user_stats.rt, get_balance_in_report.rt
 ]
 
 member_routers = [
@@ -66,7 +67,8 @@ async def main():
     #
     # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
     # определить для него ссылки на гугл таблицы и гугл драйв, добавить ему один кошелек в redis_wallets_users и
-    # добавить ему все 3 периода по отчетам в sql periods_stats, также создать папку для чеков в misc (в папку поместить файл)
+    # добавить ему все 3 периода по отчетам в sql periods_stats, также создать папку для чеков в misc
+    # (в папку поместить файл)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot,

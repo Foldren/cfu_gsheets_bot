@@ -77,7 +77,7 @@ async def load_or_pass_load_check(callback: CallbackQuery, state: FSMContext, bo
         'payment_method': selected_bank
     })
 
-    if st_data['sender'] == "me":
+    if st_data['sender'] == "me" and st_data['operation_type'] == 'cost':
         await state.set_state(StepsWriteCategoriesToBd.load_check)
         await callback.message.edit_text(text=text_send_check_photo, reply_markup=cf_keyb_pass_check_load, parse_mode="html")
     else:

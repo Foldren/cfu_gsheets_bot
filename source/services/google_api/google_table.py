@@ -37,7 +37,7 @@ class GoogleTable:
 
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
-        ws = await ss.get_worksheet(0) #worksheet("БД (не редактировать)")
+        ws = await ss.get_worksheet(0)  # worksheet("БД (не редактировать)")
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         queue_items = queue_op.split(" → ")
         menu_item_lvls = [" ", " ", " ", " ", " ", " "]
@@ -104,9 +104,23 @@ class GoogleTable:
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         volume_with_sign = -int(volume_op)
 
-        row_1 = [int(chat_id_worker), "ЮР Лицо", str(frmt_date_time), "Расход", wallet_sender, volume_with_sign, org_name,
+        row_1 = [int(chat_id_worker), "ЮР Лицо", str(frmt_date_time), "Расход", wallet_sender, volume_with_sign,
+                 org_name,
                  "Техническая операция", "Перевод"]
         row_2 = [int(chat_id_worker), "ЮР Лицо", str(frmt_date_time), "Доход", wallet_recipient, volume_op, org_name,
                  "Техническая операция", "Перевод"]
 
         await ws.append_rows([row_1, row_2], value_input_option='USER_ENTERED')
+
+    async def get_balance_in_report_by_fullname(self, table_url: str, chat_id_user: int):
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_url)
+        ws = await ss.worksheet("БД по остаткам в подотчете (не редактировать)")
+        user_balances = await ws.get_all_values()
+        result = []
+
+        for i in range(0, len(user_balances)):
+            if user_balances[i][0] == str(chat_id_user):
+                result.append(user_balances[i][2:])
+
+        return result

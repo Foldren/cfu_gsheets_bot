@@ -1,6 +1,6 @@
 from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
-    ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField
+    ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField
 
 
 class User(Model):
@@ -42,7 +42,7 @@ class NotifyGroup(Model):
     chat_id = BigIntField(pk=True)
     name = TextField(maxlength=200, null=False)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
-                                                        related_name="notify_groups", null=True)
+                                                        related_name="notify_groups", null=False)
     issuance_reports: ReverseRelation['IssuanceReport']
 
     class Meta:
@@ -58,9 +58,9 @@ class IssuanceReport(Model):
     payment_method = TextField(maxlength=100, null=True)
     message_id = BigIntField(null=True)
     user: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
-                                                       related_name="issuance_reports", null=True)
+                                                       related_name="issuance_reports", null=False)
     notify_group: ForeignKeyRelation['NotifyGroup'] = ForeignKeyField('models.NotifyGroup', on_delete=OnDelete.CASCADE,
-                                                       related_name="issuance_reports", null=True)
+                                                       related_name="issuance_reports", null=False)
 
     class Meta:
         table = "issuance_reports"
@@ -77,6 +77,20 @@ class AdminInfo(Model):
 
     class Meta:
         table = "admin_info"
+
+
+class AdminBank(Model):
+    id = IntField(pk=True)
+    admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                        related_name="admin_banks", null=False)
+    name = TextField(maxlength=200, null=False)
+    api_key = TextField(maxlength=500, null=False)
+    number_or_name_account = TextField(maxlength=500, null=True)
+    first_date_load_statement = DateField(null=False)
+    last_date_reload_statement = DateField(null=False)
+
+    class Meta:
+        table = "admin_banks"
 
 
 class PeriodStat(Model):
