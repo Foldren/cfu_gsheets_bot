@@ -17,7 +17,7 @@ class User(Model):
                                                                       related_name="observers",
                                                                       through="period_stat_observers")
     admin_organizations: ReverseRelation["Organization"]
-    workers: ReverseRelation["User"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
+    workers: ReverseRelation["User"]
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
@@ -53,6 +53,9 @@ class Organization(Model):
                                                                            null=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="admin_organizations", null=False)
+    admin_banks: ManyToManyRelation['AdminBank'] = ManyToManyField('models.AdminBank', on_delete=OnDelete.CASCADE,
+                                                                   related_name="organizations",
+                                                                   through="organization_banks")
     observers: ManyToManyRelation['User']
     inn = BigIntField(null=False)
     name = TextField(maxlength=100, null=False)
@@ -60,6 +63,22 @@ class Organization(Model):
 
     class Meta:
         table = "organizations"
+
+
+class AdminBank(Model):
+    id = IntField(pk=True)
+    admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                        related_name="admin_banks", null=False)
+    organizations: ManyToManyRelation['Organization']
+    name = TextField(maxlength=200, null=False)
+    api_key = TextField(maxlength=500, null=False)
+    number_or_name_account = TextField(maxlength=500, null=True)
+    first_date_load_statement = DateField(null=False)
+    last_date_reload_statement = DateField(null=True)
+    status = BooleanField(default=1)
+
+    class Meta:
+        table = "admin_banks"
 
 
 class NotifyGroup(Model):
@@ -101,20 +120,6 @@ class AdminInfo(Model):
 
     class Meta:
         table = "admin_info"
-
-
-class AdminBank(Model):
-    id = IntField(pk=True)
-    admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
-                                                        related_name="admin_banks", null=False)
-    name = TextField(maxlength=200, null=False)
-    api_key = TextField(maxlength=500, null=False)
-    number_or_name_account = TextField(maxlength=500, null=True)
-    first_date_load_statement = DateField(null=False)
-    last_date_reload_statement = DateField(null=True)
-
-    class Meta:
-        table = "admin_banks"
 
 
 class PeriodStat(Model):
