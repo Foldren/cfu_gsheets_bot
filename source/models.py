@@ -16,7 +16,9 @@ class User(Model):
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
                                                                       related_name="observers",
                                                                       through="period_stat_observers")
+    admin_payment_accounts: ReverseRelation['PaymentAccount']
     admin_organizations: ReverseRelation["Organization"]
+    admin_partners: ReverseRelation["Partner"]
     workers: ReverseRelation["User"]
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
@@ -36,7 +38,7 @@ class Category(Model):
                                                              related_name="child_categories", null=True)
     child_categories: ReverseRelation["Category"]  # Связь один ко многим к самому себе (выводим дочерние элементы)
     observers: ManyToManyRelation['User']
-    bank_reload_organizations: ReverseRelation['Organization']
+    bank_reload_partners: ReverseRelation['Partner']
     name = TextField(maxlength=100, null=False)
     status = BooleanField(default=1)
     level = IntField(default=1, null=False)
@@ -47,17 +49,9 @@ class Category(Model):
 
 class Organization(Model):
     id = BigIntField(pk=True)
-    bank_reload_category: ForeignKeyRelation['Category'] = ForeignKeyField('models.Category',
-                                                                           on_delete=OnDelete.SET_NULL,
-                                                                           related_name="bank_reload_organizations",
-                                                                           null=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="admin_organizations", null=False)
-    admin_banks: ManyToManyRelation['AdminBank'] = ManyToManyField('models.AdminBank', on_delete=OnDelete.CASCADE,
-                                                                   related_name="organizations",
-                                                                   through="organization_banks")
     observers: ManyToManyRelation['User']
-    inn = BigIntField(null=False)
     name = TextField(maxlength=100, null=False)
     status = BooleanField(default=1)
 
@@ -65,20 +59,39 @@ class Organization(Model):
         table = "organizations"
 
 
-class AdminBank(Model):
-    id = IntField(pk=True)
+class Partner(Model):
+    id = BigIntField(pk=True)
+    bank_reload_category: ForeignKeyRelation['Category'] = ForeignKeyField('models.Category',
+                                                                           on_delete=OnDelete.SET_NULL,
+                                                                           related_name="bank_reload_partners",
+                                                                           null=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
-                                                        related_name="admin_banks", null=False)
-    organizations: ManyToManyRelation['Organization']
-    name = TextField(maxlength=200, null=False)
+                                                        related_name="admin_partners", null=False)
+    payment_accounts: ManyToManyRelation['PaymentAccount'] = ManyToManyField('models.PaymentAccount',
+                                                                             on_delete=OnDelete.CASCADE,
+                                                                             related_name="partners",
+                                                                             forward_key="payment_account_number",
+                                                                             through="partner_payment_accounts")
+    inn = BigIntField(null=False)
+    name = TextField(maxlength=100, null=False)
+
+    class Meta:
+        table = "partners"
+
+
+class PaymentAccount(Model):
+    number = IntField(pk=True)
+    admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                        related_name="admin_payment_accounts", null=False)
+    partners: ManyToManyRelation['Partner']
+    name_bank = TextField(maxlength=200, null=False)
     api_key = TextField(maxlength=500, null=False)
-    number_or_name_account = TextField(maxlength=500, null=True)
     first_date_load_statement = DateField(null=False)
     last_date_reload_statement = DateField(null=True)
     status = BooleanField(default=1)
 
     class Meta:
-        table = "admin_banks"
+        table = "payment_accounts"
 
 
 class NotifyGroup(Model):

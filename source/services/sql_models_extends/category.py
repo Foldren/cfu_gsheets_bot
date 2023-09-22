@@ -32,10 +32,9 @@ class CategoryExtend:
 
     @staticmethod
     async def get_parent_categories_names(category_id: int):
-        mi1 = await Category.get(id=category_id).prefetch_related()
+        parent = await Category.get(id=category_id).prefetch_related()
         categories_names_list = []
 
-        parent = mi1
         while parent is not None:
             categories_names_list.append(parent.name)
             parent = await parent.parent

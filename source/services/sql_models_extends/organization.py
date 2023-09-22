@@ -68,7 +68,7 @@ class OrganizationExtend:
     async def get_user_organizations(user_chat_id):
         user = await User.filter(chat_id=user_chat_id).first()
         is_admin = user.admin_id is None
-        organizations = await user.organizations.all().values("id", "name", "inn", "status")
+        organizations = await user.organizations.all().values("id", "name", "status")
         result_organizations = []
 
         if is_admin:
@@ -82,7 +82,7 @@ class OrganizationExtend:
 
     @staticmethod
     async def get_admin_organizations(admin_chat_id):
-        return await Organization.filter(admin_id=admin_chat_id).all().values("id", "name", "inn", "status")
+        return await Organization.filter(admin_id=admin_chat_id).all().values("id", "name", "status")
 
     @staticmethod
     async def invert_status(organization: Organization):
