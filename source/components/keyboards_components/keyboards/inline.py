@@ -41,3 +41,9 @@ keyb_end_delete_org = [
         InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_organizations")
     ]
 ]
+
+keyb_get_empty_list_partners = [
+    [
+        InlineKeyboardButton(text="➕", callback_data=f"add_partner")
+    ]
+]

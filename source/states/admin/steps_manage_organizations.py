@@ -15,10 +15,10 @@ class StepsDeleteOrganizations(StatesGroup):
     sure_msg_delete_organizations = State()
 
 
-class StepsChangeOrganization(StatesGroup):
-    start_change_organization = State()
-    change_params_organization = State()
-    change_observers_organization = State()
+# class StepsChangeOrganization(StatesGroup):
+#     start_change_organization = State()
+#     change_params_organization = State()
+#     change_observers_organization = State()
 
 
 

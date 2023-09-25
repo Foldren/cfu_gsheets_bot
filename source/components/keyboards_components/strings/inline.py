@@ -40,3 +40,8 @@ keyb_str_change_observers_org = [
 keyb_str_delete_org = [
     InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_organization")
 ]
+
+keyb_str_get_full_list_partners = [
+    InlineKeyboardButton(text="➕", callback_data=f"add_organization"),
+    InlineKeyboardButton(text="❌", callback_data=f"delete_organizations")
+]

@@ -3,11 +3,13 @@ from aiogram.types import KeyboardButton
 keyb_start_admin = [
     [
         KeyboardButton(text="Сотрудники"),
-        KeyboardButton(text="Отчеты"),
+        KeyboardButton(text="ЮР Лица"),
+        KeyboardButton(text="Категории"),
+
     ],
     [
-        KeyboardButton(text="Категории"),
-        KeyboardButton(text="ЮР Лица"),
+        KeyboardButton(text="Контрагенты"),
+        KeyboardButton(text="Отчеты"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼")
