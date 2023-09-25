@@ -80,10 +80,9 @@ class Bank(Model):
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="admin_banks", null=False)
     payment_accounts: ReverseRelation['PaymentAccount']
-    name = TextField(maxlength=200, null=False)
+    custom_name = TextField(maxlength=200, null=False)
+    bank_name = TextField(maxlength=200, null=False)
     api_key = TextField(maxlength=500, null=False)
-    first_date_load_statement = DateField(null=False)
-    last_date_reload_statement = DateField(null=True)
 
     class Meta:
         table = "banks"
@@ -91,12 +90,14 @@ class Bank(Model):
 
 class PaymentAccount(Model):
     id = BigIntField(pk=True)
-    number = BigIntField()
+    number = TextField(maxlength=50, null=False)
     bank: ForeignKeyRelation['Bank'] = ForeignKeyField('models.Bank', on_delete=OnDelete.CASCADE,
                                                        related_name="payment_accounts", null=False)
     organization: ForeignKeyRelation['Organization'] = ForeignKeyField('models.Organization',
                                                                        on_delete=OnDelete.CASCADE,
                                                                        related_name="payment_accounts", null=False)
+    first_date_load_statement = DateField(null=False)
+    last_date_reload_statement = DateField(null=True)
     status = BooleanField(default=1)
 
     class Meta:

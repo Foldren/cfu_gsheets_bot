@@ -8,7 +8,7 @@ from handlers.admins.manage_categories import get_list_categories, add_category,
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_organizations import get_list_organizations, add_organization, \
     delete_organization
-from handlers.admins.manage_partners import get_list_partners
+from handlers.admins.manage_partners import get_list_partners, add_partner
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, open_nested_menu, show_user_stats
 from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
@@ -28,7 +28,7 @@ admin_routers = [
     start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
     manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organization.rt,
-    get_list_partners.rt
+    get_list_partners.rt, add_partner.rt
 ]
 
 user_routers = [
@@ -66,7 +66,7 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
-    # ЮЗЕР: При добавлении нового админа нужно добавить ему хотя бы один кошелек
+    # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
     # в redis_wallets_users и запись со статусом в redis_status_users
     #
     # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
