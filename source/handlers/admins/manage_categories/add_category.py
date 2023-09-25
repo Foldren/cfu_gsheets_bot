@@ -38,7 +38,7 @@ async def start_add_category(callback: CallbackQuery, state: FSMContext):
 
     # Сохраняем id родительского меню и уровень в стейт
     await state.set_data({
-        'id_category': id_parent_category,
+        'id_parent_category': id_parent_category,
         'text_level': text_lvl,
         'level_category': (category.level + 1) if category is not None else 1
     })
@@ -75,7 +75,7 @@ async def choose_observers_category(message: Message, state: FSMContext):
     # Сохраняем название выбранного пункта и лист статусов пользователей (выбран или нет)
     await state.update_data({
         'list_index_users': list_index_users,
-        'name_new_item': message.text,
+        'name_new_category': message.text,
         'status_list': status_list,
         'users': users,
         'text_level': md['text_level'] + f"<u>Название новой категории</u>: <b>{message.text}</b>\n",
@@ -131,9 +131,9 @@ async def save_add_category(callback: CallbackQuery, state: FSMContext):
     list_id_users.append(callback.message.chat.id)
 
     await CategoryExtend.add(
-        name_category=data_category['name_new_item'],
-        lvl_item=data_category['level_new_menu'],
-        parent_category_id=data_category['id_parent_menu'],
+        name_category=data_category['name_new_category'],
+        lvl_item=data_category['level_category'],
+        parent_category_id=data_category['id_parent_category'],
         observers_id_list=list_id_users
     )
 
