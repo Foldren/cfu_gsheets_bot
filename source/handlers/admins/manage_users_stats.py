@@ -16,7 +16,7 @@ rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
 rt.message.filter(IsAdminFilter() and IsAdminModeFilter(), F.chat.type == "private")
-rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter(), F.message.chat.type == "private")
 
 
 @rt.message(F.text == "Отчеты")

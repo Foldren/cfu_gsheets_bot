@@ -1,6 +1,6 @@
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, BotCommandScopeAllPrivateChats
 from aiogram import Router, Bot, F
 from components.commands import main_commands
 from components.filters import IsUserFilter, IsRegistration
@@ -21,7 +21,7 @@ async def start_user(message: Message, state: FSMContext, bot_object: Bot):
 
     message_text = await get_text_fst_start_user(message.from_user.full_name)
 
-    await bot_object.set_my_commands(main_commands)
+    await bot_object.set_my_commands(commands=main_commands, scope=BotCommandScopeAllPrivateChats())
     await message.answer(message_text, reply_markup=cf_keyb_start_user, parse_mode='html')
 
 

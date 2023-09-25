@@ -17,7 +17,7 @@ rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
 rt.message.filter(IsUserFilter(), IsNotMainMenuMessage(), F.chat.type == "private")
-rt.callback_query.filter(IsUserFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsUserFilter(), F.message.chat.type == "private")
 
 
 @rt.callback_query(StepsWriteCategoriesToBd.set_queue_categories,

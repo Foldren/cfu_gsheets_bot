@@ -17,7 +17,7 @@ rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
 rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage(), F.chat.type == "private")
-rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.message.chat.type == "private")
 
 
 @rt.callback_query(StepsGetPartnersList.get_list_partners, F.data.startswith("add_partner"))

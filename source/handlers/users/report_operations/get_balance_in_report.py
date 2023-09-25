@@ -11,7 +11,7 @@ rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
 rt.message.filter(IsUserFilter(), F.chat.type == "private")
-rt.callback_query.filter(IsUserFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsUserFilter(), F.message.chat.type == "private")
 
 
 @rt.message(F.text == "Остаток в подотчете")

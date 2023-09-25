@@ -13,7 +13,7 @@ rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
 rt.message.filter(IsAdminFilter(), F.chat.type == "private")
-rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.message.chat.type == "private")
 
 
 # Вывод списка пользователей из группы админа
