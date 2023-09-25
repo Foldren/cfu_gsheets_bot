@@ -1,7 +1,7 @@
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram import Router, Bot
+from aiogram import Router, Bot, F
 from components.commands import main_commands
 from components.filters import IsUserFilter, IsRegistration
 from components.keyboards_components.configurations.reply import cf_keyb_start_user
@@ -15,7 +15,7 @@ rt = Router()
 
 
 # Хэндлер на команду /start
-@rt.message(Command(commands=["start", "restart"]), IsUserFilter())
+@rt.message(Command(commands=["start", "restart"]), IsUserFilter(), F.chat.type == "private")
 async def start_user(message: Message, state: FSMContext, bot_object: Bot):
     await state.clear()
 

@@ -12,8 +12,8 @@ from states.admin.steps_manage_users import StepsGetListUsers
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
-rt.callback_query.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
 
 
 # Вывод списка пользователей из группы админа

@@ -16,8 +16,8 @@ from states.user.steps_create_notes_to_bd import StepsWriteCategoriesToBd
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsUserFilter(), IsNotMainMenuMessage())
-rt.callback_query.filter(IsUserFilter())
+rt.message.filter(IsUserFilter(), IsNotMainMenuMessage(), F.chat.type == "private")
+rt.callback_query.filter(IsUserFilter(), F.chat.type == "private")
 
 
 @rt.callback_query(StepsWriteCategoriesToBd.set_queue_categories,

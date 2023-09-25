@@ -15,8 +15,8 @@ from states.admin.steps_manage_users_stats import StepsManageUsersStats
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter() and IsAdminModeFilter())
-rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter())
+rt.message.filter(IsAdminFilter() and IsAdminModeFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter(), F.chat.type == "private")
 
 
 @rt.message(F.text == "Отчеты")

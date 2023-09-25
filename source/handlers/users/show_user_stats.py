@@ -10,7 +10,7 @@ rt = Router()
 
 
 # Хэндлер на команду /start
-@rt.message(F.text == "Отчеты", IsUserFilter())
+@rt.message(F.text == "Отчеты", IsUserFilter(), F.chat.type == "private")
 async def show_user_stats(message: Message, state: FSMContext):
     await state.clear()
 

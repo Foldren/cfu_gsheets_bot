@@ -11,8 +11,8 @@ from services.redis_models.user import RedisUser
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter())
-rt.callback_query.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
 
 
 @rt.message(F.text.in_({'Режим: Админ 👨‍💼', 'Режим: Юзер 🙎‍♂️'}))

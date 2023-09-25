@@ -16,8 +16,8 @@ from states.admin.steps_manage_partners import StepsGetPartnersList
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
-rt.callback_query.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
 
 
 @rt.callback_query(StepsGetPartnersList.get_list_partners, F.data.startswith("add_partner"))

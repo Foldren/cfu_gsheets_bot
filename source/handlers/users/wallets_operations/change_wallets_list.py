@@ -15,8 +15,8 @@ from states.user.steps_change_wallet_list import StepsChangeWalletList
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsUserFilter())
-rt.callback_query.filter(IsUserFilter())
+rt.message.filter(IsUserFilter(), F.chat.type == "private")
+rt.callback_query.filter(IsUserFilter(), F.chat.type == "private")
 
 
 @rt.message(F.text == "Изменить кошельки")

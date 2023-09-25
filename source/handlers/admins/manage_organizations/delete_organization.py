@@ -14,8 +14,8 @@ from states.admin.steps_manage_organizations import StepsGetOrganizationsList, S
 rt = Router()
 
 # Фильтр на проверку категории доступа пользователя
-rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage())
-rt.callback_query.filter(IsAdminFilter())
+rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage(), F.chat.type == "private")
+rt.callback_query.filter(IsAdminFilter(), F.chat.type == "private")
 
 
 @rt.callback_query(StepsGetOrganizationsList.get_list_organizations, F.data.startswith("delete_organizations"))

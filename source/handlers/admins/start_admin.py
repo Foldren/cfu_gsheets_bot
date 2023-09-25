@@ -1,7 +1,7 @@
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram import Router, Bot
+from aiogram import Router, Bot, F
 
 from components.commands import main_commands
 from components.text_generators.admins import get_text_start_admin
@@ -16,7 +16,7 @@ rt.callback_query.filter(IsAdminFilter())
 
 
 # Хэндлер на команду /start
-@rt.message(Command(commands=["start", "restart"]))
+@rt.message(Command(commands=["start", "restart"]), F.chat.type == "private")
 async def start_admin(message: Message, state: FSMContext, bot_object: Bot):
     await state.clear()
 
