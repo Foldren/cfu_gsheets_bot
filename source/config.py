@@ -12,7 +12,7 @@ TOKEN = getenv("LOCAL_TOKEN_BOT") if IS_THIS_LOCAL else env('TOKEN_BOT')
 MYSQL_URL = getenv('MYSQL_URL') if IS_THIS_LOCAL else env("MYSQL_URL")  # getenv для терминала Pycharm
 # К сожалению для миграций придется указывать ссылку напрямую
 AERICH_CONFIG = {
-    "connections": {"default": "mysql://root:KLyXjPfvDL1tKbNHK8_sVwUBrdTFER@158.160.105.173:3306/upravlyaika_db"},
+    "connections": {"default": getenv('MYSQL_URL')},
     "apps": {
         "models": {
             "models": ["source.models", "aerich.models"],

@@ -6,7 +6,7 @@ from components.texts.admins.manage_users import text_start_admin_user
 from components.filters import IsAdminFilter
 from components.keyboards_components.configurations.reply import cf_keyb_start_admin, \
     cf_keyb_start_user_admin
-from services.redis_models.user import RedisUser
+from microservices.redis_models.user import RedisUser
 
 rt = Router()
 

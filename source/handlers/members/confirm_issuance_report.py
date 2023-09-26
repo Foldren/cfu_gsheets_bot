@@ -4,9 +4,9 @@ from aiogram.types import CallbackQuery
 from components.filters import IsConfirmFromNecUser
 from components.tools import get_callb_content
 from components.texts.users.write_issuance_of_report_to_bd import text_confirm_issuance_report
-from services.google_api.google_table import GoogleTable
-from services.sql_models_extends.issuance_report import IssuanceReportExtend
-from services.sql_models_extends.user import UserExtend
+from microservices.google_api.google_table import GoogleTable
+from microservices.sql_models_extends.issuance_report import IssuanceReportExtend
+from microservices.sql_models_extends.user import UserExtend
 
 rt = Router()
 

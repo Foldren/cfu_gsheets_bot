@@ -6,7 +6,7 @@ from components.keyboards_components.configurations.reply import cf_keyb_start_u
     cf_keyb_start_user_admin, cf_keyb_operation_under_stats, cf_keyb_wallets
 from components.texts.users.change_menu import text_open_under_stats_menu, text_open_wallets_menu, \
     text_back_to_main_menu
-from services.sql_models_extends.user import UserExtend
+from microservices.sql_models_extends.user import UserExtend
 
 rt = Router()
 

@@ -9,12 +9,12 @@ from components.texts.users.write_issuance_of_report_to_bd import text_start_iss
     text_set_volume_issuance, text_select_payment_method_issuance, text_no_notify_groups, \
     text_select_notify_group_issuance, text_end_issuance
 from components.tools import get_callb_content
-from services.redis_models.user import RedisUser
-from services.redis_models.wallets import RedisUserWallets
-from services.sql_models_extends.issuance_report import IssuanceReportExtend
-from services.sql_models_extends.notify_group import NotifyGroupExtend
-from services.sql_models_extends.organization import OrganizationExtend
-from services.sql_models_extends.user import UserExtend
+from microservices.redis_models.user import RedisUser
+from microservices.redis_models.wallets import RedisUserWallets
+from microservices.sql_models_extends.issuance_report import IssuanceReportExtend
+from microservices.sql_models_extends.notify_group import NotifyGroupExtend
+from microservices.sql_models_extends.organization import OrganizationExtend
+from microservices.sql_models_extends.user import UserExtend
 from states.user.steps_create_notes_to_bd import StepsWriteIssuanceReport
 
 rt = Router()

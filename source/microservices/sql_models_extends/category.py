@@ -106,3 +106,7 @@ class CategoryExtend:
     async def delete_categories_by_ids(ids_categories_list: list):
         await Category.filter(id__in=ids_categories_list).delete()
 
+    @staticmethod
+    async def get_admin_lower_categories_by_id(admin_id):
+        return await Category.filter(observers__chat_id__contains=admin_id, child_categories=None).all()
+

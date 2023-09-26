@@ -8,7 +8,7 @@
 #     text_change_name_organization, text_end_change_organization, text_choose_observers_organization, \
 #     text_end_change_observers_organization
 # from components.tools import get_callb_content, generate_observers_list, get_msg_list_data
-# from services.sql_models_extends.organization import OrganizationExtend
+# from microservices.sql_models_extends.organization import OrganizationExtend
 # from states.admin.steps_manage_organizations import StepsGetOrganizationsList, StepsChangeOrganization
 #
 # rt = Router()

@@ -2,10 +2,10 @@ from aiogram.filters import BaseFilter
 from aiogram.types import Message, ChatMemberUpdated
 from components.tools import get_callb_content
 from config import MAIN_MENU_MSGS
-from services.sql_models_extends.issuance_report import IssuanceReportExtend
-from services.sql_models_extends.notify_group import NotifyGroupExtend
-from services.redis_models.registrations import RedisRegistration
-from services.redis_models.user import RedisUser
+from microservices.sql_models_extends.issuance_report import IssuanceReportExtend
+from microservices.sql_models_extends.notify_group import NotifyGroupExtend
+from microservices.redis_models.registrations import RedisRegistration
+from microservices.redis_models.user import RedisUser
 
 
 class IsAdminFilter(BaseFilter):

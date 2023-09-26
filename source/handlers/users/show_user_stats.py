@@ -4,7 +4,7 @@ from aiogram.types import Message
 from components.filters import IsUserFilter
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.show_user_stats import text_success_show_stats, text_no_shares_show_stats
-from services.sql_models_extends.user import UserExtend
+from microservices.sql_models_extends.user import UserExtend
 
 rt = Router()
 

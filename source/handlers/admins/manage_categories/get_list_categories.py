@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F
 from components.filters import IsAdminFilter
 from components.texts.admins.manage_categories import text_get_list_categories
-from services.sql_models_extends.category import CategoryExtend
+from microservices.sql_models_extends.category import CategoryExtend
 from components.tools import get_msg_queue, \
     get_callb_content, get_str_format_queue
 from components.keyboards_components.generators import get_inline_keyb_markup, get_inline_keyb_markup_empty, \

@@ -9,11 +9,21 @@ from aiogram.types import InlineKeyboardMarkup, Message
 from components.keyboards_components.generators import get_gt_url_keyb_markup
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
 from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA
-from services.sql_models_extends.category import CategoryExtend
-from services.sql_models_extends.notify_group import NotifyGroupExtend
-from services.sql_models_extends.user import UserExtend
-from services.google_api.google_drive import GoogleDrive
-from services.google_api.google_table import GoogleTable
+from microservices.sql_models_extends.category import CategoryExtend
+from microservices.sql_models_extends.notify_group import NotifyGroupExtend
+from microservices.sql_models_extends.user import UserExtend
+from microservices.google_api.google_drive import GoogleDrive
+from microservices.google_api.google_table import GoogleTable
+
+
+async def get_emoji_number(number):
+    numbers = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
+    emoji_number = ""
+
+    for i in range(0, len(str(number))):
+        emoji_number += numbers[int(str(number)[i])]
+
+    return emoji_number
 
 
 # Получить текст с очередью элементов и уровнем в эмоджи
@@ -125,6 +135,12 @@ async def get_sure_delete_usr_msg(list_users: list):
     return f"Вы уверены что хотите забрать доступ у:\n<b>{', '.join(str(u) for u in list_users)}</b> ❓\n\n" \
            f"При удалении исчезнут все определенные пользователям права видимости к определенным пунктам меню, " \
            f"а доступ пользователей к боту будет анулирован 🤔‼️"
+
+
+async def get_sure_delete_partner_msg(list_partners: list):
+    return f"Вы уверены, что хотите удалить контрагентов:\n<b>{', '.join(str(p) for p in list_partners)}</b> ❓\n\n" \
+           f"При удалении исчезнут связи контрагентов с категориями и операции из выписок банков перестанут" \
+           f"распределяться в вашей таблице 🤔‼️"
 
 
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):

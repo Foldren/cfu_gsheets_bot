@@ -8,11 +8,23 @@ keyb_start_admin = [
 
     ],
     [
-        KeyboardButton(text="Контрагенты"),
+        KeyboardButton(text="Интеграция с банками"),
         KeyboardButton(text="Отчеты"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼")
+    ]
+]
+keyb_operation_integration_banks = [
+    [
+        KeyboardButton(text="Контрагенты"),
+        KeyboardButton(text="Банки"),
+    ],
+    [
+        KeyboardButton(text="Расчётные счета")
+    ],
+    [
+        KeyboardButton(text="⬅️ Назад в главное меню")
     ]
 ]
 keyb_start_user = [

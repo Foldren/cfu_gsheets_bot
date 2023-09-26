@@ -10,13 +10,13 @@ from components.texts.users.write_transfer_to_wallet_to_bd import text_set_volum
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
 from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
 from config import BANKS_UPRAVLYAIKA
-from services.google_api.google_table import GoogleTable
-from services.sql_models_extends.category import CategoryExtend
-from services.sql_models_extends.notify_group import NotifyGroupExtend
-from services.sql_models_extends.organization import OrganizationExtend
-from services.sql_models_extends.user import UserExtend
-from services.redis_models.user import RedisUser
-from services.redis_models.wallets import RedisUserWallets
+from microservices.google_api.google_table import GoogleTable
+from microservices.sql_models_extends.category import CategoryExtend
+from microservices.sql_models_extends.notify_group import NotifyGroupExtend
+from microservices.sql_models_extends.organization import OrganizationExtend
+from microservices.sql_models_extends.user import UserExtend
+from microservices.redis_models.user import RedisUser
+from microservices.redis_models.wallets import RedisUserWallets
 from states.user.steps_create_notes_to_bd import StepsWriteTransfer
 
 rt = Router()

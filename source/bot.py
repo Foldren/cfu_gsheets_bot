@@ -3,12 +3,12 @@ import logging
 from aiogram import Bot, Dispatcher
 from aioredis import from_url
 from tortoise import run_async
-from handlers.admins import start_admin, change_mode, manage_users_stats
+from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_organizations import get_list_organizations, add_organization, \
-    delete_organization
-from handlers.admins.manage_partners import get_list_partners, add_partner
+    delete_organizations
+from handlers.admins.manage_partners import get_list_partners, add_partner, delete_partners
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, open_nested_menu, show_user_stats
 from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
@@ -18,23 +18,24 @@ from handlers.users.categories_operations import browse_categories, write_chosen
     choose_write_category_sender
 from handlers.members import check_events_notification_groups, confirm_issuance_report
 from init_db import init_db
-from services.google_api.google_drive import GoogleDrive
-from services.google_api.google_table import GoogleTable
-from services.redis_models.registrations import RedisRegistration
-from services.redis_models.user import RedisUser
-from services.redis_models.wallets import RedisUserWallets
+from microservices.google_api.google_drive import GoogleDrive
+from microservices.google_api.google_table import GoogleTable
+from microservices.redis_models.registrations import RedisRegistration
+from microservices.redis_models.user import RedisUser
+from microservices.redis_models.wallets import RedisUserWallets
 
 admin_routers = [
     start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
-    manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organization.rt,
-    get_list_partners.rt, add_partner.rt
+    manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organizations.rt,
+    get_list_partners.rt, add_partner.rt, delete_partners.rt
 ]
 
 user_routers = [
     start_user.rt, browse_categories.rt, write_chosen_category_to_bd.rt, write_issuance_of_report_to_bd.rt,
     write_return_of_report_to_bd.rt, choose_write_category_sender.rt, write_transfer_to_wallet_to_bd.rt,
-    open_nested_menu.rt, change_wallets_list.rt, show_user_stats.rt, get_balance_in_report.rt
+    open_nested_menu.rt, change_wallets_list.rt, show_user_stats.rt, get_balance_in_report.rt,
+    open_admin_nested_menu.rt
 ]
 
 member_routers = [

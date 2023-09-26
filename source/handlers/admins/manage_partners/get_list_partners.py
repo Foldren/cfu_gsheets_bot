@@ -6,7 +6,7 @@ from components.keyboards_components.configurations.inline import cf_keyb_get_em
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.keyboards_components.strings.inline import keyb_str_get_full_list_partners
 from components.texts.admins.manage_partners import text_get_list_partners
-from services.sql_models_extends.partner import PartnerExtend
+from microservices.sql_models_extends.partner import PartnerExtend
 from states.admin.steps_manage_partners import StepsGetPartnersList
 
 rt = Router()

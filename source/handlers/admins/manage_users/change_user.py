@@ -6,7 +6,7 @@ from components.texts.admins.manage_users import text_get_id_user, text_invalid_
     text_change_user, text_end_change_user, text_end_change_id_user
 from components.tools import get_callb_content, get_msg_user_data, set_memory_data, get_memory_data
 from components.keyboards_components.generators import get_inline_users_keyb_markup, get_inline_keyb_change_user
-from services.sql_models_extends.user import UserExtend
+from microservices.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users import StepsGetListUsers, StepsChangeUser
 
 rt = Router()

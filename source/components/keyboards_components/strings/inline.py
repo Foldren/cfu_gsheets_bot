@@ -42,6 +42,10 @@ keyb_str_delete_org = [
 ]
 
 keyb_str_get_full_list_partners = [
-    InlineKeyboardButton(text="➕", callback_data=f"add_organization"),
-    InlineKeyboardButton(text="❌", callback_data=f"delete_organizations")
+    InlineKeyboardButton(text="➕", callback_data=f"add_partner"),
+    InlineKeyboardButton(text="❌", callback_data=f"delete_partners")
+]
+
+keyb_str_delete_partner = [
+    InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_partner")
 ]

@@ -8,8 +8,8 @@ from components.texts.admins.manage_users import text_start_delete_users
 from components.texts.admins.manage_categories import text_stop_delete_u, text_end_delete_u
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_usr_msg
 from components.keyboards_components.generators import get_inline_keyb_markup
-from services.sql_models_extends.user import UserExtend
-from services.redis_models.user import RedisUser
+from microservices.sql_models_extends.user import UserExtend
+from microservices.redis_models.user import RedisUser
 from states.admin.steps_manage_categories import StepsDeleteCategories
 from states.admin.steps_manage_users import StepsGetListUsers, StepsDeleteUser
 

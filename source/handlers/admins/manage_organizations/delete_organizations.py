@@ -8,7 +8,7 @@ from components.keyboards_components.strings.inline import keyb_str_delete_org
 from components.texts.admins.manage_organizations import text_start_delete_organizations, \
     text_stop_delete_organizations, text_end_delete_organizations
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_org_msg
-from services.sql_models_extends.organization import OrganizationExtend
+from microservices.sql_models_extends.organization import OrganizationExtend
 from states.admin.steps_manage_organizations import StepsGetOrganizationsList, StepsDeleteOrganizations
 
 rt = Router()

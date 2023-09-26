@@ -47,3 +47,10 @@ keyb_get_empty_list_partners = [
         InlineKeyboardButton(text="➕", callback_data=f"add_partner")
     ]
 ]
+
+keyb_end_delete_partners = [
+    [
+        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_partners"),
+        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_partners")
+    ]
+]

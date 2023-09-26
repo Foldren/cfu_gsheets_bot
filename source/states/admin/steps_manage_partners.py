@@ -7,6 +7,7 @@ class StepsGetPartnersList(StatesGroup):
 
 class StepsAddPartner(StatesGroup):
     start_add_partner = State()
+    select_bank_reload_category = State()
 
 
 class StepsDeletePartners(StatesGroup):

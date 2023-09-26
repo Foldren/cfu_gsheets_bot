@@ -6,10 +6,10 @@ from components.commands import main_commands
 from components.filters import IsUserFilter, IsRegistration
 from components.keyboards_components.configurations.reply import cf_keyb_start_user
 from components.text_generators.users import get_text_fst_start_user, get_text_start_user
-from services.sql_models_extends.user import UserExtend
-from services.redis_models.registrations import RedisRegistration
-from services.redis_models.user import RedisUser
-from services.redis_models.wallets import RedisUserWallets
+from microservices.sql_models_extends.user import UserExtend
+from microservices.redis_models.registrations import RedisRegistration
+from microservices.redis_models.user import RedisUser
+from microservices.redis_models.wallets import RedisUserWallets
 
 rt = Router()
 
