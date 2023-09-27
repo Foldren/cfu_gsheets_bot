@@ -156,3 +156,11 @@ async def get_confirm_issuance_keyb_button(id_issuance_report: int):
         ]
     ]
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+async def get_keyb_str_manage_payment_accounts(bank_id):
+    return [
+        InlineKeyboardButton(text="⬅️", callback_data=f"back_to_banks"),
+        InlineKeyboardButton(text="➕", callback_data=f"add_payment_account:{bank_id}"),
+        InlineKeyboardButton(text="❌", callback_data=f"delete_payment_accounts")
+    ]

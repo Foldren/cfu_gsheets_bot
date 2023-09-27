@@ -143,6 +143,12 @@ async def get_sure_delete_partner_msg(list_partners: list):
            f"распределяться в вашей таблице 🤔‼️"
 
 
+async def get_sure_delete_banks_msg(list_banks: list):
+    return f"Вы уверены, что хотите удалить банки:\n<b>{', '.join(str(b) for b in list_banks)}</b> ❓\n\n" \
+           f"При удалении исчезнут также расчетные счета, привязанные к этим банкам, а операции из выписок " \
+           f"этих банков перестанут распределяться в вашей таблице 🤔‼️"
+
+
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):
     if flag_answer:
         message = await message.answer(

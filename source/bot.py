@@ -4,11 +4,13 @@ from aiogram import Bot, Dispatcher
 from aioredis import from_url
 from tortoise import run_async
 from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu
+from handlers.admins.manage_banks import get_list_banks, add_bank, delete_banks
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from config import TOKEN, REDIS_URL
 from handlers.admins.manage_organizations import get_list_organizations, add_organization, \
     delete_organizations
 from handlers.admins.manage_partners import get_list_partners, add_partner, delete_partners
+from handlers.admins.manage_payment_accounts import get_list_payment_accounts, add_payment_account
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.users import start_user, open_nested_menu, show_user_stats
 from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
@@ -28,7 +30,8 @@ admin_routers = [
     start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
     manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organizations.rt,
-    get_list_partners.rt, add_partner.rt, delete_partners.rt
+    get_list_partners.rt, add_partner.rt, delete_partners.rt, get_list_banks.rt, add_bank.rt, delete_banks.rt,
+    get_list_payment_accounts.rt, add_payment_account.rt
 ]
 
 user_routers = [

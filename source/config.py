@@ -22,6 +22,11 @@ AERICH_CONFIG = {
 }  # "connections": {"default": "sqlite://source/upravlyaika.db"},
 MEMORY_STORAGE = MemoryStorage()
 BANKS_UPRAVLYAIKA = ["Точка", "Модуль", "Сбер", "Тинькофф", "Альфа", "Наличные", "Другой"]
+BANKS_RUS_NAMES = {
+    'tinkoff': 'Тинькофф',
+    'module': 'Модуль',
+    'tochka': 'Точка',
+}
 STATS_UPRAVLYAIKA = ["Ежедневный", "Еженедельный", "Ежемесячный"]
 NAME_GOOGLE_TABLE_BD_LIST = "БД (не редактировать)"
 NAME_GOOGLE_TABLE_ACCOUNTING_LIST = "Учёт"

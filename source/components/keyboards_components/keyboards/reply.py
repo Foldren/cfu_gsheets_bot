@@ -18,10 +18,7 @@ keyb_start_admin = [
 keyb_operation_integration_banks = [
     [
         KeyboardButton(text="Контрагенты"),
-        KeyboardButton(text="Банки"),
-    ],
-    [
-        KeyboardButton(text="Расчётные счета")
+        KeyboardButton(text="Банки и расчётные счета"),
     ],
     [
         KeyboardButton(text="⬅️ Назад в главное меню")

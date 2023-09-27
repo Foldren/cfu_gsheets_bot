@@ -54,3 +54,23 @@ keyb_end_delete_partners = [
         InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_partners")
     ]
 ]
+
+keyb_get_empty_list_banks = [
+    [
+        InlineKeyboardButton(text="➕", callback_data=f"add_bank")
+    ]
+]
+
+keyb_end_delete_banks = [
+    [
+        InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_banks"),
+        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_banks")
+    ]
+]
+
+keyb_get_empty_list_payment_accounts = [
+    [
+        InlineKeyboardButton(text="⬅️", callback_data=f"back_to_banks"),
+        InlineKeyboardButton(text="➕", callback_data=f"add_payment_account")
+    ]
+]

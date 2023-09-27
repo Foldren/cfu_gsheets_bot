@@ -49,3 +49,13 @@ keyb_str_get_full_list_partners = [
 keyb_str_delete_partner = [
     InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_partner")
 ]
+
+keyb_str_get_full_list_banks = [
+    InlineKeyboardButton(text="➕", callback_data=f"add_bank"),
+    InlineKeyboardButton(text="❌", callback_data=f"delete_banks")
+]
+
+keyb_str_delete_banks = [
+    InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_banks")
+]
+
