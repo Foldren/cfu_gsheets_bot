@@ -26,8 +26,7 @@ async def get_partners_list(message: Message, state: FSMContext):
     if partners:
         keyboard = await get_inline_keyb_markup(
             list_names=[f'{p["name"]}  -  {p["inn"]}' for p in partners],
-            list_data=[p["id"] for p in partners],
-            callback_str="empty",
+            callback_str="disabled_inline_btn",
             number_cols=1,
             add_keyb_to_start=keyb_str_get_full_list_partners
         )

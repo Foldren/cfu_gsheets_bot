@@ -1,15 +1,15 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-async def get_inline_keyb_markup(list_names: list, list_data: list, callback_str: str, number_cols: int,
+async def get_inline_keyb_markup(callback_str: str, number_cols: int, list_names: list, list_data: list = None,
                                  urls_list: str = None, add_keyb_to_start=None):
     keyboard: list = [[]]
-
     number_str_keyboard = 0
-    for i in range(0, len(list_data)):
+
+    for i in range(0, len(list_names)):
         keyboard[number_str_keyboard].append(InlineKeyboardButton(
             text=list_names[i],
-            callback_data=f"{callback_str}:{list_data[i]}",
+            callback_data=f"{callback_str}:{list_data[i]}" if list_data is not None else callback_str,
             url=urls_list[i] if urls_list is not None else None))
         if ((i + 1) % number_cols) == 0:
             number_str_keyboard += 1
@@ -162,5 +162,5 @@ async def get_keyb_str_manage_payment_accounts(bank_id):
     return [
         InlineKeyboardButton(text="⬅️", callback_data=f"back_to_banks"),
         InlineKeyboardButton(text="➕", callback_data=f"add_payment_account:{bank_id}"),
-        InlineKeyboardButton(text="❌", callback_data=f"delete_payment_accounts")
+        InlineKeyboardButton(text="❌", callback_data=f"delete_payment_accounts:{bank_id}")
     ]

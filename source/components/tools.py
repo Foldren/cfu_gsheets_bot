@@ -149,6 +149,12 @@ async def get_sure_delete_banks_msg(list_banks: list):
            f"этих банков перестанут распределяться в вашей таблице 🤔‼️"
 
 
+async def get_sure_delete_payment_account_msg(list_partners: list):
+    return f"Вы уверены, что хотите удалить расчётные счета:\n<b>{', '.join(str(p) for p in list_partners)}</b> ❓\n\n" \
+           f"При удалении исчезнут связи ЮР Лиц с выбранными расчётными счётами, а операции из выписок банков перестанут " \
+           f"подгружаться из выбранных счётов 🤔‼️"
+
+
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):
     if flag_answer:
         message = await message.answer(

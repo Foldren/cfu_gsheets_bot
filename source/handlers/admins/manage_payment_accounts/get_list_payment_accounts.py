@@ -39,8 +39,7 @@ async def get_payment_accounts_list(callback: CallbackQuery, state: FSMContext):
 
         keyboard = await get_inline_keyb_markup(
             list_names=list_button_names,
-            list_data=[p.id for p in payment_accounts],
-            callback_str="empty",
+            callback_str="disabled_inline_btn",
             number_cols=1,
             add_keyb_to_start=await get_keyb_str_manage_payment_accounts(selected_bank_id)
         )

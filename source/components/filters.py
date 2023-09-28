@@ -47,12 +47,15 @@ class IsSenderGroupExistFilter(BaseFilter):
 class IsConfirmFromNecUser(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         user_id = message.from_user.id
-        id_report = await get_callb_content(message.data)
+        try:
+            id_report = await get_callb_content(message.data)
 
-        return await IssuanceReportExtend.check_issuance_report_by_id(
-            recipient_id=user_id,
-            id_issuance_report=id_report
-        )
+            return await IssuanceReportExtend.check_issuance_report_by_id(
+                recipient_id=user_id,
+                id_issuance_report=id_report
+            )
+        except Exception:
+            return False
 
 
 class IsNotMainMenuMessage(BaseFilter):

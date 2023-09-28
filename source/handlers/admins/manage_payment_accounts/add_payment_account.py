@@ -19,7 +19,7 @@ rt.callback_query.filter(IsAdminFilter(), F.message.chat.type == "private")
 
 
 @rt.callback_query(StepsGetPaymentAccountsList.get_payment_accounts_list, F.data.startswith("add_payment_account"))
-async def start_add_partner(callback: CallbackQuery, state: FSMContext):
+async def start_add_payment_account(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await get_callb_content(callback.data)
     await state.set_data({'bank_id': await get_callb_content(callback.data)})

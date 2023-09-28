@@ -26,8 +26,7 @@ async def get_organizations_list(message: Message, state: FSMContext):
     if organizations:
         keyboard = await get_inline_keyb_markup(
             list_names=[(e["name"] + ("  💤" if e["status"] == 0 else "")) for e in organizations],
-            list_data=[e["id"] for e in organizations],
-            callback_str="empty",  # change_organization
+            callback_str="disabled_inline_btn",
             number_cols=2,
             add_keyb_to_start=keyb_str_get_full_list_organizations
         )
