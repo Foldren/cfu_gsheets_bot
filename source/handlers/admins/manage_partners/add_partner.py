@@ -17,7 +17,7 @@ rt.message.filter(IsAdminFilter(), IsNotMainMenuMessage(), F.chat.type == "priva
 rt.callback_query.filter(IsAdminFilter(), F.message.chat.type == "private")
 
 
-@rt.callback_query(StepsGetPartnersList.get_list_partners, F.data.startswith("add_partner"))
+@rt.callback_query(StepsGetPartnersList.get_list_partners, F.data.startswith("add_partners"))
 async def start_add_partner(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsAddPartner.start_add_partner)

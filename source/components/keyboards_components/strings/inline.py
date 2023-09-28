@@ -42,7 +42,7 @@ keyb_str_delete_org = [
 ]
 
 keyb_str_get_full_list_partners = [
-    InlineKeyboardButton(text="➕", callback_data=f"add_partner"),
+    InlineKeyboardButton(text="➕", callback_data=f"add_partners"),
     InlineKeyboardButton(text="❌", callback_data=f"delete_partners")
 ]
 
