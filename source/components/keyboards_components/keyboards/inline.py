@@ -68,13 +68,6 @@ keyb_end_delete_banks = [
     ]
 ]
 
-keyb_get_empty_list_payment_accounts = [
-    [
-        InlineKeyboardButton(text="⬅️", callback_data=f"back_to_banks"),
-        InlineKeyboardButton(text="➕", callback_data=f"add_payment_account")
-    ]
-]
-
 keyb_end_delete_payment_accounts = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_payment_accounts"),

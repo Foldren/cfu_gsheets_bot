@@ -5,7 +5,7 @@ from components.texts.admins.manage_user_stats import text_start_manage_stats, t
     text_end_change_observers_p_stats
 from components.filters import IsAdminFilter, IsAdminModeFilter
 from components.keyboards_components.strings.inline import keyb_str_change_observers_ps
-from components.tools import get_callb_content, generate_observers_list
+from components.tools import get_callb_content, generate_observers_list, answer_or_edit_message
 from components.keyboards_components.generators import get_inline_keyb_markup
 from config import STATS_UPRAVLYAIKA
 from microservices.sql_models_extends.period_stat import PeriodStatExtend
@@ -20,7 +20,7 @@ rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter(), F.message.chat
 
 
 @rt.message(F.text == "Отчеты")
-async def start_manage_users_stats(message: Message, state: FSMContext):
+async def start_manage_users_stats(message: Message, state: FSMContext, answer_or_edit_msg: bool = True):
     await state.clear()
     await state.set_state(StepsManageUsersStats.choose_stats_period)
 
@@ -31,7 +31,12 @@ async def start_manage_users_stats(message: Message, state: FSMContext):
         number_cols=3
     )
 
-    await message.answer(text=text_start_manage_stats, reply_markup=keyboard_stats, parse_mode="html")
+    await answer_or_edit_message(
+        message=message,
+        text=text_start_manage_stats,
+        keyboard=keyboard_stats,
+        flag_answer=answer_or_edit_msg
+    )
 
 
 @rt.callback_query(StepsManageUsersStats.choose_stats_period, F.data.startswith("choose_stats_period"))
@@ -127,7 +132,5 @@ async def end_change_observers_menu_item(callback: CallbackQuery, state: FSMCont
         observers_id_list=list_id_users
     )
 
-    await callback.message.edit_text(
-        text=text_end_change_observers_p_stats,
-        parse_mode="html"
-    )
+    await callback.answer(text=text_end_change_observers_p_stats)
+    await start_manage_users_stats(message=callback.message, state=state, answer_or_edit_msg=False)

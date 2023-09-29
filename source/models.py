@@ -68,7 +68,7 @@ class Partner(Model):
                                                                            null=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="admin_partners", null=False)
-    inn = BigIntField(null=False)
+    inn = TextField(maxlength=100, null=False)
     name = TextField(maxlength=100, null=False)
 
     class Meta:

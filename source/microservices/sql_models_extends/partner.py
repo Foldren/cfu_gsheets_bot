@@ -5,7 +5,7 @@ class PartnerExtend:
     __slots__ = {}
 
     @staticmethod
-    async def add(name: str, inn: int, bank_reload_category_id: int, admin_id: int):
+    async def add(name: str, inn: str, bank_reload_category_id: int, admin_id: int):
         await Partner.create(
             name=name,
             inn=inn,

@@ -164,3 +164,12 @@ async def get_keyb_str_manage_payment_accounts(bank_id):
         InlineKeyboardButton(text="➕", callback_data=f"add_payment_account:{bank_id}"),
         InlineKeyboardButton(text="❌", callback_data=f"delete_payment_accounts:{bank_id}")
     ]
+
+
+async def get_keyb_empty_list_payment_accounts(bank_id):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="⬅️", callback_data=f"back_to_banks"),
+            InlineKeyboardButton(text="➕", callback_data=f"add_payment_account:{bank_id}")
+        ]
+    ])

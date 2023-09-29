@@ -2,8 +2,8 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter
-from components.keyboards_components.configurations.inline import cf_keyb_get_empty_list_payment_accounts
-from components.keyboards_components.generators import get_inline_keyb_markup, get_keyb_str_manage_payment_accounts
+from components.keyboards_components.generators import get_inline_keyb_markup, get_keyb_str_manage_payment_accounts, \
+    get_keyb_empty_list_payment_accounts
 from components.texts.admins.manage_payment_accounts import text_get_list_payment_accounts
 from components.tools import get_callb_content
 from config import BANKS_RUS_NAMES
@@ -44,7 +44,7 @@ async def get_payment_accounts_list(callback: CallbackQuery, state: FSMContext):
             add_keyb_to_start=await get_keyb_str_manage_payment_accounts(selected_bank_id)
         )
     else:
-        keyboard = cf_keyb_get_empty_list_payment_accounts
+        keyboard = await get_keyb_empty_list_payment_accounts(selected_bank_id)
 
     await callback.message.edit_text(
         text=text_info_bank + text_get_list_payment_accounts,
