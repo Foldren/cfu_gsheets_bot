@@ -3,13 +3,15 @@ from aiogram.types import ChatMemberUpdated
 from aiogram import Router, F
 from components.filters import IsSenderMemberFilter, IsSenderGroupExistFilter
 from components.texts.users.check_events_notifications_group import text_success_join_bot_to_group
+from config import TECHNICAL_SUPPORT_GROUP_CHAT_ID
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 
 rt = Router()
 
 
-@rt.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER), IsSenderMemberFilter(), F.chat.type == "group")
+@rt.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER), IsSenderMemberFilter(),
+                   F.chat.type == "group", F.chat.id != TECHNICAL_SUPPORT_GROUP_CHAT_ID)
 async def join_to_notification_group(event: ChatMemberUpdated):
     current_user = await UserExtend.get_by_id(event.from_user.id)
     admin = await current_user.admin
@@ -22,6 +24,7 @@ async def join_to_notification_group(event: ChatMemberUpdated):
 
 
 # Удаляем связь админа с группой в случае если бота кикнут
-@rt.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT), IsSenderGroupExistFilter(), F.chat.type == "group")
+@rt.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT), IsSenderGroupExistFilter(),
+                   F.chat.type == "group", F.chat.id != TECHNICAL_SUPPORT_GROUP_CHAT_ID)
 async def kicked_from_notification_group(event: ChatMemberUpdated):
     await NotifyGroupExtend.detach_group_from_admin(event.chat.id)

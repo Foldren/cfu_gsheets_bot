@@ -1,6 +1,7 @@
 from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
-    ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField
+    ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField, \
+    CharField
 
 
 class User(Model):
@@ -68,7 +69,7 @@ class Partner(Model):
                                                                            null=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="admin_partners", null=False)
-    inn = TextField(maxlength=100, null=False)
+    inn = CharField(max_length=100, null=False, unique=True)
     name = TextField(maxlength=100, null=False)
 
     class Meta:

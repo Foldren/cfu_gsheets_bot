@@ -12,7 +12,8 @@ keyb_start_admin = [
         KeyboardButton(text="Отчеты"),
     ],
     [
-        KeyboardButton(text="Режим: Админ 👨‍💼")
+        KeyboardButton(text="Режим: Админ 👨‍💼"),
+        KeyboardButton(text="Тех. Поддержка")
     ]
 ]
 keyb_operation_integration_banks = [
@@ -31,7 +32,8 @@ keyb_start_user = [
     ],
     [
         KeyboardButton(text="Кошельки"),
-        KeyboardButton(text="Отчеты")
+        KeyboardButton(text="Отчеты"),
+        KeyboardButton(text="Тех. Поддержка"),
     ]
 ]
 keyb_start_user_admin = [
@@ -45,7 +47,8 @@ keyb_start_user_admin = [
         KeyboardButton(text="Отчеты")
     ],
     [
-        KeyboardButton(text="Режим: Юзер 🙎‍♂️")
+        KeyboardButton(text="Режим: Юзер 🙎‍♂️"),
+        KeyboardButton(text="Тех. Поддержка")
     ]
 ]
 keyb_operation_under_stats = [

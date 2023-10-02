@@ -4,10 +4,12 @@ from aiogram.types import CallbackQuery, Message
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.admins.manage_partners import text_start_add_partner, text_end_add_partner, \
-    text_select_bank_reload_category
+    text_select_bank_reload_category, text_start_distribute_statement_operations
 from components.tools import get_msg_list_data, get_emoji_number, get_callb_content
+from microservices.google_api.google_table import GoogleTable
 from microservices.sql_models_extends.category import CategoryExtend
 from microservices.sql_models_extends.partner import PartnerExtend
+from microservices.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_partners import StepsGetPartnersList, StepsAddPartner
 
 rt = Router()
@@ -57,9 +59,23 @@ async def select_bank_reload_category(message: Message, state: FSMContext):
 
 
 @rt.callback_query(StepsAddPartner.select_bank_reload_category, F.data.startswith("selected_category_for_partner"))
-async def end_add_partner(callback: CallbackQuery, state: FSMContext):
+async def end_add_partner(callback: CallbackQuery, state: FSMContext, gt_object: GoogleTable):
     selected_category_p_id = await get_callb_content(callback.data)
     st_data = await state.get_data()
+
+    list_queue_categories = await CategoryExtend.get_parent_categories_names(selected_category_p_id)
+
+    await callback.message.edit_text(text=text_start_distribute_statement_operations, parse_mode="html")
+
+    admin = await UserExtend.get_by_id(callback.message.chat.id)
+    admin_info = await admin.admin_info
+
+    await gt_object.distribute_statement_operations(
+        table_url=admin_info.google_table_url,
+        inn_partner=st_data['inn_new_partner'],
+        name_partner=st_data['name_new_partner'],
+        list_queue_category=list_queue_categories,
+    )
 
     await PartnerExtend.add(
         inn=st_data['inn_new_partner'],

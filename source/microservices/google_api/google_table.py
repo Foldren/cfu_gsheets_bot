@@ -1,3 +1,4 @@
+from asyncio import run
 from datetime import datetime
 from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadClientManager
@@ -20,7 +21,59 @@ class GoogleTable:
     def __init__(self):
         self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
 
-    async def get_stats_dict_urls(self, table_url: str):
+    async def distribute_statement_operations(self, table_url: str, inn_partner: str,
+                                              name_partner: str, list_queue_category: list):
+        """
+        Метод распределения операций в листе БД, если инн партнера еще нети в таблице, то возвращает None
+        (на месте "Без распределения" ставит очередь категорий, на месте названия контрагента ставит новое)
+
+        :param table_url: ссылка на гугл таблицу
+        :param inn_partner: инн контрагента
+        :param name_partner: наименование контрагента
+        :param queue_category: очередь категорий
+        :return: bool_partner_in_bd - в случае, если контрагента еще нет в БД
+        """
+
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_url)
+        ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
+
+        bd_values_rows = await ws.get_all_values()
+        indexes_change_rows = []
+
+        for i in range(0, len(bd_values_rows)):
+            if bd_values_rows[i][12] == str(inn_partner):
+                indexes_change_rows.append(i+1)
+
+        if indexes_change_rows:
+            for i in range(0, 6):
+                if i > len(list_queue_category):
+                    list_queue_category.append("")
+
+            for index in indexes_change_rows:
+                await ws.batch_update([
+                    {
+                        "range": f"B{index}",
+                        "values": [[name_partner]]
+                    },
+                    {
+                        "range": f"H{index}:L{index}",
+                        "values": [list_queue_category]
+                    },
+                ])
+            return True
+
+        else:
+            return False
+
+    async def get_stats_dict_urls(self, table_url: str) -> dict:
+        """
+        Метод для вывода списка ссылок на листы с отчетами (используя ссылку на таблицу)
+
+        :param table_url: ссылка на гугл таблицу
+        :return: dict_stats_urls: словарь отчетов со ссылками на листы
+        """
+
         agc = await self.agcm.authorize()
         ss = await agc.open_by_url(table_url)
         result_stats_urls = {}
@@ -35,7 +88,7 @@ class GoogleTable:
                                 org_op: str, queue_op: str, type_op: str, payment_method: str,
                                 sender_is_org: bool = False):
         """
-        Функция для добавления новой строки (записи) в гугл таблицу в лист БД
+        Метод для добавления новой строки (записи) в гугл таблицу в лист БД
         Параметр type_op = profit или cost
 
         :param org_op: наименование организации
@@ -134,7 +187,20 @@ class GoogleTable:
         result = []
 
         for i in range(0, len(user_balances)):
-            if user_balances[i][0] == str(chat_id_user):
+            if user_balances[i][1] == str(chat_id_user):
                 result.append(user_balances[i][2:])
 
         return result
+
+
+async def test():
+    gt = GoogleTable()
+    await gt.distribute_statement_operations(
+        table_url="https://docs.google.com/spreadsheets/d/1uRn27OI41Yh3lBvoETN3w4WlpG6E2V8__GPwe8tr7q8/edit#gid=0",
+        inn_partner="7710140679",
+        queue_category="Тестовый рк  → Тестовый рк 1.0",
+        name_partner="Тестовое распределение")
+
+
+if __name__ == "__main__":
+    run(test())

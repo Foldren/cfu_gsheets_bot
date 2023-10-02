@@ -20,7 +20,7 @@ from handlers.users.report_operations import write_issuance_of_report_to_bd, wri
 from handlers.users.wallets_operations import change_wallets_list, write_transfer_to_wallet_to_bd
 from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
     choose_write_category_sender
-from handlers.members import check_events_notification_groups, confirm_issuance_report
+from handlers.members import check_events_notification_groups, confirm_issuance_report, technical_support
 from init_db import init_db
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
@@ -44,7 +44,7 @@ user_routers = [
 ]
 
 member_routers = [
-    check_events_notification_groups.rt, confirm_issuance_report.rt
+    check_events_notification_groups.rt, confirm_issuance_report.rt, technical_support.rt
 ]
 
 
