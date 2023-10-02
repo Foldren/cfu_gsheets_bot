@@ -1,7 +1,7 @@
 from datetime import datetime
 from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadClientManager
-from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST
+from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA
 
 
 class GoogleTable:
@@ -19,6 +19,17 @@ class GoogleTable:
 
     def __init__(self):
         self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
+
+    async def get_stats_dict_urls(self, table_url: str):
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_url)
+        result_stats_urls = {}
+
+        for stat_name in STATS_UPRAVLYAIKA:
+            ws = await ss.worksheet(stat_name)
+            result_stats_urls[stat_name] = ws.url
+
+        return result_stats_urls
 
     async def add_new_str_to_bd(self, table_url: str, chat_id_worker: int, fullname_worker: str, volume_op: str,
                                 org_op: str, queue_op: str, type_op: str, payment_method: str,

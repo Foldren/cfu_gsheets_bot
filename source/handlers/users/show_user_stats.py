@@ -4,6 +4,7 @@ from aiogram.types import Message
 from components.filters import IsUserFilter
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.show_user_stats import text_success_show_stats, text_no_shares_show_stats
+from microservices.google_api.google_table import GoogleTable
 from microservices.sql_models_extends.user import UserExtend
 
 rt = Router()
@@ -11,7 +12,7 @@ rt = Router()
 
 # Хэндлер на команду /start
 @rt.message(F.text == "Отчеты", IsUserFilter(), F.chat.type == "private")
-async def show_user_stats(message: Message, state: FSMContext):
+async def show_user_stats(message: Message, state: FSMContext, gt_object: GoogleTable):
     """
     Обработчик на получение списка отчетов (ежедневный, еженедельный..) расшареных юзеру
     """
@@ -21,7 +22,7 @@ async def show_user_stats(message: Message, state: FSMContext):
 
     if stats_names:
         admin_id = await UserExtend.get_user_admin_id(message.from_user.id)
-        urls_stats = await UserExtend.get_admin_stats_urls(admin_id)
+        urls_stats = await UserExtend.get_admin_stats_urls_by_names(admin_id, stats_names, gt_object, message)
 
         keyboard = await get_inline_keyb_markup(
             list_names=stats_names,

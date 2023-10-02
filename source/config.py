@@ -12,7 +12,7 @@ TOKEN = getenv("LOCAL_TOKEN_BOT") if IS_THIS_LOCAL else env('TOKEN_BOT')
 MYSQL_URL = getenv('MYSQL_URL') if IS_THIS_LOCAL else env("MYSQL_URL")  # getenv для терминала Pycharm
 # К сожалению для миграций придется указывать ссылку напрямую
 AERICH_CONFIG = {
-    "connections": {"default": getenv('MYSQL_URL')},
+    "connections": {"default": "mysql://root:KLyXjPfvDL1tKbNHK8_sVwUBrdTFER@158.160.105.173:3306/upravlyaika_db"},
     "apps": {
         "models": {
             "models": ["source.models", "aerich.models"],
@@ -27,7 +27,7 @@ BANKS_RUS_NAMES = {
     'module': 'Модуль',
     'tochka': 'Точка',
 }
-STATS_UPRAVLYAIKA = ["Ежедневный", "Еженедельный", "Ежемесячный"]
+STATS_UPRAVLYAIKA = ["Dashboard", "Ежедневный", "Еженедельный", "Ежемесячный"]
 NAME_GOOGLE_TABLE_BD_LIST = "БД (не редактировать)"
 NAME_GOOGLE_TABLE_ACCOUNTING_LIST = "Учёт"
 CHECKS_PATH = getcwd() + "/misc/images/checks/"

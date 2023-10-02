@@ -133,13 +133,15 @@ class IssuanceReport(Model):
 
 
 class AdminInfo(Model):
+    id = BigIntField(pk=True)
     admin: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
-                                                    related_name="admin_info", pk=True)
+                                                    related_name="admin_info")
     google_table_url = TextField(maxlength=500, null=False)
     google_drive_dir_url = TextField(maxlength=500, null=False)
-    gt_day_stat_url = TextField(maxlength=500, null=False)
-    gt_week_stat_url = TextField(maxlength=500, null=False)
-    gt_month_stat_url = TextField(maxlength=500, null=False)
+    gt_dashboard_url = TextField(maxlength=500, null=True)
+    gt_day_stat_url = TextField(maxlength=500, null=True)
+    gt_week_stat_url = TextField(maxlength=500, null=True)
+    gt_month_stat_url = TextField(maxlength=500, null=True)
 
     class Meta:
         table = "admin_info"

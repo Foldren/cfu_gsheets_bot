@@ -1,3 +1,7 @@
+from aiogram.types import Message
+
+from components.texts.users.show_user_stats import text_fst_load_dashboard
+from microservices.google_api.google_table import GoogleTable
 from models import User, AdminInfo
 
 
@@ -11,10 +15,36 @@ class UserExtend:
         return p_stats
 
     @staticmethod
-    async def get_admin_stats_urls(admin_chat_id):
+    async def get_admin_stats_urls_by_names(admin_chat_id, stats_names_list, gt_object: GoogleTable, message: Message):
         admin = await User.get(chat_id=admin_chat_id)
         admin_info = await admin.admin_info
-        return [admin_info.gt_day_stat_url, admin_info.gt_week_stat_url, admin_info.gt_month_stat_url]
+        dashboard_url, s_day_url, s_week_url, s_month_url = admin_info.gt_dashboard_url, admin_info.gt_day_stat_url, \
+                                                            admin_info.gt_week_stat_url, admin_info.gt_month_stat_url
+
+        if (dashboard_url in [None, ""]) or (s_day_url in [None, ""]) \
+                or (s_week_url in [None, ""]) or (s_month_url in [None, ""]):
+            await message.answer(text_fst_load_dashboard, parse_mode="html")
+            dict_urls = await gt_object.get_stats_dict_urls(admin_info.google_table_url)
+            admin_info.gt_dashboard_url = dict_urls["Dashboard"]
+            admin_info.gt_day_stat_url = dict_urls["Ежедневный"]
+            admin_info.gt_week_stat_url = dict_urls["Еженедельный"]
+            admin_info.gt_month_stat_url = dict_urls["Ежемесячный"]
+            await admin_info.save()
+
+        list_urls = []
+        for st_name in stats_names_list:
+            url_for_stat = ""
+            if st_name == "Dashboard":
+                url_for_stat = admin_info.gt_dashboard_url
+            elif st_name == "Ежедневный":
+                url_for_stat = admin_info.gt_day_stat_url
+            elif st_name == "Еженедельный":
+                url_for_stat = admin_info.gt_week_stat_url
+            elif st_name == "Ежемесячный":
+                url_for_stat = admin_info.gt_month_stat_url
+            list_urls.append(url_for_stat)
+
+        return list_urls
 
     @staticmethod
     async def get_table_url(admin_chat_id):
