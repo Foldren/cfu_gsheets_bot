@@ -26,5 +26,5 @@ class NotifyGroupExtend:
     async def check_admin_groups_empty(admin_id):
         admin = await User.get(chat_id=admin_id)
         admin_ngroups = await admin.notify_groups
-        return admin_ngroups is None
+        return (admin_ngroups is None) or (admin_ngroups == [])
 
