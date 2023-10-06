@@ -29,13 +29,13 @@ async def start_write_issuance_of_report_to_bd(message: Message, state: FSMConte
     await state.clear()
     await state.set_state(StepsWriteIssuanceReport.select_organization)
 
-    admin_id = await redis_users.get_user_admin_id(message.from_user.id)
+    admin_id = await redis_users.get_user_admin_id(message.chat.id)
     check_admin_empty_groups = await NotifyGroupExtend.check_admin_groups_empty(admin_id)
 
     if check_admin_empty_groups:
         await message.answer(text=text_no_notify_groups, parse_mode="html")
     else:
-        organizations = await OrganizationExtend.get_user_organizations(message.from_user.id)
+        organizations = await OrganizationExtend.get_user_organizations(message.chat.id)
 
         if organizations:
             keyboard = await get_inline_keyb_markup(
@@ -138,7 +138,7 @@ async def select_group_for_notify(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.callback_query(StepsWriteIssuanceReport.select_notify_group, F.data.startswith("select_notify_group_issuance"))
-async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
+async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSMContext, bot_object: Bot, redis_users: RedisUser):
     selected_notify_group_chat_id = int(await get_callb_content(callback.data))
     st_data = await state.get_data()
     user = await UserExtend.get_by_id(callback.message.chat.id)
@@ -185,7 +185,7 @@ async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSM
         await issuance_report.delete()
         await NotifyGroupExtend.detach_group_from_admin(selected_notify_group_chat_id)
         await callback.answer(text=text_error_issuance, show_alert=True)
-        await callback.message.delete()
+        await start_write_issuance_of_report_to_bd(message=callback.message, state=state, redis_users=redis_users)
 
 
 
