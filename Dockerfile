@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 WORKDIR /home
-RUN apk update
+RUN apt update
 COPY /source /source
 COPY ./requirements.txt /source/requirements.txt
 WORKDIR /source
