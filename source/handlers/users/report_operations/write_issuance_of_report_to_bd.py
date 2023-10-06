@@ -7,7 +7,7 @@ from components.text_generators.users import get_msg_notify_new_issuance_of_repo
 from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
 from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance, text_select_worker_issuance, \
     text_set_volume_issuance, text_select_payment_method_issuance, text_no_notify_groups, \
-    text_select_notify_group_issuance, text_end_issuance
+    text_select_notify_group_issuance, text_end_issuance, text_error_issuance
 from components.tools import get_callb_content
 from microservices.redis_models.user import RedisUser
 from microservices.redis_models.wallets import RedisUserWallets
@@ -165,19 +165,30 @@ async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSM
     )
 
     # Отправляем сообщение с подтверждением в группу -------------------------------------------------------------------
-    message_notify = await bot_object.send_message(
-        chat_id=selected_notify_group_chat_id,
-        text=msg_in_group,
-        parse_mode="html",
-        reply_markup=await get_confirm_issuance_keyb_button(issuance_report.id),
-    )
+    try:
+        message_notify = await bot_object.send_message(
+            chat_id=selected_notify_group_chat_id,
+            text=msg_in_group,
+            parse_mode="html",
+            reply_markup=await get_confirm_issuance_keyb_button(issuance_report.id),
+        )
 
-    # Добавляем id сообщения
-    issuance_report.message_id = message_notify.message_id
-    await issuance_report.save()
+        # Добавляем id сообщения
+        issuance_report.message_id = message_notify.message_id
+        await issuance_report.save()
 
-    await state.clear()
-    await callback.message.edit_text(text=text_end_issuance, parse_mode="html")
+        await state.clear()
+        await callback.message.edit_text(text=text_end_issuance, parse_mode="html")
+
+    except Exception:
+        # Удаляем запись о выдаче и группу из бд
+        await issuance_report.delete()
+        await NotifyGroupExtend.detach_group_from_admin(selected_notify_group_chat_id)
+        await callback.answer(text=text_error_issuance, show_alert=True)
+
+
+
+
 
 
 
