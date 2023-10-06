@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
-from aioredis import from_url
+from redis.asyncio import from_url
 from tortoise import run_async
 from handlers import main_handlers
 from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu, \
