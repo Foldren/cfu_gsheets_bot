@@ -185,6 +185,7 @@ async def end_write_issuance_of_report_to_bd(callback: CallbackQuery, state: FSM
         await issuance_report.delete()
         await NotifyGroupExtend.detach_group_from_admin(selected_notify_group_chat_id)
         await callback.answer(text=text_error_issuance, show_alert=True)
+        await callback.message.delete()
 
 
 
