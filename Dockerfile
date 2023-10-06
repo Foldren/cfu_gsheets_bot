@@ -1,6 +1,6 @@
 FROM python:3.11-alpine
 WORKDIR /home
-RUN apt update
+RUN apk update
 COPY /source /source
 COPY ./requirements.txt /source/requirements.txt
 WORKDIR /source
