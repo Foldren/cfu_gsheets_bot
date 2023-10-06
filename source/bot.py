@@ -4,7 +4,8 @@ from aiogram import Bot, Dispatcher
 from aioredis import from_url
 from tortoise import run_async
 from handlers import main_handlers
-from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu
+from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu, \
+    manage_reports_requests
 from handlers.admins.manage_banks import get_list_banks, add_bank, delete_banks
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from config import TOKEN, REDIS_URL
@@ -33,7 +34,7 @@ admin_routers = [
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
     manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organizations.rt,
     get_list_partners.rt, add_partner.rt, delete_partners.rt, get_list_banks.rt, add_bank.rt, delete_banks.rt,
-    get_list_payment_accounts.rt, add_payment_account.rt, delete_payment_accounts.rt
+    get_list_payment_accounts.rt, add_payment_account.rt, delete_payment_accounts.rt, manage_reports_requests.rt
 ]
 
 user_routers = [

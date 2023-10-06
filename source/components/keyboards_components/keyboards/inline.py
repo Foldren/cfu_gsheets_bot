@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 keyb_empty_user_list = [
     [
@@ -74,3 +74,13 @@ keyb_end_delete_payment_accounts = [
         InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_payment_accounts")
     ]
 ]
+
+keyb_start_manage_reports_requests = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(text="Назначить согласующих", callback_data="assign:conciliators"),
+        InlineKeyboardButton(text="Назначить утверждающего", callback_data="assign:approver"),
+    ],
+    [
+        InlineKeyboardButton(text="Назначить казначея", callback_data="assign:treasurer")
+    ]
+])

@@ -1,7 +1,7 @@
 from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
     ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField, \
-    CharField
+    CharField, BinaryField
 
 
 class User(Model):
@@ -24,6 +24,7 @@ class User(Model):
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
+    role_for_reports: ReverseRelation["WorkersRolesForReports"]
     nickname = TextField(maxlength=150, null=False)
     fullname = TextField(maxlength=250, null=True)
     profession = TextField(maxlength=250, null=True)
@@ -83,7 +84,7 @@ class Bank(Model):
     payment_accounts: ReverseRelation['PaymentAccount']
     custom_name = TextField(maxlength=200, null=False)
     bank_name = TextField(maxlength=200, null=False)
-    api_key = TextField(maxlength=500, null=False)
+    api_key = BinaryField(null=False)
 
     class Meta:
         table = "banks"
@@ -137,12 +138,12 @@ class AdminInfo(Model):
     id = BigIntField(pk=True)
     admin: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
                                                     related_name="admin_info")
-    google_table_url = TextField(maxlength=500, null=False)
-    google_drive_dir_url = TextField(maxlength=500, null=False)
-    gt_dashboard_url = TextField(maxlength=500, null=True)
-    gt_day_stat_url = TextField(maxlength=500, null=True)
-    gt_week_stat_url = TextField(maxlength=500, null=True)
-    gt_month_stat_url = TextField(maxlength=500, null=True)
+    google_table_url = BinaryField(null=False)
+    google_drive_dir_url = BinaryField(null=False)
+    gt_dashboard_url = BinaryField(null=True)
+    gt_day_stat_url = BinaryField(null=True)
+    gt_week_stat_url = BinaryField(null=True)
+    gt_month_stat_url = BinaryField(null=True)
 
     class Meta:
         table = "admin_info"
@@ -155,3 +156,13 @@ class PeriodStat(Model):
 
     class Meta:
         table = "periods_stats"
+
+
+class WorkersRolesForReports(Model):
+    id = BigIntField(pk=True)
+    worker: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
+                                                     related_name="role_for_reports")
+    role = TextField(maxlength=200, null=False)
+
+    class Meta:
+        table = "workers_roles_for_reports"

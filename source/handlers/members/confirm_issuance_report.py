@@ -21,7 +21,7 @@ async def confirm_issuance_report(callback: CallbackQuery, gt_object: GoogleTabl
 
     # Вносим в google таблицу запись
     await gt_object.add_issuance_report_to_bd(
-        table_url=table_url,
+        table_encr_url=table_url,
         chat_id_worker=issuance_report.user_id,
         fullname_recipient=recipient.fullname,
         volume_op=issuance_report.volume,

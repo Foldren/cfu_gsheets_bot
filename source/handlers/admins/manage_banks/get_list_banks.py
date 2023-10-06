@@ -49,5 +49,5 @@ async def get_banks_list(callb_or_msg: Union[Message, CallbackQuery], state: FSM
         message=message,
         flag_answer=not hasattr(callb_or_msg, "data"),
         text=text_get_list_banks,
-        keyboard=keyboard,
+        keyboard_markup=keyboard,
     )

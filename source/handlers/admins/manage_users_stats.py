@@ -34,7 +34,7 @@ async def start_manage_users_stats(message: Message, state: FSMContext, answer_o
     await answer_or_edit_message(
         message=message,
         text=text_start_manage_stats,
-        keyboard=keyboard_stats,
+        keyboard_markup=keyboard_stats,
         flag_answer=answer_or_edit_msg
     )
 

@@ -22,7 +22,7 @@ async def get_balance_in_report(message: Message, state: FSMContext, gt_object: 
     text_balances = text_user_balances + "\n"
 
     balances = await gt_object.get_balance_in_report_by_fullname(
-        table_url=admin_info.google_table_url,
+        table_encr_url=admin_info.google_table_url,
         chat_id_user=message.from_user.id
     )
 

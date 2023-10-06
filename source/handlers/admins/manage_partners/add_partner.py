@@ -71,7 +71,7 @@ async def end_add_partner(callback: CallbackQuery, state: FSMContext, gt_object:
     admin_info = await admin.admin_info
 
     await gt_object.distribute_statement_operations(
-        table_url=admin_info.google_table_url,
+        table_encr_url=admin_info.google_table_url,
         inn_partner=st_data['inn_new_partner'],
         name_partner=st_data['name_new_partner'],
         list_queue_category=list_queue_categories,

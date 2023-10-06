@@ -6,9 +6,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardMarkup, Message
+from cryptography.fernet import Fernet
+
 from components.keyboards_components.generators import get_gt_url_keyb_markup
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA
+from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY
 from microservices.sql_models_extends.category import CategoryExtend
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
@@ -155,17 +157,17 @@ async def get_sure_delete_payment_account_msg(list_partners: list):
            f"подгружаться из выбранных счётов 🤔‼️"
 
 
-async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard: InlineKeyboardMarkup = None):
+async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard_markup: InlineKeyboardMarkup = None):
     if flag_answer:
         message = await message.answer(
             text=text,
-            reply_markup=keyboard,
+            reply_markup=keyboard_markup,
             parse_mode="html"
         )
     else:
         message = await message.edit_text(
             text=text,
-            reply_markup=keyboard,
+            reply_markup=keyboard_markup,
             parse_mode="html"
         )
     return message
@@ -203,7 +205,9 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
     admin_id = await UserExtend.get_user_admin_id(message.chat.id)
     admin_info = await UserExtend.get_admin_info(admin_id)
     state_data = await state.get_data()
-    keyboard_end_write = await get_gt_url_keyb_markup(admin_info.google_table_url, admin_info.google_drive_dir_url)
+    gt_decr_url = Fernet(SECRET_KEY).decrypt(admin_info.google_table_url).decode("utf-8")
+    gd_decr_url = Fernet(SECRET_KEY).decrypt(admin_info.google_drive_dir_url).decode("utf-8")
+    keyboard_end_write = await get_gt_url_keyb_markup(gt_decr_url, gd_decr_url)
     sender_org_flag = True if state_data['sender'] == "org" else False
 
     message = await answer_or_edit_message(
@@ -214,7 +218,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 
     # Добавляем запись в google
     await gt_object.add_new_str_to_bd(
-        table_url=admin_info.google_table_url,
+        table_encr_url=admin_info.google_table_url,
         chat_id_worker=message.chat.id,
         fullname_worker=current_user.fullname,
         volume_op=state_data['volume_operation'],
@@ -239,7 +243,7 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
             # Отправляем файл в папку google drive клиента
             await gd_object.upload_check_too_google_drive_dir(
                 file_path=file_path,
-                google_dir_url=admin_info.google_drive_dir_url,
+                google_dir_encr_url=admin_info.google_drive_dir_url,
                 file_name_on_gd=file_name
             )
 

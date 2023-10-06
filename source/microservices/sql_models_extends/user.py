@@ -1,12 +1,33 @@
 from aiogram.types import Message
+from cryptography.fernet import Fernet
 
 from components.texts.users.show_user_stats import text_fst_load_dashboard
+from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
 from models import User, AdminInfo
 
 
 class UserExtend:
     __slots__ = {}
+
+    @staticmethod
+    async def get_admin_users_with_flag_role(id_admin: int, role: str, include_admin: bool = False):
+        v_list = ["nickname", "fullname", "profession", "chat_id"]
+        admin_users_with_role = await User.filter(admin_id=id_admin, role_for_reports__role=role).all().values(*v_list)
+        admin_users = await User.filter(admin_id=id_admin).all().values(*v_list)
+
+        if include_admin:
+            admin_users_with_role = await User.get(chat_id=id_admin, role_for_reports__role=role).values(*v_list) \
+                                    + admin_users_with_role
+            admin_users = await User.get(chat_id=id_admin).values(*v_list) + admin_users
+
+        for i in range(0, len(admin_users)):
+            if admin_users[i] in admin_users_with_role:
+                admin_users[i]['role'] = 1
+            else:
+                admin_users[i]['role'] = 0
+
+        return admin_users
 
     @staticmethod
     async def get_user_periods_stats_list(user_chat_id):
@@ -21,10 +42,10 @@ class UserExtend:
         dashboard_url, s_day_url, s_week_url, s_month_url = admin_info.gt_dashboard_url, admin_info.gt_day_stat_url, \
                                                             admin_info.gt_week_stat_url, admin_info.gt_month_stat_url
 
-        if (dashboard_url in [None, ""]) or (s_day_url in [None, ""]) \
-                or (s_week_url in [None, ""]) or (s_month_url in [None, ""]):
+        if (dashboard_url in [None, b""]) or (s_day_url in [None, b""]) \
+                or (s_week_url in [None, b""]) or (s_month_url in [None, b""]):
             await message.answer(text_fst_load_dashboard, parse_mode="html")
-            dict_urls = await gt_object.get_stats_dict_urls(admin_info.google_table_url)
+            dict_urls = await gt_object.get_stats_dict_encr_urls(admin_info.google_table_url)
             admin_info.gt_dashboard_url = dict_urls["Dashboard"]
             admin_info.gt_day_stat_url = dict_urls["Ежедневный"]
             admin_info.gt_week_stat_url = dict_urls["Еженедельный"]
@@ -32,16 +53,17 @@ class UserExtend:
             await admin_info.save()
 
         list_urls = []
+        f = Fernet(SECRET_KEY)
         for st_name in stats_names_list:
             url_for_stat = ""
             if st_name == "Dashboard":
-                url_for_stat = admin_info.gt_dashboard_url
+                url_for_stat = f.decrypt(admin_info.gt_dashboard_url).decode('utf-8')
             elif st_name == "Ежедневный":
-                url_for_stat = admin_info.gt_day_stat_url
+                url_for_stat = f.decrypt(admin_info.gt_day_stat_url).decode('utf-8')
             elif st_name == "Еженедельный":
-                url_for_stat = admin_info.gt_week_stat_url
+                url_for_stat = f.decrypt(admin_info.gt_week_stat_url).decode('utf-8')
             elif st_name == "Ежемесячный":
-                url_for_stat = admin_info.gt_month_stat_url
+                url_for_stat = f.decrypt(admin_info.gt_month_stat_url).decode('utf-8')
             list_urls.append(url_for_stat)
 
         return list_urls
@@ -93,8 +115,12 @@ class UserExtend:
         return user.admin_id if user.admin_id else id_user
 
     @staticmethod
-    async def get_admin_users(id_admin: int):
-        return await User.filter(admin_id=id_admin).all().values("nickname", "fullname", "profession", "chat_id")
+    async def get_admin_users(id_admin: int, include_admin: bool = False):
+        admin_users = await User.filter(admin_id=id_admin).all().values("nickname", "fullname", "profession", "chat_id")
+        if include_admin:
+            admin_users = await User.get(chat_id=id_admin).values("nickname", "fullname", "profession", "chat_id") + \
+                          admin_users
+        return admin_users
 
     @staticmethod
     async def add(chat_id: int, nickname: str, fullname: str, profession: str, id_admin: int):

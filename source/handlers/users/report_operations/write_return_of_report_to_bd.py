@@ -118,7 +118,7 @@ async def end_write_return_issuance_to_bd(callback: CallbackQuery, state: FSMCon
     # Добавляем запись в бд --------------------------------------------------------------------------------------------
     await callback.message.edit_text('Вношу запись в БД гугл таблицы 🆕 \n\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩')
     await gt_object.add_issuance_report_to_bd(
-        table_url=admin_info.google_table_url,
+        table_encr_url=admin_info.google_table_url,
         chat_id_worker=callback.message.chat.id,
         fullname_recipient=user.fullname,
         volume_op=st_data['specified_volume'],

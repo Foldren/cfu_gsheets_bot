@@ -1,8 +1,10 @@
 from asyncio import run
 from datetime import datetime
+
+from cryptography.fernet import Fernet
 from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadClientManager
-from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA
+from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA, SECRET_KEY
 
 
 class GoogleTable:
@@ -21,21 +23,22 @@ class GoogleTable:
     def __init__(self):
         self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
 
-    async def distribute_statement_operations(self, table_url: str, inn_partner: str,
+    async def distribute_statement_operations(self, table_encr_url: str, inn_partner: str,
                                               name_partner: str, list_queue_category: list):
         """
         Метод распределения операций в листе БД, если инн партнера еще нети в таблице, то возвращает None
         (на месте "Без распределения" ставит очередь категорий, на месте названия контрагента ставит новое)
 
-        :param table_url: ссылка на гугл таблицу
+        :param list_queue_category: очередь категорий
+        :param table_encr_url: ссылка на гугл таблицу
         :param inn_partner: инн контрагента
         :param name_partner: наименование контрагента
-        :param queue_category: очередь категорий
         :return: bool_partner_in_bd - в случае, если контрагента еще нет в БД
         """
 
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
 
         bd_values_rows = await ws.get_all_values()
@@ -66,25 +69,27 @@ class GoogleTable:
         else:
             return False
 
-    async def get_stats_dict_urls(self, table_url: str) -> dict:
+    async def get_stats_dict_encr_urls(self, table_encr_url: str) -> dict:
         """
         Метод для вывода списка ссылок на листы с отчетами (используя ссылку на таблицу)
 
-        :param table_url: ссылка на гугл таблицу
+        :param table_encr_url: ссылка на гугл таблицу
         :return: dict_stats_urls: словарь отчетов со ссылками на листы
         """
 
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
+        f = Fernet(SECRET_KEY)
         result_stats_urls = {}
 
         for stat_name in STATS_UPRAVLYAIKA:
             ws = await ss.worksheet(stat_name)
-            result_stats_urls[stat_name] = ws.url
+            result_stats_urls[stat_name] = f.encrypt(ws.url.encode())
 
         return result_stats_urls
 
-    async def add_new_str_to_bd(self, table_url: str, chat_id_worker: int, fullname_worker: str, volume_op: str,
+    async def add_new_str_to_bd(self, table_encr_url: str, chat_id_worker: int, fullname_worker: str, volume_op: str,
                                 org_op: str, queue_op: str, type_op: str, payment_method: str,
                                 sender_is_org: bool = False):
         """
@@ -93,7 +98,7 @@ class GoogleTable:
 
         :param org_op: наименование организации
         :param sender_is_org: флаг, что исполнитель - юр лицо
-        :param table_url: ссылка на гугл таблицу
+        :param table_encr_url: ссылка на гугл таблицу
         :param chat_id_worker: chat_id сотрудника в телеграм, который производит запись
         :param fullname_worker: полное имя сотрудника
         :param volume_op: сумма операции
@@ -102,8 +107,9 @@ class GoogleTable:
         :param payment_method: тип оплаты, либо банк
         """
 
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         queue_items = queue_op.split(" → ")
@@ -133,11 +139,12 @@ class GoogleTable:
                              ], value_input_option='USER_ENTERED')
         # value_input_option='USER_ENTERED' решает проблему с апострофом который появляется в таблице
 
-    async def add_issuance_report_to_bd(self, table_url: str, chat_id_worker: int, fullname_recipient: str,
+    async def add_issuance_report_to_bd(self, table_encr_url: str, chat_id_worker: int, fullname_recipient: str,
                                         volume_op: str, payment_method: str, org_name: str,
                                         return_issuance: bool = False):
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
@@ -162,10 +169,11 @@ class GoogleTable:
 
         await ws.append_rows([row_1, row_2], value_input_option='USER_ENTERED')
 
-    async def add_transfer_to_bd(self, table_url: str, chat_id_worker: int, volume_op: str,
+    async def add_transfer_to_bd(self, table_encr_url: str, chat_id_worker: int, volume_op: str,
                                  wallet_sender: str, wallet_recipient: str, org_name: str):
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
 
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
@@ -179,9 +187,10 @@ class GoogleTable:
 
         await ws.append_rows([row_1, row_2], value_input_option='USER_ENTERED')
 
-    async def get_balance_in_report_by_fullname(self, table_url: str, chat_id_user: int):
+    async def get_balance_in_report_by_fullname(self, table_encr_url: str, chat_id_user: int):
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
-        ss = await agc.open_by_url(table_url)
+        ss = await agc.open_by_url(table_decr_url)
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_ACCOUNTING_LIST)
         user_balances = await ws.get_all_values()
         result = []
@@ -191,16 +200,3 @@ class GoogleTable:
                 result.append(user_balances[i][2:])
 
         return result
-
-
-async def test():
-    gt = GoogleTable()
-    await gt.distribute_statement_operations(
-        table_url="https://docs.google.com/spreadsheets/d/1uRn27OI41Yh3lBvoETN3w4WlpG6E2V8__GPwe8tr7q8/edit#gid=0",
-        inn_partner="7710140679",
-        queue_category="Тестовый рк  → Тестовый рк 1.0",
-        name_partner="Тестовое распределение")
-
-
-if __name__ == "__main__":
-    run(test())

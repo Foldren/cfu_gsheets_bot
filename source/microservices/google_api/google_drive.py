@@ -2,6 +2,9 @@ import json
 import mimetypes
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
+from cryptography.fernet import Fernet
+
+from config import SECRET_KEY
 
 
 class GoogleDrive:
@@ -18,10 +21,11 @@ class GoogleDrive:
             **service_account_key
         )
 
-    async def upload_check_too_google_drive_dir(self, file_path: str, google_dir_url: str, file_name_on_gd: str):
+    async def upload_check_too_google_drive_dir(self, file_path: str, google_dir_encr_url: str, file_name_on_gd: str):
         async with Aiogoogle(service_account_creds=self.credentials) as aiog_session:
-            index_start_folder_id = google_dir_url.rfind("/") + 1
-            folder_id = google_dir_url[index_start_folder_id:]
+            google_dir_decr_url = Fernet(SECRET_KEY).decrypt(google_dir_encr_url).decode("utf-8")
+            index_start_folder_id = google_dir_decr_url.rfind("/") + 1
+            folder_id = google_dir_decr_url[index_start_folder_id:]
 
             drive_v3 = await aiog_session.discover('drive', 'v3')
             meta_data = {
