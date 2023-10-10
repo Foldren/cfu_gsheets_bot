@@ -15,7 +15,8 @@ class UserExtend:
     async def change_roles_for_admin_users(admin_id: int, users_chat_id_list: list[int], role: str):
         user_new_roles = []
         expression = Q(worker__admin_id=admin_id) | Q(worker_id=admin_id)
-        await WorkersRolesForReports.filter(expression, role=role).delete()
+        id_roles_objs = await WorkersRolesForReports.filter(expression, role=role).values_list("id", flat=True)
+        await WorkersRolesForReports.filter(id__in=id_roles_objs).delete()
         for user_chat_id in users_chat_id_list:
             user_new_roles.append(WorkersRolesForReports(worker_id=user_chat_id, role=role))
         await WorkersRolesForReports.bulk_create(user_new_roles)

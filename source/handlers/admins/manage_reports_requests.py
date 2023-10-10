@@ -67,7 +67,7 @@ async def get_role_users_list(callback: CallbackQuery, state: FSMContext) -> Non
         admin_id=callback.message.chat.id
     )
     if not names_callb_btns['names']:
-        await callback.answer(alert_text_error_load_users_list, show_alert=True)
+        await callback.answer(alert_text_error_load_users_list)
         try:
             await start_manage_reports_requests(callback.message, state, answer_on_msg=False)
         except TelegramBadRequest:
@@ -110,7 +110,7 @@ async def end_manage_reports_requests(callback: CallbackQuery, state: FSMContext
     await state.clear()
     # Возвращаемся в начало
     await start_manage_reports_requests(callback.message, state, answer_on_msg=False)
-    await callback.answer(text_success_alert, show_alert=True)
+    await callback.answer(text_success_alert)
 
 
 
