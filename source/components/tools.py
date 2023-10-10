@@ -5,9 +5,8 @@ from aiogram.exceptions import TelegramForbiddenError
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
 from aiogram.fsm.storage.base import StorageKey
-from aiogram.types import InlineKeyboardMarkup, Message
+from aiogram.types import InlineKeyboardMarkup, Message, CallbackQuery
 from cryptography.fernet import Fernet
-
 from components.keyboards_components.generators import get_gt_url_keyb_markup
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
 from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY
@@ -16,6 +15,47 @@ from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
+
+
+async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
+                                             admin_id=None):
+    buttons_names = []
+    buttons_callbacks = []
+    for u in users:
+        selected_emoji = '☑️' if u[flag_name] == flag_value else ''
+        if u['chat_id'] == admin_id and include_admin:
+            buttons_names.append(f"{selected_emoji} Я")
+        else:
+            buttons_names.append(f"{selected_emoji} {u['fullname'].split(' ')[1]} - {u['profession']}")
+        buttons_callbacks.append(u['chat_id'])
+    return {'names': buttons_names, 'callbacks': buttons_callbacks}
+
+
+async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, selected_minimum_one=False):
+    keyboard_markup = callback.message.reply_markup
+    number_pressed_btns = 0
+    # Считаем количество нажатых кнопок (выбранных пунктов)
+    if selected_minimum_one:
+        for i, row in enumerate(keyboard_markup.inline_keyboard):
+            for k, button in enumerate(row):
+                if '☑️' in button.text:
+                    number_pressed_btns += 1
+    # Находим нажатую в данный момент кнопку и ставим флажок, либо убираем (+- проверка, что должен быть хотя бы один)
+    for i, row in enumerate(keyboard_markup.inline_keyboard):
+        for k, button in enumerate(row):
+            if callback.data == button.callback_data:
+                if '☑️' in button.text and not selected_minimum_one:
+                    keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
+                elif '☑️' in button.text and selected_minimum_one:
+                    if (number_pressed_btns - 1) > 0:
+                        keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
+                    else:
+                        await callback.answer()
+                        break
+                else:
+                    keyboard_markup.inline_keyboard[i][k].text = '☑️ ' + button.text
+                break
+    return keyboard_markup
 
 
 async def get_emoji_number(number):
@@ -157,7 +197,8 @@ async def get_sure_delete_payment_account_msg(list_partners: list):
            f"подгружаться из выбранных счётов 🤔‼️"
 
 
-async def answer_or_edit_message(message: Message, flag_answer: bool, text: str, keyboard_markup: InlineKeyboardMarkup = None):
+async def answer_or_edit_message(message: Message, flag_answer: bool, text: str,
+                                 keyboard_markup: InlineKeyboardMarkup = None):
     if flag_answer:
         message = await message.answer(
             text=text,

@@ -173,3 +173,15 @@ async def get_keyb_empty_list_payment_accounts(bank_id):
             InlineKeyboardButton(text="➕", callback_data=f"add_payment_account:{bank_id}")
         ]
     ])
+
+
+async def get_keyb_row_save_changes(callback_data_str: str) -> list[InlineKeyboardButton]:
+    """
+    Функция для генерации inline строки сохранения изменений
+
+    :param callback_data_str: значение колбека кнопки, в формате строки
+    :return: [InlineKeyboardButton]
+    """
+    return [
+        InlineKeyboardButton(text="Сохранить изменения ✅", callback_data=callback_data_str)
+    ]

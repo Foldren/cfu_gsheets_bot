@@ -6,7 +6,7 @@ env.read_env('../.env')
 
 f = Fernet(env('SECRET_KEY'))
 # print('NTU1OTY4ZDMtN2EyYi00ZTM0LWI1ZmQtOTVlNWFlMDcwNDUwMzNhYmU0YTgtNjUxZi00MTNjLTlkNjAtOWU0ODMwMGMyNjM3'.encode())
-encr_text = f.encrypt(b"https://drive.google.com/drive/u/1/folders/1WuD9uOOAyQ1Cufmjvjmsefw6cbkkDvIa")
+encr_text = f.encrypt(b"https://drive.google.com/drive/folders/1-7TyEnnrnHLIisGr1A6RgI4djVHzSFgu")
 print(encr_text)
 
 # decr_text = f.decrypt(encr_text)

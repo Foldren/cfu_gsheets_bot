@@ -1,33 +1,24 @@
 from aiogram.types import Message
 from cryptography.fernet import Fernet
+from tortoise.expressions import Q
 
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo
+from models import User, AdminInfo, WorkersRolesForReports
 
 
 class UserExtend:
     __slots__ = {}
 
     @staticmethod
-    async def get_admin_users_with_flag_role(id_admin: int, role: str, include_admin: bool = False):
-        v_list = ["nickname", "fullname", "profession", "chat_id"]
-        admin_users_with_role = await User.filter(admin_id=id_admin, role_for_reports__role=role).all().values(*v_list)
-        admin_users = await User.filter(admin_id=id_admin).all().values(*v_list)
-
-        if include_admin:
-            admin_users_with_role = await User.get(chat_id=id_admin, role_for_reports__role=role).values(*v_list) \
-                                    + admin_users_with_role
-            admin_users = await User.get(chat_id=id_admin).values(*v_list) + admin_users
-
-        for i in range(0, len(admin_users)):
-            if admin_users[i] in admin_users_with_role:
-                admin_users[i]['role'] = 1
-            else:
-                admin_users[i]['role'] = 0
-
-        return admin_users
+    async def change_roles_for_admin_users(admin_id: int, users_chat_id_list: list[int], role: str):
+        user_new_roles = []
+        expression = Q(worker__admin_id=admin_id) | Q(worker_id=admin_id)
+        await WorkersRolesForReports.filter(expression, role=role).delete()
+        for user_chat_id in users_chat_id_list:
+            user_new_roles.append(WorkersRolesForReports(worker_id=user_chat_id, role=role))
+        await WorkersRolesForReports.bulk_create(user_new_roles)
 
     @staticmethod
     async def get_user_periods_stats_list(user_chat_id):
@@ -115,11 +106,20 @@ class UserExtend:
         return user.admin_id if user.admin_id else id_user
 
     @staticmethod
-    async def get_admin_users(id_admin: int, include_admin: bool = False):
-        admin_users = await User.filter(admin_id=id_admin).all().values("nickname", "fullname", "profession", "chat_id")
-        if include_admin:
-            admin_users = await User.get(chat_id=id_admin).values("nickname", "fullname", "profession", "chat_id") + \
-                          admin_users
+    async def get_admin_users(id_admin: int, include_admin: bool = False, only_none_and_role: str = None):
+        values_list = ["nickname", "fullname", "profession", "chat_id"]
+        expression = Q(role_for_reports__role=None) | Q(role_for_reports__role=only_none_and_role)
+        if only_none_and_role is not None:
+            values_list.append("role_for_reports__role")
+            admin_users = await User.filter(expression, admin_id=id_admin).all().values(*values_list)
+            if include_admin:
+                admin_user = await User.filter(expression, chat_id=id_admin).first().values(*values_list)
+                if admin_user is not None:
+                    admin_users.insert(0, admin_user)
+        else:
+            admin_users = await User.filter(admin_id=id_admin).all().values(*values_list)
+            if include_admin:
+                admin_users.insert(0, await User.get(chat_id=id_admin).values(*values_list))
         return admin_users
 
     @staticmethod
