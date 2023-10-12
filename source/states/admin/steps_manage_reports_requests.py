@@ -6,3 +6,7 @@ class StepsManageReportsRequests(StatesGroup):
     select_list_users = State()
 
 
+class StepsMakeRequestMoneyReport(StatesGroup):
+    start_agreement = State()
+    select_list_users = State()
+

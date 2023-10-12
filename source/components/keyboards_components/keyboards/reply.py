@@ -60,7 +60,8 @@ keyb_operation_under_stats = [
         KeyboardButton(text="Возврат подотчета")
     ],
     [
-        KeyboardButton(text="Остаток в подотчете")
+        KeyboardButton(text="Остаток в подотчете"),
+        KeyboardButton(text="Запрос денег в подотчет"),
     ],
     [
         KeyboardButton(text="⬅️ Назад в главное меню")
