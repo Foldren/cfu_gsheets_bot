@@ -4,30 +4,30 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio import from_url
 from tortoise import run_async
+from config import TOKEN, REDIS_URL
 from handlers import main_handlers
 from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu, \
     manage_reports_requests
 from handlers.admins.manage_banks import get_list_banks, add_bank, delete_banks
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
-from config import TOKEN, REDIS_URL
 from handlers.admins.manage_organizations import get_list_organizations, add_organization, \
     delete_organizations
 from handlers.admins.manage_partners import get_list_partners, add_partner, delete_partners
 from handlers.admins.manage_payment_accounts import get_list_payment_accounts, add_payment_account, \
     delete_payment_accounts
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
+from handlers.members import check_events_notification_groups, confirm_issuance_report, technical_support, \
+    manage_confirm_notifications
 from handlers.users import start_user, open_nested_menu, show_user_stats, request_money_report
+from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
+    choose_write_category_sender
 from handlers.users.report_operations import write_issuance_of_report_to_bd, write_return_of_report_to_bd, \
     get_balance_in_report
 from handlers.users.wallets_operations import change_wallets_list, write_transfer_to_wallet_to_bd
-from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
-    choose_write_category_sender
-from handlers.members import check_events_notification_groups, confirm_issuance_report, technical_support
 from init_db import init_db
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
 from microservices.redis_models.registrations import RedisRegistration
-from microservices.redis_models.report_requests import RedisUserRepsReqs
 from microservices.redis_models.user import RedisUser
 from microservices.redis_models.wallets import RedisUserWallets
 
@@ -47,7 +47,8 @@ user_routers = [
 ]
 
 member_routers = [
-    check_events_notification_groups.rt, confirm_issuance_report.rt, technical_support.rt
+    check_events_notification_groups.rt, confirm_issuance_report.rt, technical_support.rt,
+    manage_confirm_notifications.rt
 ]
 
 
@@ -57,9 +58,13 @@ async def main():
     bot = Bot(token=TOKEN, parse_mode='html')
     # Диспетчер
 
-    # В 15 базе будут стейты
+    # В 15 db будут стейты
     storage = RedisStorage(await from_url(REDIS_URL, db=15, decode_responses=True))
     dp = Dispatcher(storage=storage)
+
+    # Добавляем промежуточные вычисления
+    # dp.message.outer_middleware(ChangeNumberNotifiesMiddleware())
+    # dp.callback_query.outer_middleware(ChangeNumberNotifiesMiddleware())
 
     # Включаем логирование, чтобы не пропустить важные сообщения
     logging.basicConfig(level=logging.INFO)
@@ -78,9 +83,6 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
-    redis_reports_requests_users = RedisUserRepsReqs(await from_url(REDIS_URL, db=3, decode_responses=True))
-    # admin_chat_id -> hash conciliate, approve, treasure  -> {time_delete, }
-
     # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
     # в redis_wallets_users и запись со статусом в redis_status_users
     #
@@ -98,7 +100,6 @@ async def main():
                            redis_users=redis_status_users,
                            redis_regs=redis_registrations_users,
                            redis_wallets=redis_wallets_users,
-                           redis_reps_reqs=redis_reports_requests_users,
                            allowed_updates=["message", "callback_query", "my_chat_member"]
                            )
 

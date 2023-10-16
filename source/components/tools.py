@@ -15,6 +15,7 @@ from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
+from models import ConfirmNotification
 
 
 async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
@@ -324,3 +325,18 @@ async def add_new_note_to_bd_handler_algorithm(message: Message, state: FSMConte
 async def get_str_format_queue(selected_item_id) -> str:
     menu_items_names_list = await CategoryExtend.get_parent_categories_names(selected_item_id)
     return " → ".join(menu_items_names_list)
+
+
+async def get_formatted_notifications(notifications: list[ConfirmNotification]):
+    volume = ""
+    comment = ""
+    nickname_sender = ""
+
+    for n in notifications:
+        if n.type == 'report_request':
+            rep_req = await n.report_request
+            rep_req.stage
+            volume = rep_req.volume
+            comment = rep_req.comment
+            nickname_sender = rep_req.nickname_sender
+

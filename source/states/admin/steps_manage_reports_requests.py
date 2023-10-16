@@ -10,3 +10,8 @@ class StepsMakeRequestMoneyReport(StatesGroup):
     start_agreement = State()
     select_list_users = State()
 
+
+class StepsManageRequestReports(StatesGroup):
+    get_list_notify_types_user = State()
+    get_list_notifications_by_category = State()
+

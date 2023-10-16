@@ -1,25 +1,72 @@
+from typing import List, Any, Tuple
+
 from aiogram.types import Message
 from cryptography.fernet import Fernet
 from tortoise.expressions import Q
-
+from datetime import datetime, timedelta
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo, WorkersRolesForReports
+from models import User, AdminInfo, WorkerRoleForReports, ReportRequest, ConfirmNotification
 
 
 class UserExtend:
     __slots__ = {}
 
     @staticmethod
+    async def get_user_role(chat_id) -> str:
+        role_obj = await WorkerRoleForReports.filter(worker_id=chat_id).values_list('role', flat=True)
+        return role_obj[0]
+
+    @staticmethod
+    async def get_notifications(chat_id):
+        return await ConfirmNotification.filter(user_id=chat_id).all()
+
+    @staticmethod
+    async def send_confirm_notify_to_users_by_role(admin_id, role_recipients, volume, comment, nickname_sender):
+        expr = Q(admin_id=admin_id) | Q(chat_id=admin_id)
+        recipients = await User.filter(expr, role_for_reports__role=role_recipients).all()
+
+        match role_recipients:
+            case 'conciliator':
+                stage = 'conciliate'
+            case 'approver':
+                stage = 'approve'
+            case _:
+                stage = 'treasure'
+
+        report_request = await ReportRequest.create(
+            stage=stage,
+            volume=volume,
+            comment=comment,
+            nickname_sender=nickname_sender,
+            time_delete=datetime.now() + timedelta(hours=24)
+        )
+
+        list_notifications = []
+        for r in recipients:
+            confirm_notification = ConfirmNotification(
+                report_request=report_request,
+                type='report_request',
+                user=r
+            )
+            list_notifications.append(confirm_notification)
+
+        await ConfirmNotification.bulk_create(list_notifications)
+
+    @staticmethod
+    async def get_users_by_role(admin_id: int, role: str) -> list[User]:
+        return await User.filter(Q(admin_id=admin_id) | Q(chat_id=admin_id), role_for_reports__role=role).all()
+
+    @staticmethod
     async def change_roles_for_admin_users(admin_id: int, users_chat_id_list: list[int], role: str):
         user_new_roles = []
         expression = Q(worker__admin_id=admin_id) | Q(worker_id=admin_id)
-        id_roles_objs = await WorkersRolesForReports.filter(expression, role=role).values_list("id", flat=True)
-        await WorkersRolesForReports.filter(id__in=id_roles_objs).delete()
+        id_roles_objs = await WorkerRoleForReports.filter(expression, role=role).values_list("id", flat=True)
+        await WorkerRoleForReports.filter(id__in=id_roles_objs).delete()
         for user_chat_id in users_chat_id_list:
-            user_new_roles.append(WorkersRolesForReports(worker_id=user_chat_id, role=role))
-        await WorkersRolesForReports.bulk_create(user_new_roles)
+            user_new_roles.append(WorkerRoleForReports(worker_id=user_chat_id, role=role))
+        await WorkerRoleForReports.bulk_create(user_new_roles)
 
     @staticmethod
     async def get_user_periods_stats_list(user_chat_id):

@@ -1,5 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from models import ConfirmNotification
+
 
 async def get_inline_keyb_markup(callback_str: str, number_cols: int, list_names: list, list_data: list = None,
                                  urls_list: str = None, add_keyb_to_start=None):
@@ -185,3 +187,59 @@ async def get_keyb_row_save_changes(callback_data_str: str) -> list[InlineKeyboa
     return [
         InlineKeyboardButton(text="Сохранить изменения ✅", callback_data=callback_data_str)
     ]
+
+
+async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
+                                          user_notifications: list[ConfirmNotification]) -> InlineKeyboardMarkup:
+    inline_keyboard = []
+
+    notifies = {
+        'issuance_of_report': {
+            'count': 0,
+            'btn_text': "Подтверждения на выдачу в подотчет:",
+            'callb_d': 'open_notifies_issuance_of_report',
+        }
+    }
+
+    match user_role:
+        case 'conciliator':
+            notifies['conciliate_requests_report'] = {
+                'count': 0,
+                'btn_text': "Согласование запросов в подотчет:",
+                'callb_d': 'open_notifies_conciliate_requests_report',
+            }
+        case 'approver':
+            notifies['approve_requests_report'] = {
+                'count': 0,
+                'btn_text': "Утверждения запросов в подотчет:",
+                'callb_d': 'open_notifies_approve_requests_report',
+            }
+        case 'treasurer':
+            notifies['treasure_requests_report'] = {
+                'count': 0,
+                'btn_text': "Выдать средства по запросу в подотчет:",
+                'callb_d': 'open_notifies_treasure_requests_report',
+            }
+
+    for n in user_notifications:
+        if n.type == 'report_request':
+            nrq = await n.report_request
+            match nrq.stage:
+                case 'conciliate':
+                    notifies['conciliate_requests_report']['count'] += 1
+                case 'approve':
+                    notifies['approve_requests_report']['count'] += 1
+                case 'treasure':
+                    notifies['treasure_requests_report']['count'] += 1
+        elif n.type == 'issuance_of_report':
+            notifies['issuance_of_report']['count'] += 1
+
+    for e in notifies.values():
+        if e['count'] > 0:
+            ikb = InlineKeyboardButton(text=f"{e['btn_text']} {e['count']} 🔻", callback_data=f"{e['callb_d']}:{user_chat_id}")
+            inline_keyboard.append([ikb])
+        else:
+            ikb = InlineKeyboardButton(text=e['btn_text'] + " 0", callback_data='disabled_inline_btn')
+            inline_keyboard.append([ikb])
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)

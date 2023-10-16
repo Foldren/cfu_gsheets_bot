@@ -1,7 +1,7 @@
 from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
     ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField, \
-    CharField, BinaryField
+    CharField, BinaryField, TimeField, DatetimeField
 
 
 class User(Model):
@@ -24,7 +24,8 @@ class User(Model):
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
-    role_for_reports: ReverseRelation["WorkersRolesForReports"]
+    role_for_reports: ReverseRelation["WorkerRoleForReports"]
+    confirm_notifications: ReverseRelation["ConfirmNotification"]
     nickname = TextField(maxlength=150, null=False)
     fullname = TextField(maxlength=250, null=True)
     profession = TextField(maxlength=250, null=True)
@@ -158,7 +159,7 @@ class PeriodStat(Model):
         table = "periods_stats"
 
 
-class WorkersRolesForReports(Model):
+class WorkerRoleForReports(Model):
     id = BigIntField(pk=True)
     worker: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
                                                      related_name="role_for_reports")
@@ -166,3 +167,29 @@ class WorkersRolesForReports(Model):
 
     class Meta:
         table = "workers_roles_for_reports"
+
+
+class ConfirmNotification(Model):
+    id = BigIntField(pk=True)
+    user: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                       related_name="confirm_notifications")
+    report_request: ForeignKeyRelation['ReportRequest'] = ForeignKeyField('models.ReportRequest',
+                                                                          on_delete=OnDelete.CASCADE,
+                                                                          related_name="confirm_notifications")
+    type = TextField(maxlength=80, null=False)
+
+    class Meta:
+        table = "confirm_notifications"
+
+
+class ReportRequest(Model):
+    id = BigIntField(pk=True)
+    confirm_notifications: ReverseRelation['ConfirmNotification']
+    time_delete = DatetimeField(null=False)
+    stage = TextField(maxlength=130, null=False)
+    volume = BigIntField(null=False)
+    comment = TextField(maxlength=500, null=False)
+    nickname_sender = TextField(maxlength=100, null=False)
+
+    class Meta:
+        table = "report_requests"

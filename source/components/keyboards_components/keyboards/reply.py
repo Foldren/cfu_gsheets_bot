@@ -10,13 +10,14 @@ keyb_start_admin = [
     [
         KeyboardButton(text="Интеграция с банками"),
         KeyboardButton(text="Отчеты"),
+        KeyboardButton(text="Поддержка"),
     ],
     [
         KeyboardButton(text="Алгоритм запроса в подотчет"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼"),
-        KeyboardButton(text="Тех. Поддержка")
+        KeyboardButton(text="📩"),
     ]
 ]
 keyb_operation_integration_banks = [
@@ -31,12 +32,15 @@ keyb_operation_integration_banks = [
 keyb_start_user = [
     [
         KeyboardButton(text="Операция с категориями"),
-        KeyboardButton(text="Операция с подотчетами")
+        KeyboardButton(text="Операция с подотчетами"),
     ],
     [
         KeyboardButton(text="Кошельки"),
         KeyboardButton(text="Отчеты"),
-        KeyboardButton(text="Тех. Поддержка"),
+        KeyboardButton(text="Поддержка"),
+    ],
+    [
+        KeyboardButton(text="📩"),
     ]
 ]
 keyb_start_user_admin = [
@@ -47,11 +51,12 @@ keyb_start_user_admin = [
     ],
     [
         KeyboardButton(text="Кошельки"),
-        KeyboardButton(text="Отчеты")
+        KeyboardButton(text="Отчеты"),
+        KeyboardButton(text="Поддержка")
     ],
     [
         KeyboardButton(text="Режим: Юзер 🙎‍♂️"),
-        KeyboardButton(text="Тех. Поддержка")
+        KeyboardButton(text="📩"),
     ]
 ]
 keyb_operation_under_stats = [
