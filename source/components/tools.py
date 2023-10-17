@@ -8,14 +8,15 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardMarkup, Message, CallbackQuery
 from cryptography.fernet import Fernet
 from components.keyboards_components.generators import get_gt_url_keyb_markup
+from components.text_generators.users import get_notify_request_report_text
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY
+from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY, ROLE_BY_STAGES_REPS_REQS
 from microservices.sql_models_extends.category import CategoryExtend
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
-from models import ConfirmNotification
+from models import ConfirmNotification, ReportRequest
 
 
 async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
@@ -327,16 +328,78 @@ async def get_str_format_queue(selected_item_id) -> str:
     return " → ".join(menu_items_names_list)
 
 
-async def get_formatted_notifications(notifications: list[ConfirmNotification]):
-    volume = ""
-    comment = ""
-    nickname_sender = ""
+async def get_formatted_msg_callb_notifications(notifications: list[ConfirmNotification]):
+    result = {
+        'fst_message': '',
+        'notifications': [],
+    }
+    variants_messages = {
+        'conciliate': 'согласованию запроса в подотчет',
+        'approve': 'утверждению запроса в подотчет',
+        'treasure': 'подтверждению выдачи средств в подотчет'
+    }
 
-    for n in notifications:
+    for i, n in enumerate(notifications):
         if n.type == 'report_request':
             rep_req = await n.report_request
-            rep_req.stage
-            volume = rep_req.volume
-            comment = rep_req.comment
-            nickname_sender = rep_req.nickname_sender
+            stage = rep_req.stage
+            if i == 0:
+                result['fst_message'] = f"<b>Уведомления по {variants_messages[stage]}</b>"
+            result['notifications'].append({
+                'text': f"<u>Запрос от:</u> <b>{rep_req.nickname_sender}</b>\n"
+                        f"<u>Сумма:</u> <b>{rep_req.volume}</b>\n"
+                        f"<u>Комментарий:</u> <b>{rep_req.comment}</b>",
+                'callback': f'n_report_request:{stage}:{n.id}'
+            })
+
+    return result
+
+
+async def change_stage_report_request(bot: Bot, admin_chat_id: int, stage: str, report_request: ReportRequest):
+    cfrm_notifications = await report_request.confirm_notifications
+
+    if not cfrm_notifications:
+        users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id, role=ROLE_BY_STAGES_REPS_REQS[stage])
+        nicknames = [u.nickname for u in users_by_role]
+        chat_groups_ids = await UserExtend.get_notify_groups(admin_id=admin_chat_id, only_chat_ids=True)
+        volume = report_request.volume,
+        comment = report_request.comment
+        sender_nickname = report_request.nickname_sender
+
+        match stage:
+            case 'conciliate':
+                report_request.stage = 'approve'
+                await report_request.save()
+            case 'approve':
+                report_request.stage = 'treasure'
+                await report_request.save()
+            case 'treasure':
+                stage = 'end'
+                await report_request.delete()
+
+        ftmt_msg = await get_notify_request_report_text(
+            stage=stage,
+            users_nicknames=nicknames,
+            sender_nickname=sender_nickname,
+            volume=volume,
+            comment=comment
+        )
+
+        await send_multiply_messages(
+            bot=bot,
+            msg_text=ftmt_msg,
+            list_chat_ids=chat_groups_ids,
+            keyboard_markup=None
+        )
+
+        if stage != 'end':
+            await UserExtend.send_confirm_notify_to_users_by_role(
+                admin_id=admin_chat_id,
+                role_recipients=ROLE_BY_STAGES_REPS_REQS[stage],
+                volume=volume,
+                comment=comment,
+                nickname_sender=sender_nickname
+            )
+
+
 

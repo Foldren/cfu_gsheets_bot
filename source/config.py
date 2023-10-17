@@ -44,3 +44,8 @@ STAGES_REPS_REQS_BY_ROLE = {
     'approver': 'approve',
     'treasurer': 'treasure',
 }
+ROLE_BY_STAGES_REPS_REQS = {
+    'conciliate': 'conciliator',
+    'approve': 'approver',
+    'treasure': 'treasurer',
+}

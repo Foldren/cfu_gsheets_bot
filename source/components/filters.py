@@ -26,6 +26,12 @@ class IsUserFilter(BaseFilter):
         return (status != 1) and (status is not None)
 
 
+class IsMemberFilter(BaseFilter):
+    async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
+        status = await redis_users.get_user_status(message.from_user.id)
+        return status is not None
+
+
 class IsRegistration(BaseFilter):
     async def __call__(self, message: Message, redis_regs: RedisRegistration) -> bool:
         registration = await redis_regs.check_registration_by_nickname(message.from_user.username)

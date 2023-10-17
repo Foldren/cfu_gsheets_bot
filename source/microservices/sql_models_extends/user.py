@@ -19,8 +19,18 @@ class UserExtend:
         return role_obj[0]
 
     @staticmethod
-    async def get_notifications(chat_id):
-        return await ConfirmNotification.filter(user_id=chat_id).all()
+    async def get_notifications(chat_id, type_n: str = None):
+        match type_n:
+            case 'n_conciliate_report_request':
+                expr = Q(report_request__stage='conciliate') & Q(user_id=chat_id)
+            case 'n_approve_report_request':
+                expr = Q(report_request__stage='approve') & Q(user_id=chat_id)
+            case 'n_treasure_report_request':
+                expr = Q(report_request__stage='treasure') & Q(user_id=chat_id)
+            case _:
+                expr = Q(user_id=chat_id)
+
+        return await ConfirmNotification.filter(expr).all()
 
     @staticmethod
     async def send_confirm_notify_to_users_by_role(admin_id, role_recipients, volume, comment, nickname_sender):
@@ -114,9 +124,13 @@ class UserExtend:
         return admin_info.google_table_url
 
     @staticmethod
-    async def get_notify_groups(admin_id):
+    async def get_notify_groups(admin_id, only_chat_ids: bool = False):
         admin = await User.get(chat_id=admin_id)
-        return await admin.notify_groups.all().values("chat_id", "name")
+        if only_chat_ids:
+            notify_groups = await admin.notify_groups.all().values_list("chat_id", flat=True)
+        else:
+            notify_groups = await admin.notify_groups.all().values("chat_id", "name")
+        return notify_groups
 
     @staticmethod
     async def invert_mode(admin_id):

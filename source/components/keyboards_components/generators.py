@@ -185,7 +185,7 @@ async def get_keyb_row_save_changes(callback_data_str: str) -> list[InlineKeyboa
     :return: [InlineKeyboardButton]
     """
     return [
-        InlineKeyboardButton(text="Сохранить изменения ✅", callback_data=callback_data_str)
+        InlineKeyboardButton(text="Сохранить изменения  💾", callback_data=callback_data_str)
     ]
 
 
@@ -197,7 +197,7 @@ async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
         'issuance_of_report': {
             'count': 0,
             'btn_text': "Подтверждения на выдачу в подотчет:",
-            'callb_d': 'open_notifies_issuance_of_report',
+            'callb_d': 'n_issuance_report',
         }
     }
 
@@ -206,19 +206,19 @@ async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
             notifies['conciliate_requests_report'] = {
                 'count': 0,
                 'btn_text': "Согласование запросов в подотчет:",
-                'callb_d': 'open_notifies_conciliate_requests_report',
+                'callb_d': 'n_conciliate_requests_report',
             }
         case 'approver':
             notifies['approve_requests_report'] = {
                 'count': 0,
                 'btn_text': "Утверждения запросов в подотчет:",
-                'callb_d': 'open_notifies_approve_requests_report',
+                'callb_d': 'n_approve_requests_report',
             }
         case 'treasurer':
             notifies['treasure_requests_report'] = {
                 'count': 0,
                 'btn_text': "Выдать средства по запросу в подотчет:",
-                'callb_d': 'open_notifies_treasure_requests_report',
+                'callb_d': 'n_treasure_requests_report',
             }
 
     for n in user_notifications:
@@ -236,10 +236,16 @@ async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
 
     for e in notifies.values():
         if e['count'] > 0:
-            ikb = InlineKeyboardButton(text=f"{e['btn_text']} {e['count']} 🔻", callback_data=f"{e['callb_d']}:{user_chat_id}")
+            ikb = InlineKeyboardButton(text=f"{e['btn_text']} {e['count']} 🔻", callback_data=f"{e['callb_d']}")
             inline_keyboard.append([ikb])
         else:
             ikb = InlineKeyboardButton(text=e['btn_text'] + " 0", callback_data='disabled_inline_btn')
             inline_keyboard.append([ikb])
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def get_notify_keyboard_btn(callback_d: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="Подтвердить ✅", callback_data=callback_d)
+    ]])
