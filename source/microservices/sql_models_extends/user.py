@@ -14,6 +14,16 @@ class UserExtend:
     __slots__ = {}
 
     @staticmethod
+    async def check_all_users_roles_exist(admin_id):
+        expr = Q(admin_id=admin_id) | Q(chat_id=admin_id)
+        users_chat_ids = await User.filter(expr).values_list('chat_id', flat=True)
+        conciliators = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='conciliator')
+        approvers = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='approver')
+        treasures = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='treasurer')
+        return (conciliators != []) and (approvers != []) and (treasures != [])
+
+
+    @staticmethod
     async def get_user_role(chat_id) -> str:
         role_obj = await WorkerRoleForReports.filter(worker_id=chat_id).values_list('role', flat=True)
         return role_obj[0]
@@ -33,7 +43,7 @@ class UserExtend:
         return await ConfirmNotification.filter(expr).all()
 
     @staticmethod
-    async def send_confirm_notify_to_users_by_role(admin_id, role_recipients, volume, comment, nickname_sender):
+    async def send_confirm_notify_to_users_by_role(admin_id: int, role_recipients: str, volume: int, comment: str, nickname_sender: str):
         expr = Q(admin_id=admin_id) | Q(chat_id=admin_id)
         recipients = await User.filter(expr, role_for_reports__role=role_recipients).all()
 

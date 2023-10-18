@@ -128,7 +128,7 @@ async def end_write_transfer_to_bd(callback: CallbackQuery, state: FSMContext,
     )
 
     await gt_object.add_transfer_to_bd(
-        table_url=table_url,
+        table_encr_url=table_url,
         chat_id_worker=callback.message.chat.id,
         volume_op=st_data['specified_volume'],
         wallet_sender=st_data['wallet_sender'],

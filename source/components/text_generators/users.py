@@ -63,7 +63,7 @@ async def get_notify_start_request_report(users_nicknames: list[str], sender_nic
            f"{' '.join(users_nicknames)}"
 
 
-async def get_notify_request_report_text(stage: str, users_nicknames: list[str], sender_nickname: str, volume,
+async def get_notify_request_report_text(stage: str, users_nicknames: list[str], sender_nickname: str, volume: int,
                                          comment: str) -> str:
     text_v_dict = {
         'conciliate': {
@@ -94,7 +94,7 @@ async def get_notify_request_report_text(stage: str, users_nicknames: list[str],
           f"<u>Комментарий:</u> <b>{comment}</b>\n\n"
 
     if stage != 'end':
-        msg += f"<i>✔ {text_v_dict[stage]['mark_text']}</i>\n" \
-               f"{' '.join(users_nicknames)}"
+        msg += f"<i>✔ {text_v_dict[stage]['mark_text']}\n" \
+               f"{' '.join(users_nicknames)}</i>"
 
     return msg

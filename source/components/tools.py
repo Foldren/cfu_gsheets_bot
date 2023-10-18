@@ -359,23 +359,26 @@ async def change_stage_report_request(bot: Bot, admin_chat_id: int, stage: str, 
     cfrm_notifications = await report_request.confirm_notifications
 
     if not cfrm_notifications:
-        users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id, role=ROLE_BY_STAGES_REPS_REQS[stage])
-        nicknames = [u.nickname for u in users_by_role]
         chat_groups_ids = await UserExtend.get_notify_groups(admin_id=admin_chat_id, only_chat_ids=True)
-        volume = report_request.volume,
+        volume = report_request.volume
         comment = report_request.comment
         sender_nickname = report_request.nickname_sender
 
         match stage:
             case 'conciliate':
                 report_request.stage = 'approve'
+                stage = 'approve'
                 await report_request.save()
             case 'approve':
                 report_request.stage = 'treasure'
+                stage = 'treasure'
                 await report_request.save()
             case 'treasure':
                 stage = 'end'
                 await report_request.delete()
+
+        users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id, role=ROLE_BY_STAGES_REPS_REQS[stage])
+        nicknames = [u.nickname for u in users_by_role]
 
         ftmt_msg = await get_notify_request_report_text(
             stage=stage,

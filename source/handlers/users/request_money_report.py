@@ -3,7 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from components.filters import IsUserFilter
 from components.text_generators.users import get_notify_start_request_report
-from components.texts.users.request_money_report import text_start_request_money_report, text_send_request_to_agreement
+from components.texts.users.request_money_report import text_start_request_money_report, text_send_request_to_agreement, \
+    text_no_all_roles_on_request
 from components.tools import get_msg_list_data, send_multiply_messages
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
@@ -24,9 +25,16 @@ async def start_request_money_report(message: Message, state: FSMContext) -> Non
     :param message: сообщение из главного меню
     :param state: стейт главного меню
     """
-    await state.clear()
-    await state.set_state(StepsMakeRequestMoneyReport.start_agreement)
-    await message.answer(text=text_start_request_money_report)
+    admin_id = await UserExtend.get_user_admin_id(message.from_user.id)
+    roles_exist_flag = await UserExtend.check_all_users_roles_exist(admin_id)
+
+    if roles_exist_flag:
+        await state.clear()
+        await state.set_state(StepsMakeRequestMoneyReport.start_agreement)
+        text_msg = text_start_request_money_report
+    else:
+        text_msg = text_no_all_roles_on_request
+    await message.answer(text=text_msg)
 
 
 @rt.message(StepsMakeRequestMoneyReport.start_agreement)
@@ -62,3 +70,4 @@ async def send_request_to_agreement(message: Message, state: FSMContext) -> None
     )
 
     await state.clear()
+    await message.answer(text=text_send_request_to_agreement)

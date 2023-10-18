@@ -58,7 +58,7 @@ async def get_list_notifications_by_category(callback: CallbackQuery, state: FSM
 
 @rt.callback_query(StepsManageRequestReports.get_list_notifications_by_category,
                    (F.data.startswith('n_report_request') | F.data.startswith('n_issuance_report')))
-async def confirm_notification(callback: CallbackQuery, state: FSMContext) -> None:
+async def confirm_notification(callback: CallbackQuery) -> None:
     callb_d = await get_callb_content(callback_data=callback.data, multiply_values=True)
     type_notify = callb_d[0]
 
@@ -77,6 +77,7 @@ async def confirm_notification(callback: CallbackQuery, state: FSMContext) -> No
             stage=stage_rep_req,
             report_request=rep_req
         )
+        await callback.message.delete()
 
 
 
