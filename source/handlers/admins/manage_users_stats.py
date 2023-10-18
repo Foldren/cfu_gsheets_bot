@@ -19,7 +19,7 @@ rt.message.filter(IsAdminFilter() and IsAdminModeFilter(), F.chat.type == "priva
 rt.callback_query.filter(IsAdminFilter() and IsAdminModeFilter(), F.message.chat.type == "private")
 
 
-@rt.message(F.text == "Отчеты")
+@rt.message(F.text == "Управление отчетами")
 async def start_manage_users_stats(message: Message, state: FSMContext, answer_or_edit_msg: bool = True):
     await state.clear()
     await state.set_state(StepsManageUsersStats.choose_stats_period)

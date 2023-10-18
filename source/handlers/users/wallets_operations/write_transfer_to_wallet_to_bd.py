@@ -2,21 +2,18 @@ from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter, IsNotMainMenuMessage
-from components.tools import get_callb_content, send_multiply_messages
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.text_generators.users import get_msg_notify_new_transfer
-from components.texts.users.write_transfer_to_wallet_to_bd import text_set_volume_transfer, text_select_wallet_sender, \
-    text_select_wallet_recipient, text_end_transfer
-from components.texts.users.write_issuance_of_report_to_bd import text_start_issuance
 from components.texts.users.write_category_to_bd import text_invalid_volume_operation, text_no_menu_items_orgs
-from config import BANKS_UPRAVLYAIKA
+from components.texts.users.write_transfer_to_wallet_to_bd import text_set_volume_transfer, text_select_wallet_sender, \
+    text_select_wallet_recipient, text_end_transfer, text_start_transfer
+from components.tools import get_callb_content, send_multiply_messages
 from microservices.google_api.google_table import GoogleTable
-from microservices.sql_models_extends.category import CategoryExtend
+from microservices.redis_models.user import RedisUser
+from microservices.redis_models.wallets import RedisUserWallets
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.organization import OrganizationExtend
 from microservices.sql_models_extends.user import UserExtend
-from microservices.redis_models.user import RedisUser
-from microservices.redis_models.wallets import RedisUserWallets
 from states.user.steps_create_notes_to_bd import StepsWriteTransfer
 
 rt = Router()
@@ -49,7 +46,7 @@ async def start_write_transfer_to_bd(message: Message, state: FSMContext, redis_
         await state.set_data({
             'admin_id': admin_id,
         })
-        await message.answer(text=text_start_issuance, reply_markup=keyboard, parse_mode="html")
+        await message.answer(text=text_start_transfer, reply_markup=keyboard, parse_mode="html")
     else:
         await message.answer(text=text_no_menu_items_orgs, parse_mode="html")
 

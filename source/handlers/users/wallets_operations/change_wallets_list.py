@@ -19,7 +19,7 @@ rt.message.filter(IsUserFilter(), F.chat.type == "private")
 rt.callback_query.filter(IsUserFilter(), F.message.chat.type == "private")
 
 
-@rt.message(F.text == "Изменить кошельки")
+@rt.message(F.text == "Изменение списка кошельков")
 async def start_change_wallets_list(message: Message, state: FSMContext, redis_wallets: RedisUserWallets):
     await state.clear()
     await state.set_state(StepsChangeWalletList.change_wallets_list)

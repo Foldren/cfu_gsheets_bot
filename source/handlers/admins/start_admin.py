@@ -18,7 +18,6 @@ rt.callback_query.filter(IsAdminFilter())
 @rt.message(Command(commands=["start", "restart"]), F.chat.type == "private")
 async def start_admin(message: Message, state: FSMContext, bot_object: Bot):
     await state.clear()
-
     message_text = await get_text_start_admin(message.from_user.full_name)
 
     await bot_object.set_my_commands(commands=main_commands, scope=BotCommandScopeAllPrivateChats())

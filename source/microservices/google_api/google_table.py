@@ -1,9 +1,8 @@
-from asyncio import run
+from asyncio import run, get_event_loop
 from datetime import datetime
-
 from cryptography.fernet import Fernet
 from google.oauth2.service_account import Credentials
-from gspread_asyncio import AsyncioGspreadClientManager
+from gspread_asyncio import AsyncioGspreadClientManager, AsyncioGspreadClient
 from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA, SECRET_KEY
 
 

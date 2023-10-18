@@ -9,7 +9,7 @@ keyb_start_admin = [
     ],
     [
         KeyboardButton(text="Интеграция с банками"),
-        KeyboardButton(text="Отчеты"),
+        KeyboardButton(text="Управление отчетами"),
         KeyboardButton(text="Поддержка"),
     ],
     [
@@ -75,7 +75,7 @@ keyb_operation_under_stats = [
 keyb_wallets = [
     [
         KeyboardButton(text="Перевод на кошелек"),
-        KeyboardButton(text="Изменить кошельки")
+        KeyboardButton(text="Изменение списка кошельков")
     ],
     [
         KeyboardButton(text="⬅️ Назад в главное меню")
