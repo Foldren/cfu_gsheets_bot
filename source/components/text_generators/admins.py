@@ -19,12 +19,13 @@ async def get_text_start_admin(name_user: str) -> str:
 async def get_text_select_users_by_role(role: str) -> str:
     match role:
         case 'conciliator':
-            rus_role = "согласующих"
+            rus_role = "согласующих."
         case 'approver':
-            rus_role = "утверждающего"
+            rus_role = "утверждающего."
         case _:
-            rus_role = "казначея"
-    return f"<b>Выбор {rus_role}</b>"
+            rus_role = "казначея."
+    return f"<b>Алгоритм запроса в подотчет:</b> (шаг 2)\n\n" \
+           f"👉 Выберите {rus_role}"
 
 
 async def get_alert_by_role(role: str) -> str:

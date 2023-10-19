@@ -20,11 +20,11 @@ from models import ConfirmNotification, ReportRequest
 
 
 async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
-                                             admin_id=None):
+                                             admin_id=None, radio_buttons=False):
     buttons_names = []
     buttons_callbacks = []
     for u in users:
-        selected_emoji = '☑️' if u[flag_name] == flag_value else ''
+        selected_emoji = ('🔘' if radio_buttons else '☑️') if u[flag_name] == flag_value else ''
         if u['chat_id'] == admin_id and include_admin:
             buttons_names.append(f"{selected_emoji} Я")
         else:
@@ -33,29 +33,52 @@ async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_v
     return {'names': buttons_names, 'callbacks': buttons_callbacks}
 
 
-async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, selected_minimum_one=False):
+async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_mode='checkbox'):
     keyboard_markup = callback.message.reply_markup
     number_pressed_btns = 0
+    emoji = '🔘' if (select_mode == 'radio' or select_mode == 'radio_with_none') else '☑️'
+    irb = []
     # Считаем количество нажатых кнопок (выбранных пунктов)
-    if selected_minimum_one:
+    if select_mode == 'checkbox_minimum_one':
         for i, row in enumerate(keyboard_markup.inline_keyboard):
             for k, button in enumerate(row):
-                if '☑️' in button.text:
+                if emoji in button.text:
                     number_pressed_btns += 1
+    # Получаем индекс выбранной radio кнопки
+    if 'radio' in select_mode:
+        for i, row in enumerate(keyboard_markup.inline_keyboard):
+            for k, button in enumerate(row):
+                if emoji in button.text:
+                    irb.append(i)
+                    irb.append(k)
+                    break
     # Находим нажатую в данный момент кнопку и ставим флажок, либо убираем (+- проверка, что должен быть хотя бы один)
     for i, row in enumerate(keyboard_markup.inline_keyboard):
         for k, button in enumerate(row):
             if callback.data == button.callback_data:
-                if '☑️' in button.text and not selected_minimum_one:
-                    keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
-                elif '☑️' in button.text and selected_minimum_one:
-                    if (number_pressed_btns - 1) > 0:
+                if 'checkbox' in select_mode:
+                    if emoji in button.text and not (select_mode == 'checkbox_minimum_one'):
                         keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
+                    elif emoji in button.text and (select_mode == 'checkbox_minimum_one'):
+                        if (number_pressed_btns - 1) > 0:
+                            keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
+                        else:
+                            await callback.answer()
+                            break
                     else:
+                        keyboard_markup.inline_keyboard[i][k].text = emoji + " " + button.text
+                else:
+                    if emoji in button.text and not (select_mode == 'radio_with_none'):
                         await callback.answer()
                         break
-                else:
-                    keyboard_markup.inline_keyboard[i][k].text = '☑️ ' + button.text
+                    elif emoji in button.text and (select_mode == 'radio_with_none'):
+                        keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
+                    else:
+                        try:
+                            keyboard_markup.inline_keyboard[irb[0]][irb[1]].text = keyboard_markup.inline_keyboard[irb[0]][irb[1]].text[2:]
+                        except IndexError:
+                            pass
+                        keyboard_markup.inline_keyboard[i][k].text = emoji + " " + button.text
                 break
     return keyboard_markup
 
@@ -79,12 +102,14 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
         if only_queue:
             return f"<u>Вложенность</u>:  <b>Главные категории</b>\n"
         else:
-            return f"<u>Уровень</u>: 0️⃣ <b>Главные категории</b>\n"
+            return f"<u>Уровень</u>: 0️⃣\n" \
+                   f"<u>Категория</u>: <b>Главные категории</b>\n"
     elif level == 1:
         if only_queue:
             return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
         else:
-            return f"<u>Уровень</u>: 1️⃣ <b>{selected_item_name}</b>\n"
+            return f"<u>Уровень</u>: 1️⃣ \n" \
+                   f"<u>Категория</u>: <b>{selected_item_name}</b>\n"
 
     for i in range(0, len(str(level))):
         emoji_level += numbers[int(str(level)[i])]
@@ -92,7 +117,8 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
     if only_queue:
         return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
     else:
-        return f"<u>Уровень</u>: {emoji_level} <b>{selected_item_name}</b>\n" \
+        return f"<u>Уровень</u>: {emoji_level}\n" \
+               f"<u>Категория</u>: <b>{selected_item_name}</b>\n"\
                f"<u>Вложенность</u>:  <b>{queue}</b>\n"
 
 

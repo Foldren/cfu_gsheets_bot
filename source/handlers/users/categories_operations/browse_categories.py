@@ -27,7 +27,7 @@ async def next_to_nested_categories_u(callback: CallbackQuery, state: FSMContext
     selected_item = await CategoryExtend.get_by_id(selected_category_id)
     categories = await CategoryExtend.get_user_categories_by_parent_id(callback.from_user.id, parent_id=selected_item.id)
     queue = await get_str_format_queue(selected_category_id)
-    msg_queue = await get_msg_queue(selected_item.level, selected_item.name, queue)
+    msg_queue = '<b>Операция с категориями:</b> (шаг 3)\n\n' + await get_msg_queue(selected_item.level, selected_item.name, queue)
 
     dict_c_names_ids = {'names': [], "ids": []}
 
@@ -66,7 +66,7 @@ async def back_to_parent_categories_u(callback: CallbackQuery):
     new_queue = old_queue[:old_queue.rfind('→') - 1]
     msg_queue = await get_msg_queue(selected_category.level-1, parent_category_name, new_queue)
     upper_level = categories[0]['parent_id'] is None
-    final_msg = text_get_user_list_mi + msg_queue if upper_level else msg_queue
+    final_msg = text_get_user_list_mi + msg_queue if upper_level else '<b>Операция с категориями:</b> (шаг 3)\n\n' + msg_queue
     selected_upper_item_id = selected_category.parent_id
     dict_mi_names_ids = {'names': [], "ids": []}
 

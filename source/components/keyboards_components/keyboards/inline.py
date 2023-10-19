@@ -77,10 +77,10 @@ keyb_end_delete_payment_accounts = [
 
 keyb_start_manage_reports_requests = InlineKeyboardMarkup(inline_keyboard=[
     [
-        InlineKeyboardButton(text="Назначить согласующих", callback_data="assign:conciliator"),
-        InlineKeyboardButton(text="Назначить утверждающего", callback_data="assign:approver"),
+        InlineKeyboardButton(text="Согласующие", callback_data="assign:conciliator"),
+        InlineKeyboardButton(text="Утверждающий", callback_data="assign:approver"),
     ],
     [
-        InlineKeyboardButton(text="Назначить казначея", callback_data="assign:treasurer")
+        InlineKeyboardButton(text="Казначей", callback_data="assign:treasurer")
     ]
 ])

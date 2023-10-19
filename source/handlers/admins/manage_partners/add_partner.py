@@ -1,10 +1,12 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
+from tortoise.exceptions import IntegrityError
+
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.admins.manage_partners import text_start_add_partner, text_end_add_partner, \
-    text_select_bank_reload_category, text_start_distribute_statement_operations
+    text_select_bank_reload_category, text_start_distribute_statement_operations, text_error_add_partner
 from components.tools import get_msg_list_data, get_emoji_number, get_callb_content
 from microservices.google_api.google_table import GoogleTable
 from microservices.sql_models_extends.category import CategoryExtend
@@ -44,7 +46,7 @@ async def select_bank_reload_category(message: Message, state: FSMContext):
     for c in admin_lower_categories:
         category_queue = await CategoryExtend.get_parent_categories_names(c.id)
         emoji_number = await get_emoji_number(i)
-        result_text += f"{emoji_number} {' → '.join(category_queue)}\n"
+        result_text += f"<b>{emoji_number} {' → '.join(category_queue)}</b>\n"
         names_categories_list.append(f"{emoji_number} {c.name}")
         i += 1
 
@@ -77,14 +79,17 @@ async def end_add_partner(callback: CallbackQuery, state: FSMContext, gt_object:
         list_queue_category=list_queue_categories,
     )
 
-    await PartnerExtend.add(
-        inn=st_data['inn_new_partner'],
-        name=st_data['name_new_partner'],
-        bank_reload_category_id=selected_category_p_id,
-        admin_id=callback.from_user.id,
-    )
+    try:
+        await PartnerExtend.add(
+            inn=st_data['inn_new_partner'],
+            name=st_data['name_new_partner'],
+            bank_reload_category_id=selected_category_p_id,
+            admin_id=callback.from_user.id,
+        )
+        await state.clear()
+        await callback.answer(text=text_end_add_partner, parse_mode="html")
 
-    await state.clear()
-    await callback.message.edit_text(text=text_end_add_partner, parse_mode="html")
+    except IntegrityError:
+        await callback.answer(text=text_error_add_partner, parse_mode="html")
 
 

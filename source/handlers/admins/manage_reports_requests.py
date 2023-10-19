@@ -64,7 +64,8 @@ async def get_role_users_list(callback: CallbackQuery, state: FSMContext) -> Non
         flag_name='role_for_reports__role',
         flag_value=role,
         include_admin=True,
-        admin_id=callback.message.chat.id
+        admin_id=callback.message.chat.id,
+        radio_buttons=False if role == 'conciliator' else True
     )
     if not names_callb_btns['names']:
         await callback.answer(alert_text_error_load_users_list)
@@ -86,7 +87,8 @@ async def get_role_users_list(callback: CallbackQuery, state: FSMContext) -> Non
 @rt.callback_query(StepsManageReportsRequests.select_list_users, F.data.startswith("select_rep_reqs"))
 async def change_role_users_list(callback: CallbackQuery, state: FSMContext) -> None:
     st_data = await state.get_data()
-    new_keyboard_markup = await get_changed_reply_keyb_with_checkbox(callback=callback)
+    mode = 'checkbox_minimum_one' if st_data['role'] == 'conciliator' else 'radio'
+    new_keyboard_markup = await get_changed_reply_keyb_with_checkbox(callback=callback, select_mode=mode)
     try:
         await callback.message.edit_text(text=st_data['text_msg'], reply_markup=new_keyboard_markup, parse_mode="html")
     except TelegramBadRequest:
@@ -98,9 +100,10 @@ async def end_manage_reports_requests(callback: CallbackQuery, state: FSMContext
     st_data = await state.get_data()
     users_with_new_roles = []
     text_success_alert = await get_alert_by_role(st_data['role'])
+    emoji = '☑️' if st_data['role'] == 'conciliator' else '🔘'
     for i, row in enumerate(callback.message.reply_markup.inline_keyboard):
         for k, button in enumerate(row):
-            if '☑️' in button.text:
+            if emoji in button.text:
                 users_with_new_roles.append(int(button.callback_data.split(":")[2]))
     await UserExtend.change_roles_for_admin_users(
         admin_id=callback.message.chat.id,
