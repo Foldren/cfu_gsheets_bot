@@ -2,7 +2,6 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from tortoise.exceptions import IntegrityError
-
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.admins.manage_partners import text_start_add_partner, text_end_add_partner, \

@@ -26,8 +26,8 @@ async def get_payment_accounts_list(callback: CallbackQuery, state: FSMContext):
 
     selected_bank_id = await get_callb_content(callback.data)
     bank = await BankExtend.get_by_id(selected_bank_id)
-    text_info_bank = f"<u>Выбран банк</u> 🏦⤵️\n\n<b>Название:</b>  {bank.custom_name}\n" \
-                     f"<b>Отделение:</b>  {BANKS_RUS_NAMES[bank.bank_name]}\n\n"
+    text_info_bank = f"<b>Расчётные счета</b>\n\n<u>Банк:</u> <b>{bank.custom_name}</b>\n" \
+                     f"<u>Отделение:</u> <b>{BANKS_RUS_NAMES[bank.bank_name]}</b>\n\n"
     payment_accounts = await PaymentAccountExtend.get_bank_payment_accounts(selected_bank_id)
 
     if payment_accounts:

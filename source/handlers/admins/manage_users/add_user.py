@@ -38,8 +38,8 @@ async def end_add_user(message: Message, state: FSMContext, redis_regs: RedisReg
 
         # Добавляем запись о регистрации в redis
         await redis_regs.set_new_registration(nickname=msg_data['nickname'][1:],
-                                                    fullname=msg_data['fullname'],
-                                                    profession=msg_data['profession'],
-                                                    id_admin=message.from_user.id)
+                                              fullname=msg_data['fullname'],
+                                              profession=msg_data['profession'],
+                                              id_admin=message.from_user.id)
 
     await message.answer(text=final_text, parse_mode="html")

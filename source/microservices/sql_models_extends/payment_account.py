@@ -22,6 +22,10 @@ class PaymentAccountExtend:
         return await PaymentAccount.filter(bank_id=bank_id).all()
 
     @staticmethod
+    async def get_pa_by_ids(ids_pa_list: list):
+        return await PaymentAccount.filter(id__in=ids_pa_list).all()
+
+    @staticmethod
     async def delete_payment_accounts_by_ids(ids_payment_accounts_list: list):
         await PaymentAccount.filter(id__in=ids_payment_accounts_list).delete()
 

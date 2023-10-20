@@ -8,13 +8,13 @@ keyb_empty_user_list = [
 keyb_end_delete_mi = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_menu_item"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_menu_item")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_menu_item")
     ]
 ]
 keyb_end_delete_u = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_users"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_users")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_users")
     ]
 ]
 keyb_choose_write_menu_sender = [
@@ -38,7 +38,7 @@ keyb_get_empty_list_organizations = [
 keyb_end_delete_org = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_organizations"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_organizations")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_organizations")
     ]
 ]
 
@@ -51,7 +51,7 @@ keyb_get_empty_list_partners = [
 keyb_end_delete_partners = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_partners"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_partners")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_partners")
     ]
 ]
 
@@ -64,14 +64,14 @@ keyb_get_empty_list_banks = [
 keyb_end_delete_banks = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_banks"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_banks")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_banks")
     ]
 ]
 
 keyb_end_delete_payment_accounts = [
     [
         InlineKeyboardButton(text="Да  ✅", callback_data="end_delete_payment_accounts"),
-        InlineKeyboardButton(text="Нет  ❌", callback_data="cancel_delete_payment_accounts")
+        InlineKeyboardButton(text="Нет  ⛔️", callback_data="cancel_delete_payment_accounts")
     ]
 ]
 

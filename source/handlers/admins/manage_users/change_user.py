@@ -42,9 +42,9 @@ async def set_new_data_user(callback: CallbackQuery, state: FSMContext, bot_obje
     id_user = await get_callb_content(callback.data)
     user = await UserExtend.get_by_id(id_user)
 
-    msg_text = f"<b>Выбран пользователь</b> 👇\n" \
-               f"<b>Chat_id:</b> {user.chat_id}\n" \
-               f"<b>Полное имя:</b> {user.fullname}\n\n"
+    msg_text = f"<b>Редактирование сотрудника:</b> (шаг 2)\n\n" \
+               f"<u>Chat_id:</u> <b>{user.chat_id}</b>\n" \
+               f"<u>Полное имя:</u> <b>{user.fullname}</b>\n\n"
     example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}</code>"
 
     await set_memory_data(bot_object, callback.message, {

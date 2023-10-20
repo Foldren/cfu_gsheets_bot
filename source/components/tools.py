@@ -16,7 +16,7 @@ from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
-from models import ConfirmNotification, ReportRequest
+from models import ConfirmNotification, ReportRequest, PaymentAccount
 
 
 async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
@@ -24,16 +24,50 @@ async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_v
     buttons_names = []
     buttons_callbacks = []
     for u in users:
-        selected_emoji = ('🔘' if radio_buttons else '☑️') if u[flag_name] == flag_value else ''
+        selected_emoji = ('🔘 ' if radio_buttons else '☑️ ') if u[flag_name] == flag_value else ''
         if u['chat_id'] == admin_id and include_admin:
             buttons_names.append(f"{selected_emoji} Я")
         else:
-            buttons_names.append(f"{selected_emoji} {u['fullname'].split(' ')[1]} - {u['profession']}")
+            buttons_names.append(f"{selected_emoji}{u['fullname'].split(' ')[1]} - {u['profession']}")
         buttons_callbacks.append(u['chat_id'])
     return {'names': buttons_names, 'callbacks': buttons_callbacks}
 
 
-async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_mode='checkbox'):
+async def is_start_select_delete_btns(state: FSMContext):
+    st_data = await state.get_data()
+    result = False
+    if 'start_select_btns_on_delete' not in st_data:
+        await state.update_data({'start_select_btns_on_delete': 1})
+        result = True
+    return result
+
+
+async def get_ids_delete_objects_from_keyb_callb(callback: CallbackQuery, emoji_flag: str):
+    inline_keyboard = callback.message.reply_markup.inline_keyboard
+    ids_objects = []
+    for row in inline_keyboard:
+        for button in row:
+            if emoji_flag in button.text:
+                ids_objects.append(button.callback_data.split(":")[1])
+    return ids_objects
+
+
+async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_mode='checkbox',
+                                               ignore_emoji: list = None) -> InlineKeyboardMarkup:
+    """
+    Мощный инструмент для изменения флажков нажатых на inline клавиатуре кнопок.
+
+    :param ignore_emoji: список игнорируемых эмоджи в кнопках
+    :param callback: колбэк с inline клавиатурой
+    :param select_mode: checkbox/checkbox_minimum_one/radio/radio_with_none по порядку
+    1. checkbox - режим выбора нескольких кнопок с возможностью убрать все флажки.
+    2. checkbox_minimum_one - режим выбора нескольких кнопок с возможностью убрать флажки, при условии, что остался
+    один включенный.
+    3. radio - режим при котором можно выбрать только одну кнопку, флажок убрать нельзя.
+    4. radio_with_none - режим при котором можно выбрать только одну кнопку, а также можно убрать флажок.
+    :return: InlineKeyboardMarkup
+    """
+
     keyboard_markup = callback.message.reply_markup
     number_pressed_btns = 0
     emoji = '🔘' if (select_mode == 'radio' or select_mode == 'radio_with_none') else '☑️'
@@ -55,6 +89,8 @@ async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_m
     # Находим нажатую в данный момент кнопку и ставим флажок, либо убираем (+- проверка, что должен быть хотя бы один)
     for i, row in enumerate(keyboard_markup.inline_keyboard):
         for k, button in enumerate(row):
+            if button.text[:1] in ignore_emoji:
+                continue
             if callback.data == button.callback_data:
                 if 'checkbox' in select_mode:
                     if emoji in button.text and not (select_mode == 'checkbox_minimum_one'):
@@ -75,7 +111,8 @@ async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_m
                         keyboard_markup.inline_keyboard[i][k].text = button.text[2:]
                     else:
                         try:
-                            keyboard_markup.inline_keyboard[irb[0]][irb[1]].text = keyboard_markup.inline_keyboard[irb[0]][irb[1]].text[2:]
+                            keyboard_markup.inline_keyboard[irb[0]][irb[1]].text = \
+                            keyboard_markup.inline_keyboard[irb[0]][irb[1]].text[2:]
                         except IndexError:
                             pass
                         keyboard_markup.inline_keyboard[i][k].text = emoji + " " + button.text
@@ -118,7 +155,7 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
         return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
     else:
         return f"<u>Уровень</u>: {emoji_level}\n" \
-               f"<u>Категория</u>: <b>{selected_item_name}</b>\n"\
+               f"<u>Категория</u>: <b>{selected_item_name}</b>\n" \
                f"<u>Вложенность</u>:  <b>{queue}</b>\n"
 
 
@@ -190,39 +227,40 @@ async def generate_wallets_status_list(wallets: list):
 
 
 async def get_sure_delete_mi_msg(list_menu_items: list):
-    return f"Вы уверены что хотите удалить категории:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
-           f"При удалении, исчезнут все вложенные подкатегории а также определенные пользователям доступы к этим подкатегориям 🤔‼️"
+    return f"<b>Вы уверены что хотите удалить категории:</b>\n{', '.join(str(mi) for mi in list_menu_items)}❓\n\n" \
+           f"<i>⚠️ Важно: при удалении, исчезнут все вложенные подкатегории а также определенные пользователям " \
+           f"доступы к этим подкатегориям!</i>"
 
 
 async def get_sure_delete_org_msg(list_menu_items: list):
-    return f"Вы уверены что хотите удалить ЮР Лица:\n<b>{', '.join(str(mi) for mi in list_menu_items)}</b> ❓\n\n" \
-           f"При удалении исчезнут все определенные пользователям доступы к этим ЮР Лицам, а также, " \
+    return f"<b>Вы уверены что хотите удалить ЮР Лица:</b>\n{', '.join(str(mi) for mi in list_menu_items)}❓\n\n" \
+           f"<i>⚠️ Важно: при удалении исчезнут все определенные пользователям доступы к этим ЮР Лицам, а также, " \
            f"если вы привязали банки к системе и определили эти ЮР Лица для определенных категорий - система " \
-           f"перестанет подгружать данные о новых операциях по этим категориям из банка 🤔‼️"
+           f"перестанет подгружать данные о новых операциях по этим категориям из банка!</i>"
 
 
 async def get_sure_delete_usr_msg(list_users: list):
-    return f"Вы уверены что хотите забрать доступ у:\n<b>{', '.join(str(u) for u in list_users)}</b> ❓\n\n" \
-           f"При удалении исчезнут все определенные пользователям права видимости к определенным пунктам меню, " \
-           f"а доступ пользователей к боту будет анулирован 🤔‼️"
+    return f"<b>Вы уверены что хотите забрать доступ у:</b>\n{', '.join(str(u) for u in list_users)}❓\n\n" \
+           f"<i>⚠️ Важно: при удалении исчезнут все определенные пользователям права видимости к определенным " \
+           f"пунктам меню, а доступ пользователей к боту будет анулирован!</i>️"
 
 
 async def get_sure_delete_partner_msg(list_partners: list):
-    return f"Вы уверены, что хотите удалить контрагентов:\n<b>{', '.join(str(p) for p in list_partners)}</b> ❓\n\n" \
-           f"При удалении исчезнут связи контрагентов с категориями и операции из выписок банков перестанут" \
-           f"распределяться в вашей таблице 🤔‼️"
+    return f"<b>Вы уверены, что хотите удалить контрагентов:</b>\n{', '.join(str(p) for p in list_partners)}❓\n\n" \
+           f"<i>⚠️ Важно: при удалении исчезнут связи контрагентов с категориями и операции из выписок " \
+           f"банков перестанут распределяться в вашей таблице!</i>"
 
 
 async def get_sure_delete_banks_msg(list_banks: list):
-    return f"Вы уверены, что хотите удалить банки:\n<b>{', '.join(str(b) for b in list_banks)}</b> ❓\n\n" \
-           f"При удалении исчезнут также расчетные счета, привязанные к этим банкам, а операции из выписок " \
-           f"этих банков перестанут распределяться в вашей таблице 🤔‼️"
+    return f"<b>Вы уверены, что хотите удалить банки:</b>\n{', '.join(str(b) for b in list_banks)}❓\n\n" \
+           f"<i>⚠️ Важно: при удалении исчезнут также расчетные счета, привязанные к этим банкам, а операции из выписок " \
+           f"этих банков перестанут распределяться в вашей таблице!</i>"
 
 
 async def get_sure_delete_payment_account_msg(list_partners: list):
-    return f"Вы уверены, что хотите удалить расчётные счета:\n<b>{', '.join(str(p) for p in list_partners)}</b> ❓\n\n" \
-           f"При удалении исчезнут связи ЮР Лиц с выбранными расчётными счётами, а операции из выписок банков перестанут " \
-           f"подгружаться из выбранных счётов 🤔‼️"
+    return f"<b>Вы уверены, что хотите удалить расчётные счета:</b>\n{', '.join(str(p) for p in list_partners)}❓\n\n" \
+           f"<i>⚠️ Важно: При удалении исчезнут связи ЮР Лиц с выбранными расчётными счётами, а операции из выписок банков перестанут " \
+           f"подгружаться из выбранных счётов!</i>"
 
 
 async def answer_or_edit_message(message: Message, flag_answer: bool, text: str,
@@ -404,7 +442,8 @@ async def change_stage_report_request(bot: Bot, admin_chat_id: int, stage: str, 
                 await report_request.delete()
 
         if stage != 'end':
-            users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id, role=ROLE_BY_STAGES_REPS_REQS[stage])
+            users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id,
+                                                               role=ROLE_BY_STAGES_REPS_REQS[stage])
             nicknames = [u.nickname for u in users_by_role]
         else:
             nicknames = None
@@ -432,6 +471,3 @@ async def change_stage_report_request(bot: Bot, admin_chat_id: int, stage: str, 
                 comment=comment,
                 nickname_sender=sender_nickname
             )
-
-
-

@@ -51,7 +51,7 @@ async def choose_observers_organization(message: Message, state: FSMContext):
         add_keyb_to_start=keyb_str_pass_add_users_to_org
     )
 
-    message_text = f"<b>Параметры нового ЮР Лица</b> ⤵️\n\n" \
+    message_text = f"<b>Добавление ЮР Лица:</b> (шаг 2)\n\n" \
                    f"<u>ИНН</u>: <b>{list_msg_data[0]}</b>\n" \
                    f"<u>Название</u>: <b>{list_msg_data[1]}</b>\n" + text_choose_observers_organization
 

@@ -60,7 +60,7 @@ keyb_str_delete_banks = [
 ]
 
 keyb_str_delete_payment_accounts = [
-    InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_payment_accounts")
+    InlineKeyboardButton(text="Продолжить ⏩", callback_data="next_step_delete_pa")
 ]
 
 

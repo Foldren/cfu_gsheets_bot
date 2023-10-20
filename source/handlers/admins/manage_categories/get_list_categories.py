@@ -65,7 +65,8 @@ async def next_to_nested_categories(callb_or_msg: Union[Message, CallbackQuery],
     elif main_category and not hasattr(callb_or_msg, "data"):
         await message.answer(text=text_get_list_categories + msg_queue, reply_markup=keyboard, parse_mode="html")
     else:
-        await message.edit_text(text=msg_queue, reply_markup=keyboard, parse_mode='html')
+        title = f"<b>Категории</b>\n\n" if categories[0]['level'] == 2 else f"<b>Подкатегории</b>\n\n"
+        await message.edit_text(text=title + msg_queue, reply_markup=keyboard, parse_mode='html')
 
 
 # Возврат назад к родительским пунктам меню
@@ -84,7 +85,8 @@ async def back_to_parent_categories(callback: CallbackQuery):
     if categories[0]['level'] == 1:
         final_msg = text_get_list_categories + msg_queue
     else:
-        final_msg = msg_queue
+        title = f"<b>Категории</b>\n\n" if categories[0]['level'] == 2 else f"<b>Подкатегории</b>\n\n"
+        final_msg = title + msg_queue
 
     selected_upper_category_id = selected_category.parent_id
 

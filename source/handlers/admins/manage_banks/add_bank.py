@@ -32,7 +32,7 @@ async def select_bank_name(message: Message, state: FSMContext):
     data_new_partner = await get_msg_list_data(message.text)
     await state.set_data({
         'custom_name_new_bank': data_new_partner[0],
-        'api_key_new_bank': Fernet(SECRET_KEY).encrypt(data_new_partner[1].encode()),
+        'api_key_new_bank': Fernet(SECRET_KEY).encrypt(data_new_partner[1].encode()).decode('utf-8'),
     })
 
     keyboard = await get_inline_keyb_markup(
@@ -53,7 +53,7 @@ async def end_add_bank(callback: CallbackQuery, state: FSMContext):
     await BankExtend.add(
         custom_name=st_data['custom_name_new_bank'],
         bank_name=selected_bank_name,
-        api_key=st_data['api_key_new_bank'],
+        api_key=st_data['api_key_new_bank'].encode(),
         admin_id=callback.from_user.id,
     )
 
