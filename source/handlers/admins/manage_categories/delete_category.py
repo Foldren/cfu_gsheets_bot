@@ -73,7 +73,7 @@ async def start_delete_category(callback: CallbackQuery, state: FSMContext):
     })
 
     await callback.message.edit_text(
-        text=msg_queue + text_start_delete_menu_item,
+        text=f"<b>Удаление категорий</b>\n\n" + msg_queue + text_start_delete_menu_item,
         reply_markup=keyboard_categories,
         parse_mode="html"
     )
@@ -106,7 +106,7 @@ async def change_delete_categories_list(callback: CallbackQuery, state: FSMConte
     )
 
     await callback.message.edit_text(
-        text=new_data['queue_text'] + text_start_delete_menu_item,
+        text=f"<b>Удаление категорий</b>\n\n" + new_data['queue_text'] + text_start_delete_menu_item,
         reply_markup=keyboard_categories,
         parse_mode="html"
     )

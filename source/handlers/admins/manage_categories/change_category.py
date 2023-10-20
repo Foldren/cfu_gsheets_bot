@@ -42,8 +42,11 @@ async def start_change_category(callback: CallbackQuery, state: FSMContext):
         queue=queue
     )
 
-    await callback.message.edit_text(text=text_queue + text_start_change_menu_item, reply_markup=keyboard,
-                                     parse_mode="html")
+    await callback.message.edit_text(
+        text=f"<b>Редактирование категории:</b> (шаг 1)\n\n" + text_queue + text_start_change_menu_item,
+        reply_markup=keyboard,
+        parse_mode="html"
+    )
 
 
 @rt.callback_query(StepsChangeCategory.start_change_category,
@@ -67,9 +70,7 @@ async def choose_category_params_to_change(callback: CallbackQuery, state: FSMCo
         only_queue=True,
     )
 
-    text_name_c = f"<u>Выбран пункт</u>: <b>{category.name}</b>\n" if level_category != 1 else f"<u>Выбрано юр. лицо</u>: " \
-                                                                                       f"<b>{category.name}</b>\n"
-
+    text_name_c = f"<u>Выбрана категория</u>: <b>{category.name}</b>\n"
     text_queue = text_queue if level_category != 1 else ""
 
     await state.set_data({
@@ -77,7 +78,8 @@ async def choose_category_params_to_change(callback: CallbackQuery, state: FSMCo
         'id_menu_item': id_category,
     })
 
-    final_text = text_name_c + text_queue + text_choose_param_to_change_menu_item
+    final_text = f"<b>Редактирование категории:</b> (шаг 2)\n\n" + text_name_c + text_queue \
+                 + text_choose_param_to_change_menu_item
 
     keyboard = await get_inline_keyb_change_menu_item(
         id_menu_item=category.id,
@@ -92,7 +94,10 @@ async def choose_category_params_to_change(callback: CallbackQuery, state: FSMCo
 async def start_change_name_category(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsChangeCategory.change_name_category)
     state_data = await state.get_data()
-    await callback.message.edit_text(text=state_data['queue_text'] + text_change_name_menu_item, parse_mode="html")
+    await callback.message.edit_text(
+        text=f"<b>Редактирование категории:</b> (шаг 3)\n\n" + state_data['queue_text'] + text_change_name_menu_item,
+        parse_mode="html"
+    )
 
 
 @rt.message(StepsChangeCategory.change_name_category)
@@ -141,7 +146,7 @@ async def start_change_observers_category(callback: CallbackQuery, state: FSMCon
     })
 
     await callback.message.edit_text(
-        text=data_state['queue_text'] + text_start_change_observers_menu_item,
+        text=f"<b>Редактирование категории:</b> (шаг 3)\n\n" + data_state['queue_text'] + text_start_change_observers_menu_item,
         reply_markup=keyboard_users,
         parse_mode="html"
     )

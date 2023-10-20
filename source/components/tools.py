@@ -139,14 +139,13 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
         if only_queue:
             return f"<u>Вложенность</u>:  <b>Главные категории</b>\n"
         else:
-            return f"<u>Уровень</u>: 0️⃣\n" \
-                   f"<u>Категория</u>: <b>Главные категории</b>\n"
+            return f"<u>Уровень</u>: 0️⃣\n"
     elif level == 1:
         if only_queue:
             return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
         else:
             return f"<u>Уровень</u>: 1️⃣ \n" \
-                   f"<u>Категория</u>: <b>{selected_item_name}</b>\n"
+                   f"<u>Родительская категория</u>: <b>{selected_item_name}</b>\n"
 
     for i in range(0, len(str(level))):
         emoji_level += numbers[int(str(level)[i])]
@@ -155,7 +154,7 @@ async def get_msg_queue(level: int, selected_item_name: str = "", queue: str = "
         return f"<u>Вложенность</u>:  <b>{queue}</b>\n"
     else:
         return f"<u>Уровень</u>: {emoji_level}\n" \
-               f"<u>Категория</u>: <b>{selected_item_name}</b>\n" \
+               f"<u>Родительская категория</u>: <b>{selected_item_name}</b>\n" \
                f"<u>Вложенность</u>:  <b>{queue}</b>\n"
 
 

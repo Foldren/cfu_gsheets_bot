@@ -36,6 +36,8 @@ async def start_add_category(callback: CallbackQuery, state: FSMContext):
         only_queue=True,
     )
 
+    text_msg = "<b>Добавление категории:</b> (шаг 1)\n\n" + text_lvl + text_start_add_menu_item
+
     # Сохраняем id родительского меню и уровень в стейт
     await state.set_data({
         'id_parent_category': id_parent_category,
@@ -43,7 +45,7 @@ async def start_add_category(callback: CallbackQuery, state: FSMContext):
         'level_category': (category.level + 1) if category is not None else 1
     })
 
-    await callback.message.edit_text(text=text_lvl + text_start_add_menu_item, parse_mode="html")
+    await callback.message.edit_text(text=text_msg, parse_mode="html")
 
 
 @rt.message(StepsAddCategory.start_add_category)
@@ -78,11 +80,16 @@ async def choose_observers_category(message: Message, state: FSMContext):
         'name_new_category': message.text,
         'status_list': status_list,
         'users': users,
-        'text_level': md['text_level'] + f"<u>Название новой категории</u>: <b>{message.text}</b>\n",
+        'text_level': f"<b>Добавление категории:</b> (шаг 2)\n\n" + md['text_level'] +
+                      f"<u>Название новой категории</u>: <b>{message.text}</b>\n",
     })
 
     await state.set_state(StepsAddCategory.choose_observers_category)
-    await message.answer(text=md['text_level'] + message_text, reply_markup=keyboard_users, parse_mode="html")
+    await message.answer(
+        text=f"<b>Добавление категории:</b> (шаг 2)\n\n" + md['text_level'] + message_text,
+        reply_markup=keyboard_users,
+        parse_mode="html"
+    )
 
 
 # Выбор пользователей для меню -----------------------------------------------------------------------------------------
