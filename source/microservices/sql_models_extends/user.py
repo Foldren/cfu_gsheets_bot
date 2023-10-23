@@ -26,7 +26,7 @@ class UserExtend:
     @staticmethod
     async def get_user_role(chat_id) -> str:
         role_obj = await WorkerRoleForReports.filter(worker_id=chat_id).values_list('role', flat=True)
-        return role_obj[0]
+        return role_obj[0] if role_obj else None
 
     @staticmethod
     async def get_notifications(chat_id, type_n: str = None):

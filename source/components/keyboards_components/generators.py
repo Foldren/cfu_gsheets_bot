@@ -189,8 +189,7 @@ async def get_keyb_row_save_changes(callback_data_str: str) -> list[InlineKeyboa
     ]
 
 
-async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
-                                          user_notifications: list[ConfirmNotification]) -> InlineKeyboardMarkup:
+async def get_keyb_list_notify_types_user(user_role: str, user_notifications: list[ConfirmNotification]) -> InlineKeyboardMarkup:
     inline_keyboard = []
 
     notifies = {
@@ -224,13 +223,17 @@ async def get_keyb_list_notify_types_user(user_role: str, user_chat_id: int,
     for n in user_notifications:
         if n.type == 'report_request':
             nrq = await n.report_request
-            match nrq.stage:
-                case 'conciliate':
-                    notifies['conciliate_requests_report']['count'] += 1
-                case 'approve':
-                    notifies['approve_requests_report']['count'] += 1
-                case 'treasure':
-                    notifies['treasure_requests_report']['count'] += 1
+            try:
+                match nrq.stage:
+                    case 'conciliate':
+                        notifies['conciliate_requests_report']['count'] += 1
+                    case 'approve':
+                        notifies['approve_requests_report']['count'] += 1
+                    case 'treasure':
+                        notifies['treasure_requests_report']['count'] += 1
+            except KeyError:
+                await nrq.delete()
+                continue
         elif n.type == 'issuance_of_report':
             notifies['issuance_of_report']['count'] += 1
 

@@ -1,11 +1,11 @@
+from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from aiogram import Router, F, Bot
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.texts.admins.manage_users import text_get_id_user, text_invalid_user_id, text_start_change_user, \
-    text_change_user, text_end_change_user, text_end_change_id_user
-from components.tools import get_callb_content, get_msg_user_data, set_memory_data, get_memory_data
-from components.keyboards_components.generators import get_inline_users_keyb_markup, get_inline_keyb_change_user
+from components.keyboards_components.generators import get_inline_users_keyb_markup
+from components.texts.admins.manage_users import text_start_change_user, \
+    text_change_user, text_end_change_user
+from components.tools import get_callb_content, get_msg_user_data
 from microservices.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users import StepsGetListUsers, StepsChangeUser
 
@@ -35,7 +35,7 @@ async def start_change_user(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.callback_query(StepsChangeUser.start_change_user, F.data.startswith("change_this_user"))
-async def set_new_data_user(callback: CallbackQuery, state: FSMContext, bot_object: Bot):
+async def set_new_data_user(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsChangeUser.choose_new_data_user)
 
@@ -47,20 +47,17 @@ async def set_new_data_user(callback: CallbackQuery, state: FSMContext, bot_obje
                f"<u>Полное имя:</u> <b>{user.fullname}</b>\n\n"
     example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}</code>"
 
-    await set_memory_data(bot_object, callback.message, {
-        'id_change_u': user.chat_id
-    })
-
+    await state.set_data({'id_change_u': user.chat_id})
     await callback.message.edit_text(text=msg_text + text_change_user + example_text, parse_mode="html")
 
 
 @rt.message(StepsChangeUser.choose_new_data_user)
-async def end_set_new_main_data_user(message: Message, state: FSMContext, bot_object: Bot):
+async def end_set_new_main_data_user(message: Message, state: FSMContext):
     msg_data = await get_msg_user_data(message.text)
-    memory_data = await get_memory_data(bot_object, message)
+    st_data = await state.get_data()
 
     await UserExtend.update_by_id(
-        chat_id=memory_data['id_change_u'],
+        chat_id=st_data['id_change_u'],
         nickname=msg_data['nickname'],
         fullname=msg_data['fullname'],
         profession=msg_data['profession'],

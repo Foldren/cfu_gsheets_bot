@@ -164,28 +164,6 @@ async def get_callb_content(callback_data: str, multiply_values: bool = False):
     return callback_data.split(":") if multiply_values else callback_data.split(":")[1]
 
 
-# Добавить/перезаписать значение в оперативной памяти
-async def set_memory_data(bot_object: Bot, message: Message, data_dict: dict):
-    await MEMORY_STORAGE.set_data(
-        key=StorageKey(bot_id=bot_object.id, chat_id=message.chat.id, user_id=message.chat.id),
-        data=data_dict
-    )
-
-
-# Считать значение из ОП
-async def get_memory_data(bot_object: Bot, message: Message) -> dict:
-    return await MEMORY_STORAGE.get_data(
-        key=StorageKey(bot_id=bot_object.id, chat_id=message.chat.id, user_id=message.chat.id)
-    )
-
-
-async def set_memory_state(bot_object: Bot, message: Message, state: State):
-    MEMORY_STORAGE.set_state(
-        key=StorageKey(bot_id=bot_object.id, chat_id=message.chat.id, user_id=message.chat.id),
-        state=state
-    )
-
-
 # Функция для получения пользовательских данных из колбека
 async def get_msg_user_data(msg_data: str) -> dict:
     return {
