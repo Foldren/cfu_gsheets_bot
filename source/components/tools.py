@@ -89,8 +89,9 @@ async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_m
     # Находим нажатую в данный момент кнопку и ставим флажок, либо убираем (+- проверка, что должен быть хотя бы один)
     for i, row in enumerate(keyboard_markup.inline_keyboard):
         for k, button in enumerate(row):
-            if button.text[:1] in ignore_emoji:
-                continue
+            if ignore_emoji:
+                if button.text[:1] in ignore_emoji:
+                    continue
             if callback.data == button.callback_data:
                 if 'checkbox' in select_mode:
                     if emoji in button.text and not (select_mode == 'checkbox_minimum_one'):

@@ -87,7 +87,7 @@ async def get_role_users_list(callback: CallbackQuery, state: FSMContext) -> Non
 @rt.callback_query(StepsManageReportsRequests.select_list_users, F.data.startswith("select_rep_reqs"))
 async def change_role_users_list(callback: CallbackQuery, state: FSMContext) -> None:
     st_data = await state.get_data()
-    mode = 'checkbox_minimum_one' if st_data['role'] == 'conciliator' else 'radio'
+    mode = 'checkbox' if st_data['role'] == 'conciliator' else 'radio_with_none'
     new_keyboard_markup = await get_changed_reply_keyb_with_checkbox(callback=callback, select_mode=mode)
     try:
         await callback.message.edit_text(text=st_data['text_msg'], reply_markup=new_keyboard_markup, parse_mode="html")
