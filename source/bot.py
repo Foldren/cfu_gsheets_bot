@@ -7,7 +7,7 @@ from tortoise import run_async
 from config import TOKEN, REDIS_URL
 from handlers import main_handlers
 from handlers.admins import start_admin, change_mode, manage_users_stats, open_admin_nested_menu, \
-    manage_reports_requests
+    manage_users_roles
 from handlers.admins.manage_banks import get_list_banks, add_bank, delete_banks
 from handlers.admins.manage_categories import get_list_categories, add_category, change_category, delete_category
 from handlers.admins.manage_organizations import get_list_organizations, add_organization, \
@@ -36,7 +36,7 @@ admin_routers = [
     change_user.rt, change_category.rt, delete_category.rt, delete_user.rt, change_mode.rt,
     manage_users_stats.rt, get_list_organizations.rt, add_organization.rt, delete_organizations.rt,
     get_list_partners.rt, add_partner.rt, delete_partners.rt, get_list_banks.rt, add_bank.rt, delete_banks.rt,
-    get_list_payment_accounts.rt, add_payment_account.rt, delete_payment_accounts.rt, manage_reports_requests.rt
+    get_list_payment_accounts.rt, add_payment_account.rt, delete_payment_accounts.rt, manage_users_roles.rt
 ]
 
 user_routers = [
@@ -84,12 +84,12 @@ async def main():
     # chat_id -> hash {bank1, bank2,..}
 
     # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
-    # в redis_wallets_users и запись со статусом в redis_status_users
+    # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли типов 'report_request' и 'normal'
     #
     # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
     # определить для него ссылки на гугл таблицу и гугл драйв, добавить ему один кошелек в redis_wallets_users и
     # добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
-    # также создать папку для чеков в misc
+    # также создать папку для чеков в misc, а также создать две роли типов 'report_request' и 'normal'
     # (в папку поместить файл)
 
     await bot.delete_webhook(drop_pending_updates=True)

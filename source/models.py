@@ -24,7 +24,7 @@ class User(Model):
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
-    role_for_reports: ReverseRelation["WorkerRoleForReports"]
+    roles: ReverseRelation["Role"]
     confirm_notifications: ReverseRelation["ConfirmNotification"]
     nickname = TextField(maxlength=150, null=False)
     fullname = TextField(maxlength=250, null=True)
@@ -159,16 +159,6 @@ class PeriodStat(Model):
         table = "periods_stats"
 
 
-class WorkerRoleForReports(Model):
-    id = BigIntField(pk=True)
-    worker: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
-                                                     related_name="role_for_reports")
-    role = TextField(maxlength=200, null=False)
-
-    class Meta:
-        table = "workers_roles_for_reports"
-
-
 class ConfirmNotification(Model):
     id = BigIntField(pk=True)
     user: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
@@ -193,3 +183,14 @@ class ReportRequest(Model):
 
     class Meta:
         table = "report_requests"
+
+
+class Role(Model):
+    id = BigIntField(pk=True)
+    user: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
+                                                       related_name="roles")
+    name = TextField(maxlength=200, null=True)
+    type = TextField(maxlength=200, null=False)
+
+    class Meta:
+        table = "roles"

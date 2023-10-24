@@ -81,6 +81,7 @@ keyb_start_manage_reports_requests = InlineKeyboardMarkup(inline_keyboard=[
         InlineKeyboardButton(text="Утверждающий", callback_data="assign:approver"),
     ],
     [
-        InlineKeyboardButton(text="Казначей", callback_data="assign:treasurer")
+        InlineKeyboardButton(text="Казначей", callback_data="assign:treasurer"),
+        InlineKeyboardButton(text="Табельщик", callback_data="assign:timekeeper")
     ]
 ])

@@ -1,13 +1,11 @@
-from typing import List, Any, Tuple
-
+from datetime import datetime, timedelta
 from aiogram.types import Message
 from cryptography.fernet import Fernet
 from tortoise.expressions import Q
-from datetime import datetime, timedelta
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo, WorkerRoleForReports, ReportRequest, ConfirmNotification
+from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role
 
 
 class UserExtend:
@@ -17,15 +15,14 @@ class UserExtend:
     async def check_all_users_roles_exist(admin_id):
         expr = Q(admin_id=admin_id) | Q(chat_id=admin_id)
         users_chat_ids = await User.filter(expr).values_list('chat_id', flat=True)
-        conciliators = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='conciliator')
-        approvers = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='approver')
-        treasures = await WorkerRoleForReports.filter(worker_id__in=users_chat_ids, role='treasurer')
+        conciliators = await Role.filter(user_id__in=users_chat_ids, name='conciliator', type='report_request')
+        approvers = await Role.filter(user_id__in=users_chat_ids, name='approver', type='report_request')
+        treasures = await Role.filter(user_id__in=users_chat_ids, name='treasurer', type='report_request')
         return (conciliators != []) and (approvers != []) and (treasures != [])
 
-
     @staticmethod
-    async def get_user_role(chat_id) -> str:
-        role_obj = await WorkerRoleForReports.filter(worker_id=chat_id).values_list('role', flat=True)
+    async def get_user_role(chat_id: int, role_type: str) -> str:
+        role_obj = await Role.filter(user_id=chat_id, type=role_type).values_list('name', flat=True)
         return role_obj[0] if role_obj else None
 
     @staticmethod
@@ -43,9 +40,10 @@ class UserExtend:
         return await ConfirmNotification.filter(expr).all()
 
     @staticmethod
-    async def send_confirm_notify_to_users_by_role(admin_id: int, role_recipients: str, volume: int, comment: str, nickname_sender: str):
+    async def send_confirm_notify_to_users_by_role(admin_id: int, role_recipients: str, volume: int, comment: str,
+                                                   nickname_sender: str):
         expr = Q(admin_id=admin_id) | Q(chat_id=admin_id)
-        recipients = await User.filter(expr, role_for_reports__role=role_recipients).all()
+        recipients = await User.filter(expr, roles__name=role_recipients).all()
 
         match role_recipients:
             case 'conciliator':
@@ -75,18 +73,21 @@ class UserExtend:
         await ConfirmNotification.bulk_create(list_notifications)
 
     @staticmethod
-    async def get_users_by_role(admin_id: int, role: str) -> list[User]:
-        return await User.filter(Q(admin_id=admin_id) | Q(chat_id=admin_id), role_for_reports__role=role).all()
+    async def change_users_roles(admin_id: int, users_chat_id_list: list[int], role: str, role_type: str):
+        expr_u = Q(admin_id=admin_id) | Q(chat_id=admin_id)
+        users_with_admin_ids = await User.filter(expr_u).values_list('chat_id', flat=True)
 
-    @staticmethod
-    async def change_roles_for_admin_users(admin_id: int, users_chat_id_list: list[int], role: str):
-        user_new_roles = []
-        expression = Q(worker__admin_id=admin_id) | Q(worker_id=admin_id)
-        id_roles_objs = await WorkerRoleForReports.filter(expression, role=role).values_list("id", flat=True)
-        await WorkerRoleForReports.filter(id__in=id_roles_objs).delete()
-        for user_chat_id in users_chat_id_list:
-            user_new_roles.append(WorkerRoleForReports(worker_id=user_chat_id, role=role))
-        await WorkerRoleForReports.bulk_create(user_new_roles)
+        expr = Q(user_id__in=users_with_admin_ids) & Q(type=role_type)
+        users_type_roles = await Role.filter(expr).all()
+
+        for i in range(0, len(users_type_roles)):
+            role_user = await users_type_roles[i].user
+            if role_user.chat_id in users_chat_id_list:
+                users_type_roles[i].name = role
+            elif users_type_roles[i].name == role:
+                users_type_roles[i].name = None
+
+        await Role.bulk_update(users_type_roles, fields=['name'])
 
     @staticmethod
     async def get_user_periods_stats_list(user_chat_id):
@@ -178,20 +179,17 @@ class UserExtend:
         return user.admin_id if user.admin_id else id_user
 
     @staticmethod
-    async def get_admin_users(id_admin: int, include_admin: bool = False, only_none_and_role: str = None):
+    async def get_admin_users(id_admin: int):
         values_list = ["nickname", "fullname", "profession", "chat_id"]
-        expression = Q(role_for_reports__role=None) | Q(role_for_reports__role=only_none_and_role)
-        if only_none_and_role is not None:
-            values_list.append("role_for_reports__role")
-            admin_users = await User.filter(expression, admin_id=id_admin).all().values(*values_list)
-            if include_admin:
-                admin_user = await User.filter(expression, chat_id=id_admin).first().values(*values_list)
-                if admin_user is not None:
-                    admin_users.insert(0, admin_user)
-        else:
-            admin_users = await User.filter(admin_id=id_admin).all().values(*values_list)
-            if include_admin:
-                admin_users.insert(0, await User.get(chat_id=id_admin).values(*values_list))
+        admin_users = await User.filter(admin_id=id_admin).all().values(*values_list)
+        return admin_users
+
+    @staticmethod
+    async def get_users_by_role_and_type(id_admin: int, role: str, role_type: str):
+        values_list = ["nickname", "fullname", "profession", "chat_id", "roles__name"]
+        expr = ((Q(roles__type=role_type) & Q(roles__name=role)) | (Q(roles__type=role_type) & Q(roles__name=None))) & \
+               (Q(admin_id=id_admin) | Q(chat_id=id_admin))
+        admin_users = await User.filter(expr).all().values(*values_list)
         return admin_users
 
     @staticmethod

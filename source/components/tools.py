@@ -420,9 +420,10 @@ async def change_stage_report_request(bot: Bot, admin_chat_id: int, stage: str, 
                 await report_request.delete()
 
         if stage != 'end':
-            users_by_role = await UserExtend.get_users_by_role(admin_id=admin_chat_id,
-                                                               role=ROLE_BY_STAGES_REPS_REQS[stage])
-            nicknames = [u.nickname for u in users_by_role]
+            users_by_role = await UserExtend.get_users_by_role_and_type(id_admin=admin_chat_id,
+                                                                        role=ROLE_BY_STAGES_REPS_REQS[stage],
+                                                                        role_type='report_request')
+            nicknames = [u['nickname'] for u in users_by_role]
         else:
             nicknames = None
 

@@ -29,9 +29,11 @@ async def get_text_select_users_by_role(role: str) -> str:
             rus_role = "согласующих."
         case 'approver':
             rus_role = "утверждающего."
+        case 'timekeeper':
+            rus_role = "табельщика."
         case _:
             rus_role = "казначея."
-    return f"<b>Алгоритм запроса в подотчет:</b> (шаг 2)\n\n" \
+    return f"<b>Назначение ролей:</b> (шаг 2)\n\n" \
            f"👉 Выберите {rus_role}"
 
 

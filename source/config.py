@@ -50,3 +50,4 @@ ROLE_BY_STAGES_REPS_REQS = {
     'approve': 'approver',
     'treasure': 'treasurer',
 }
+ROLES = ['timekeeper']

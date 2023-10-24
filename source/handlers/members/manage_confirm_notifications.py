@@ -22,7 +22,7 @@ async def get_list_notify_categories_user(message: Message, state: FSMContext) -
     await state.clear()
 
     user_id = message.from_user.id
-    user_role = await UserExtend.get_user_role(user_id)
+    user_role = await UserExtend.get_user_role(chat_id=user_id, role_type='report_request')
     user_notifications = await UserExtend.get_notifications(user_id)
     keyboard_markup = await get_keyb_list_notify_types_user(
         user_notifications=user_notifications,

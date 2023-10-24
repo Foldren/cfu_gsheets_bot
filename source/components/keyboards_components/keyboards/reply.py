@@ -13,7 +13,7 @@ keyb_start_admin = [
         KeyboardButton(text="Поддержка"),
     ],
     [
-        KeyboardButton(text="Алгоритм запроса в подотчет"),
+        KeyboardButton(text="Назначение ролей"),
     ],
     [
         KeyboardButton(text="Режим: Админ 👨‍💼"),

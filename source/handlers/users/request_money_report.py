@@ -41,12 +41,16 @@ async def start_request_money_report(message: Message, state: FSMContext) -> Non
 async def send_request_to_agreement(message: Message, state: FSMContext) -> None:
     msg_data = await get_msg_list_data(message.text)
     admin_id = await UserExtend.get_user_admin_id(message.chat.id)
-    conciliators = await UserExtend.get_users_by_role(admin_id=admin_id, role='conciliator')
+    conciliators = await UserExtend.get_users_by_role_and_type(
+        id_admin=admin_id,
+        role='conciliator',
+        role_type='report_request'
+    )
     ng_chat_ids = await NotifyGroupExtend.get_admin_notify_groups_chat_ids(admin_id)
 
     user_nicknames = []
     for c in conciliators:
-        user_nicknames.append(c.nickname)
+        user_nicknames.append(c['nickname'])
 
     msg_text = await get_notify_start_request_report(
         users_nicknames=user_nicknames,
