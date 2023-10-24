@@ -62,10 +62,6 @@ async def main():
     storage = RedisStorage(await from_url(REDIS_URL, db=15, decode_responses=True))
     dp = Dispatcher(storage=storage)
 
-    # Добавляем промежуточные вычисления
-    # dp.message.outer_middleware(ChangeNumberNotifiesMiddleware())
-    # dp.callback_query.outer_middleware(ChangeNumberNotifiesMiddleware())
-
     # Включаем логирование, чтобы не пропустить важные сообщения
     logging.basicConfig(level=logging.INFO)
     dp.include_routers(*admin_routers, *user_routers, *member_routers, main_handlers.rt)
@@ -84,11 +80,12 @@ async def main():
     # chat_id -> hash {bank1, bank2,..}
 
     # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
-    # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли типов 'report_request' и 'normal'
+    # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли
+    # типов 'report_request' и 'normal'
     #
-    # АДМИН: При добавлении админа нужно добавить его в redis_status_users со статусом 1,
-    # определить для него ссылки на гугл таблицу и гугл драйв, добавить ему один кошелек в redis_wallets_users и
-    # добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
+    # АДМИН: При добавлении админа нужно добавить его в redis_status_users category='admin', admin_id='', status='1',
+    # active_reply_markup='', определить для него ссылки на гугл таблицу и гугл драйв, добавить ему один кошелек
+    # в redis_wallets_users и добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
     # также создать папку для чеков в misc, а также создать две роли типов 'report_request' и 'normal'
     # (в папку поместить файл)
 

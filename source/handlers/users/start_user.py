@@ -25,7 +25,7 @@ async def start_user(message: Message, state: FSMContext, bot_object: Bot):
     await message.answer(message_text, reply_markup=cf_keyb_start_user, parse_mode='html')
 
 
-@rt.message(Command(commands=["start"]), IsRegistration())
+@rt.message(Command(commands=["start"]), IsRegistration(), F.chat.type == "private")
 async def register_user(message: Message, state: FSMContext,
                         redis_regs: RedisRegistration, redis_users: RedisUser, redis_wallets: RedisUserWallets):
     await state.clear()
@@ -48,7 +48,11 @@ async def register_user(message: Message, state: FSMContext,
     await redis_wallets.set_new_wallets_list(message.from_user.id, ["Другой"])
 
     # Добавляем id в бд0 (для пользователей) redis
-    await redis_users.add_new_user(message.from_user.id, int(user_params['id_admin']))
+    await redis_users.add_new_user(
+        user_id=message.from_user.id,
+        category='user',
+        admin_id=int(user_params['id_admin'])
+    )
 
     message_text = await get_text_start_user(message.from_user.full_name)
 

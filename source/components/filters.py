@@ -10,26 +10,30 @@ from microservices.redis_models.user import RedisUser
 
 class IsAdminFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_user_status(message.from_user.id)
-        return (status == 1) or (status == 0)
+        category = await redis_users.get_user_category(message.from_user.id)
+        return category == 'admin'
 
 
 class IsAdminModeFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_user_status(message.from_user.id)
+        status = await redis_users.get_admin_status(message.from_user.id)
         return status == 1
 
 
 class IsUserFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_user_status(message.from_user.id)
-        return (status != 1) and (status is not None)
+        user = await redis_users.get_user(message.from_user.id)
+        result = False
+        if user:
+            if user['category'] == 'user' or (user['category'] == 'admin' and user['status'] == '0'):
+                result = True
+        return result
 
 
 class IsMemberFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_user_status(message.from_user.id)
-        return status is not None
+        user = await redis_users.get_user(message.from_user.id)
+        return user != {}
 
 
 class IsRegistration(BaseFilter):
@@ -40,7 +44,7 @@ class IsRegistration(BaseFilter):
 
 class IsSenderMemberFilter(BaseFilter):
     async def __call__(self, event: ChatMemberUpdated, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_user_status(event.from_user.id)
+        status = await redis_users.get_user_category(event.from_user.id)
         return status is not None
 
 

@@ -3,13 +3,15 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 
 
-# class ChangeNumberNotifiesMiddleware(BaseMiddleware):
+# class IsMemberMiddleWare(BaseMiddleware):
 #     async def __call__(
 #             self,
 #             handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
 #             event: Message,
 #             data: Dict[str, Any]
 #     ) -> Any:
-#         print(event.reply_markup)
-#         # Для выполнения хендлера возвращаем
-#         return await handler(event, data)
+#         status = await data['redis_users'].get_user_category(event.from_user.id)
+#         print(status)
+#         if status is not None:
+#             # Для выполнения хендлера возвращаем
+#             return await handler(event, data)
