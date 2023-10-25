@@ -23,3 +23,6 @@ class RedisUserWallets:
 
         await self.redis_wallets.delete(str(user_id))
         await self.redis_wallets.hset(str(user_id), mapping=wallets_dict)
+
+    async def delete(self, user_ids: list):
+        await self.redis_wallets.delete(*user_ids)

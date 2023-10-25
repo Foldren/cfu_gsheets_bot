@@ -4,7 +4,7 @@ from aiogram.types import Message, BotCommandScopeAllPrivateChats
 from aiogram import Router, Bot, F
 from components.commands import main_commands
 from components.filters import IsUserFilter, IsRegistration
-from components.keyboards_components.configurations.reply import cf_keyb_start_user
+from components.keyboards_components.markups.reply import keyb_markup_start_user
 from components.text_generators.users import get_text_fst_start_user, get_text_start_user
 from microservices.sql_models_extends.user import UserExtend
 from microservices.redis_models.registrations import RedisRegistration
@@ -22,7 +22,7 @@ async def start_user(message: Message, state: FSMContext, bot_object: Bot):
     message_text = await get_text_fst_start_user(message.from_user.full_name)
 
     await bot_object.set_my_commands(commands=main_commands, scope=BotCommandScopeAllPrivateChats())
-    await message.answer(message_text, reply_markup=cf_keyb_start_user, parse_mode='html')
+    await message.answer(message_text, reply_markup=keyb_markup_start_user, parse_mode='html')
 
 
 @rt.message(Command(commands=["start"]), IsRegistration(), F.chat.type == "private")
@@ -41,7 +41,9 @@ async def register_user(message: Message, state: FSMContext,
             nickname="@" + user_params['nickname'],
             fullname=user_params['fullname'],
             profession=user_params['profession'],
-            id_admin=user_params['id_admin']
+            id_admin=int(user_params['id_admin']),
+            bet=int(user_params['bet']),
+            increased_bet=int(user_params['increased_bet']),
         )
 
     # Добавляем кошелек
@@ -56,4 +58,4 @@ async def register_user(message: Message, state: FSMContext,
 
     message_text = await get_text_start_user(message.from_user.full_name)
 
-    await message.answer(message_text, reply_markup=cf_keyb_start_user, parse_mode='html')
+    await message.answer(message_text, reply_markup=keyb_markup_start_user, parse_mode='html')

@@ -2,12 +2,13 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.configurations.inline import cf_key_end_delete_u
-from components.keyboards_components.strings.inline import keyb_str_delete_u
+from components.keyboards_components.markups.inline import keyb_markup_end_delete_u
+from components.keyboards_components.inline_strings import keyb_str_delete_u
 from components.texts.admins.manage_users import text_start_delete_users
 from components.texts.admins.manage_categories import text_stop_delete_u, text_end_delete_u
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_usr_msg
 from components.keyboards_components.generators import get_inline_keyb_markup
+from microservices.redis_models.wallets import RedisUserWallets
 from microservices.sql_models_extends.user import UserExtend
 from microservices.redis_models.user import RedisUser
 from states.admin.steps_manage_categories import StepsDeleteCategories
@@ -97,7 +98,7 @@ async def sure_msg_delete_user(callback: CallbackQuery, state: FSMContext):
 
     sure_msg = await get_sure_delete_usr_msg(choose_items_names)
 
-    await callback.message.edit_text(text=sure_msg, reply_markup=cf_key_end_delete_u, parse_mode="html")
+    await callback.message.edit_text(text=sure_msg, reply_markup=keyb_markup_end_delete_u, parse_mode="html")
 
 
 @rt.callback_query(StepsDeleteCategories.sure_msg_delete_categories, F.data == "cancel_delete_users")
@@ -107,7 +108,8 @@ async def cancel_delete_menu_item(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.callback_query(StepsDeleteCategories.sure_msg_delete_categories, F.data == "end_delete_users")
-async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext, redis_users: RedisUser):
+async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext,
+                               redis_users: RedisUser, redis_wallets: RedisUserWallets):
     state_data = await state.get_data()
     await state.clear()
 
@@ -122,5 +124,7 @@ async def end_delete_menu_item(callback: CallbackQuery, state: FSMContext, redis
 
     # Удаляем их из redis
     await redis_users.delete_users(choose_users_chat_id_list)
+
+    await redis_wallets.delete(choose_users_chat_id_list)
 
     await callback.message.edit_text(text=text_end_delete_u, parse_mode="html")

@@ -14,12 +14,14 @@ class RedisRegistration:
         return await self.redis_regs.hgetall(nickname)
 
     async def set_new_registration(self, nickname: str, fullname: str,
-                                   profession: str, id_admin: int):
+                                   profession: str, id_admin: int, bet: int, increased_bet: int):
         await self.redis_regs.hset(nickname, mapping={
             "nickname": nickname,
             "fullname": fullname,
             "profession": profession,
             "id_admin": id_admin,
+            "bet": bet,
+            "increased_bet": increased_bet
         })
 
     async def get_registrations_params(self, nickname: str):

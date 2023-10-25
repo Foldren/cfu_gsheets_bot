@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.texts.admins.manage_user_stats import text_start_manage_stats, text_choose_observers_stats, \
     text_end_change_observers_p_stats
-from components.filters import IsAdminFilter, IsAdminModeFilter
-from components.keyboards_components.strings.inline import keyb_str_change_observers_ps
+from components.filters import IsAdminFilter
+from components.keyboards_components.inline_strings import keyb_str_change_observers_ps
 from components.tools import get_callb_content, generate_observers_list, answer_or_edit_message
 from components.keyboards_components.generators import get_inline_keyb_markup
 from config import STATS_UPRAVLYAIKA

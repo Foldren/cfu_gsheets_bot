@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from components.filters import IsAdminFilter
 from components.keyboards_components.generators import get_inline_keyb_markup, \
     get_keyb_row_save_changes
-from components.keyboards_components.keyboards.inline import keyb_start_manage_reports_requests
+from components.keyboards_components.markups.inline import keyb_markup_start_manage_rq
 from components.text_generators.admins import get_text_select_users_by_role, get_alert_by_role
 from components.texts.admins.manage_users_roles import text_start_manage_reports_requests, \
     alert_text_error_load_users_list
@@ -38,7 +38,7 @@ async def start_manage_users_roles(message: Message, state: FSMContext, answer_o
     await answer_or_edit_message(
         message=message,
         text=text_start_manage_reports_requests,
-        keyboard_markup=keyb_start_manage_reports_requests,
+        keyboard_markup=keyb_markup_start_manage_rq,
         flag_answer=answer_on_msg
     )
 

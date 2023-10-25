@@ -1,12 +1,11 @@
 from typing import Union
-
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsAdminFilter
-from components.keyboards_components.configurations.inline import cf_keyb_get_empty_list_banks
+from components.keyboards_components.markups.inline import keyb_markup_get_empty_list_banks
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_get_full_list_banks
+from components.keyboards_components.inline_strings import keyb_str_get_full_list_banks
 from components.texts.admins.manage_banks import text_get_list_banks
 from components.tools import answer_or_edit_message
 from config import BANKS_RUS_NAMES
@@ -43,7 +42,7 @@ async def get_banks_list(callb_or_msg: Union[Message, CallbackQuery], state: FSM
             add_keyb_to_start=keyb_str_get_full_list_banks
         )
     else:
-        keyboard = cf_keyb_get_empty_list_banks
+        keyboard = keyb_markup_get_empty_list_banks
 
     await answer_or_edit_message(
         message=message,

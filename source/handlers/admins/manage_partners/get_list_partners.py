@@ -2,9 +2,9 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from components.filters import IsAdminFilter
-from components.keyboards_components.configurations.inline import cf_keyb_get_empty_list_partners
+from components.keyboards_components.markups.inline import keyb_markup_get_empty_list_partners
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_get_full_list_partners
+from components.keyboards_components.inline_strings import keyb_str_get_full_list_partners
 from components.texts.admins.manage_partners import text_get_list_partners
 from microservices.sql_models_extends.partner import PartnerExtend
 from states.admin.steps_manage_partners import StepsGetPartnersList
@@ -31,6 +31,6 @@ async def get_partners_list(message: Message, state: FSMContext):
             add_keyb_to_start=keyb_str_get_full_list_partners
         )
     else:
-        keyboard = cf_keyb_get_empty_list_partners
+        keyboard = keyb_markup_get_empty_list_partners
 
     await message.answer(text=text_get_list_partners, reply_markup=keyboard, parse_mode="html")

@@ -1,9 +1,8 @@
 from aiogram import Router, F
-from aiogram.dispatcher.event.bases import CancelHandler
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter
-from components.keyboards_components.strings.inline import keyb_str_change_wallets_list
+from components.keyboards_components.inline_strings import keyb_str_change_wallets_list
 from components.tools import get_callb_content, generate_wallets_status_list, \
     generate_zero_array
 from components.keyboards_components.generators import get_inline_keyb_markup

@@ -4,8 +4,8 @@ from aiogram.types import Message
 from components.text_generators.admins import get_text_start_admin
 from components.texts.admins.manage_users import text_start_admin_user
 from components.filters import IsAdminFilter
-from components.keyboards_components.configurations.reply import cf_keyb_start_admin, \
-    cf_keyb_start_user_admin
+from components.keyboards_components.markups.reply import keyb_markup_start_admin, \
+    keyb_markup_start_user_admin
 from microservices.redis_models.user import RedisUser
 
 rt = Router()
@@ -22,10 +22,10 @@ async def change_mode(message: Message, state: FSMContext, redis_users: RedisUse
     await redis_users.set_admin_status(message.chat.id, admin_status)
 
     if admin_status == 0:
-        keyboard = cf_keyb_start_user_admin
+        keyboard = keyb_markup_start_user_admin
         message_text = text_start_admin_user
     else:
-        keyboard = cf_keyb_start_admin
+        keyboard = keyb_markup_start_admin
         message_text = await get_text_start_admin(message.chat.full_name)
 
     await message.answer(message_text, reply_markup=keyboard, parse_mode='html')

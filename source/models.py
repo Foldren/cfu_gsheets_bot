@@ -24,6 +24,7 @@ class User(Model):
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
+    user_info: ReverseRelation["UserInfo"]
     roles: ReverseRelation["Role"]
     confirm_notifications: ReverseRelation["ConfirmNotification"]
     nickname = TextField(maxlength=150, null=False)
@@ -148,6 +149,17 @@ class AdminInfo(Model):
 
     class Meta:
         table = "admin_info"
+
+
+class UserInfo(Model):
+    id = BigIntField(pk=True)
+    user: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
+                                                   related_name="user_info")
+    bet = BigIntField(null=False)
+    increased_bet = BigIntField(null=False)
+
+    class Meta:
+        table = "user_info"
 
 
 class PeriodStat(Model):

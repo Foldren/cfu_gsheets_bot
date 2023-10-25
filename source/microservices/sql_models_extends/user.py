@@ -5,7 +5,7 @@ from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role
+from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role, UserInfo
 
 
 class UserExtend:
@@ -193,9 +193,12 @@ class UserExtend:
         return admin_users
 
     @staticmethod
-    async def add(chat_id: int, nickname: str, fullname: str, profession: str, id_admin: int):
+    async def add(chat_id: int, nickname: str, fullname: str, profession: str,
+                  id_admin: int, bet: int, increased_bet: int):
+        await UserInfo.create(user_id=chat_id, bet=bet, increased_bet=increased_bet)
         await User.create(chat_id=chat_id, nickname=nickname, fullname=fullname, profession=profession,
                           admin_id=id_admin)
+        # ЗДЕСЬЬЬЬ ОШИБКА ______________________________
 
     @staticmethod
     async def update_by_id(chat_id: int, nickname: str = None, fullname: str = None, profession: str = None,

@@ -2,7 +2,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram import Router, F
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.strings.inline import keyb_str_pass_add_users_to_mi
+from components.keyboards_components.inline_strings import keyb_str_pass_add_users_to_mi
 from components.texts.admins.manage_categories import text_start_add_menu_item, text_choose_observers_menu_item, \
     text_end_add_menu_item
 from components.tools import get_callb_content, get_msg_queue, generate_zero_array, \

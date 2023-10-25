@@ -169,7 +169,9 @@ async def get_msg_user_data(msg_data: str) -> dict:
     return {
         'nickname': msg_data.split("\n")[0],
         'fullname': msg_data.split("\n")[1],
-        'profession': msg_data.split("\n")[2]
+        'profession': msg_data.split("\n")[2],
+        'bet': msg_data.split("\n")[3],
+        'increased_bet': msg_data.split("\n")[4]
     }
 
 

@@ -2,16 +2,15 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.configurations.inline import cf_keyb_end_delete_banks
+from components.keyboards_components.markups.inline import keyb_markup_end_delete_banks
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_delete_banks
+from components.keyboards_components.inline_strings import keyb_str_delete_banks
 from components.texts.admins.manage_banks import text_start_delete_banks, text_end_delete_banks
 from components.texts.admins.manage_organizations import text_stop_delete_organizations
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_banks_msg
 from config import BANKS_RUS_NAMES
 from microservices.sql_models_extends.bank import BankExtend
 from states.admin.steps_manage_banks import StepsDeleteBanks, StepsGetBanksList
-from states.admin.steps_manage_partners import StepsDeletePartners
 
 rt = Router()
 
@@ -101,7 +100,7 @@ async def sure_msg_delete_banks(callback: CallbackQuery, state: FSMContext):
 
     sure_msg = await get_sure_delete_banks_msg(choose_banks_names)
 
-    await callback.message.edit_text(text=sure_msg, reply_markup=cf_keyb_end_delete_banks, parse_mode="html")
+    await callback.message.edit_text(text=sure_msg, reply_markup=keyb_markup_end_delete_banks, parse_mode="html")
 
 
 @rt.callback_query(StepsDeleteBanks.sure_msg_delete_banks, F.data == "cancel_delete_banks")

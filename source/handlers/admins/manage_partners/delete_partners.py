@@ -2,9 +2,9 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.configurations.inline import cf_keyb_end_delete_org, cf_keyb_end_delete_partners
+from components.keyboards_components.markups.inline import keyb_markup_end_delete_partners
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_delete_partner
+from components.keyboards_components.inline_strings import keyb_str_delete_partner
 from components.texts.admins.manage_organizations import text_stop_delete_organizations
 from components.texts.admins.manage_partners import text_start_delete_partners, text_end_delete_partners
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_partner_msg
@@ -99,7 +99,7 @@ async def sure_msg_delete_partner(callback: CallbackQuery, state: FSMContext):
 
     sure_msg = await get_sure_delete_partner_msg(choose_partners_names)
 
-    await callback.message.edit_text(text=sure_msg, reply_markup=cf_keyb_end_delete_partners, parse_mode="html")
+    await callback.message.edit_text(text=sure_msg, reply_markup=keyb_markup_end_delete_partners, parse_mode="html")
 
 
 @rt.callback_query(StepsDeletePartners.sure_msg_delete_partners, F.data == "cancel_delete_partners")

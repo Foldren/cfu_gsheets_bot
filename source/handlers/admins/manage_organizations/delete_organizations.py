@@ -2,9 +2,9 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.configurations.inline import cf_keyb_end_delete_org
+from components.keyboards_components.markups.inline import keyb_markup_end_delete_org
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_delete_org
+from components.keyboards_components.inline_strings import keyb_str_delete_org
 from components.texts.admins.manage_organizations import text_start_delete_organizations, \
     text_stop_delete_organizations, text_end_delete_organizations
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_org_msg
@@ -107,7 +107,7 @@ async def sure_msg_delete_organization(callback: CallbackQuery, state: FSMContex
 
     sure_msg = await get_sure_delete_org_msg(choose_organizations_names)
 
-    await callback.message.edit_text(text=sure_msg, reply_markup=cf_keyb_end_delete_org, parse_mode="html")
+    await callback.message.edit_text(text=sure_msg, reply_markup=keyb_markup_end_delete_org, parse_mode="html")
 
 
 @rt.callback_query(StepsDeleteOrganizations.sure_msg_delete_organizations, F.data == "cancel_delete_organizations")

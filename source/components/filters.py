@@ -39,7 +39,7 @@ class IsMemberFilter(BaseFilter):
 class IsRegistration(BaseFilter):
     async def __call__(self, message: Message, redis_regs: RedisRegistration) -> bool:
         registration = await redis_regs.check_registration_by_nickname(message.from_user.username)
-        return registration is not None
+        return registration != {}
 
 
 class IsSenderMemberFilter(BaseFilter):

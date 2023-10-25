@@ -5,7 +5,7 @@ from aiogram import Router, Bot, F
 from components.commands import main_commands
 from components.text_generators.admins import get_text_start_admin
 from components.filters import IsAdminFilter
-from components.keyboards_components.configurations.reply import cf_keyb_start_admin
+from components.keyboards_components.markups.reply import keyb_markup_start_admin
 
 rt = Router()
 
@@ -21,4 +21,4 @@ async def start_admin(message: Message, state: FSMContext, bot_object: Bot):
     message_text = await get_text_start_admin(message.from_user.full_name)
 
     await bot_object.set_my_commands(commands=main_commands, scope=BotCommandScopeAllPrivateChats())
-    await message.answer(message_text, reply_markup=cf_keyb_start_admin, parse_mode='html')
+    await message.answer(message_text, reply_markup=keyb_markup_start_admin, parse_mode='html')

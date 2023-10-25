@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.strings.inline import keyb_str_change_observers_mi
+from components.keyboards_components.inline_strings import keyb_str_change_observers_mi
 from components.texts.admins.manage_categories import text_choose_param_to_change_menu_item, \
     text_start_change_menu_item, text_change_name_menu_item, text_end_change_name_menu_item, \
     text_start_change_observers_menu_item, text_end_change_observers_menu_item

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from components.filters import IsUserFilter
-from components.keyboards_components.configurations.inline import cf_keyb_choose_write_menu_sender
+from components.keyboards_components.markups.inline import keyb_markup_choose_write_menu_sender
 from components.tools import get_callb_content, get_msg_queue
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.write_category_to_bd import text_get_user_list_mi, text_no_menu_items_u, \
@@ -22,7 +22,7 @@ rt.callback_query.filter(IsUserFilter(), F.message.chat.type == "private")
 async def start_choose_write_category_sender(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsWriteCategoriesToBd.set_sender)
-    await message.answer(text=text_choose_sender_write_item, reply_markup=cf_keyb_choose_write_menu_sender, parse_mode="html")
+    await message.answer(text=text_choose_sender_write_item, reply_markup=keyb_markup_choose_write_menu_sender, parse_mode="html")
 
 
 @rt.callback_query(StepsWriteCategoriesToBd.set_sender, F.data.startswith("choose_write_menu_sender"))

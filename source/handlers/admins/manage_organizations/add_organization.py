@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.keyboards_components.generators import get_inline_keyb_markup
-from components.keyboards_components.strings.inline import keyb_str_pass_add_users_to_org
+from components.keyboards_components.inline_strings import keyb_str_pass_add_users_to_org
 from components.texts.admins.manage_organizations import text_start_add_organization, \
     text_choose_observers_organization, text_end_add_organization
 from components.tools import get_callb_content, generate_zero_array, \

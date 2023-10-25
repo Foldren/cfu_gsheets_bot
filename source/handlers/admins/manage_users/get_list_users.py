@@ -1,9 +1,9 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import Router, F
-from components.filters import IsAdminFilter, IsNotMainMenuMessage
-from components.keyboards_components.configurations.inline import cf_keyb_empty_user_list
-from components.keyboards_components.strings.inline import keyb_str_user_list
+from components.filters import IsAdminFilter
+from components.keyboards_components.markups.inline import keyb_markup_empty_user_list
+from components.keyboards_components.inline_strings import keyb_str_user_list
 from components.texts.admins.manage_users import text_get_list_users
 from components.keyboards_components.generators import get_inline_users_keyb_markup
 from microservices.sql_models_extends.user import UserExtend
@@ -32,6 +32,6 @@ async def get_list_users(message: Message, state: FSMContext):
             add_keyb_to_start=keyb_str_user_list
         )
     else:
-        keyboard = cf_keyb_empty_user_list
+        keyboard = keyb_markup_empty_user_list
 
     await message.answer(text=text_get_list_users, reply_markup=keyboard, parse_mode="html")
