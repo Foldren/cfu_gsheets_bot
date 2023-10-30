@@ -1,11 +1,11 @@
 from tortoise import Model
 from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, ForeignKeyField, OnDelete, \
     ManyToManyRelation, ForeignKeyRelation, OneToOneRelation, ReverseRelation, OneToOneField, BigIntField, DateField, \
-    CharField, BinaryField, TimeField, DatetimeField
+    CharField, BinaryField, DatetimeField
 
 
 class User(Model):
-    chat_id = BigIntField(pk=True)
+    chat_id = BigIntField(pk=True, field_type=int)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="workers", null=True)
     categories: ManyToManyRelation['Category'] = ManyToManyField('models.Category', on_delete=OnDelete.CASCADE,
@@ -154,7 +154,7 @@ class AdminInfo(Model):
 class UserInfo(Model):
     id = BigIntField(pk=True)
     user: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
-                                                   related_name="user_info")
+                                                   related_name="user_info", null=True)
     bet = BigIntField(null=False)
     increased_bet = BigIntField(null=False)
 

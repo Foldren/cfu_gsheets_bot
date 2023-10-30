@@ -40,7 +40,7 @@ async def start_manage_users_stats(message: Message, state: FSMContext, answer_o
 
 
 @rt.callback_query(StepsManageUsersStats.choose_stats_period, F.data.startswith("choose_stats_period"))
-async def change_wallets_list(callback: CallbackQuery, state: FSMContext):
+async def change_stats_list(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StepsManageUsersStats.change_stats_observers)
     choose_period_stat_name = await get_callb_content(callback.data)
     admin_id = await UserExtend.get_user_admin_id(callback.from_user.id)
@@ -82,7 +82,7 @@ async def change_wallets_list(callback: CallbackQuery, state: FSMContext):
 
 
 @rt.callback_query(StepsManageUsersStats.change_stats_observers, F.data.startswith("change_observers_period_stat"))
-async def change_observers_menu_item(callback: CallbackQuery, state: FSMContext):
+async def change_observers_stat(callback: CallbackQuery, state: FSMContext):
     data_state = await state.get_data()
     number_choose_user = int(await get_callb_content(callback.data))
     data_state['status_list'][number_choose_user] = 1 if data_state['status_list'][number_choose_user] == 0 else 0
@@ -113,7 +113,7 @@ async def change_observers_menu_item(callback: CallbackQuery, state: FSMContext)
 
 
 @rt.callback_query(StepsManageUsersStats.change_stats_observers, F.data == "save_change_observers_ps")
-async def end_change_observers_menu_item(callback: CallbackQuery, state: FSMContext):
+async def end_change_observers_stat(callback: CallbackQuery, state: FSMContext):
     data_state = await state.get_data()
     await state.clear()
 

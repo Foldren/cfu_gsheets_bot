@@ -1,6 +1,8 @@
+from ctypes import c_long
 from datetime import datetime, timedelta
 from aiogram.types import Message
 from cryptography.fernet import Fernet
+from numpy import int64, int32, int16, int_, uintc, intc
 from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
@@ -195,10 +197,10 @@ class UserExtend:
     @staticmethod
     async def add(chat_id: int, nickname: str, fullname: str, profession: str,
                   id_admin: int, bet: int, increased_bet: int):
-        await UserInfo.create(user_id=chat_id, bet=bet, increased_bet=increased_bet)
         await User.create(chat_id=chat_id, nickname=nickname, fullname=fullname, profession=profession,
                           admin_id=id_admin)
-        # ЗДЕСЬЬЬЬ ОШИБКА ______________________________
+        await UserInfo.create(user_id=chat_id, bet=bet, increased_bet=increased_bet)
+        await Role.bulk_create([Role(user_id=chat_id, type='normal'), Role(user_id=chat_id, type='report_request')])
 
     @staticmethod
     async def update_by_id(chat_id: int, nickname: str = None, fullname: str = None, profession: str = None,

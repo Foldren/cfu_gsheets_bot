@@ -37,7 +37,7 @@ async def register_user(message: Message, state: FSMContext,
 
     # Добавляем данные нового пользователя в бд sql
     await UserExtend.add(
-            chat_id=message.from_user.id,
+            chat_id=int(message.from_user.id),
             nickname="@" + user_params['nickname'],
             fullname=user_params['fullname'],
             profession=user_params['profession'],
