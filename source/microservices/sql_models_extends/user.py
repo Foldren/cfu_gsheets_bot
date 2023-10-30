@@ -204,10 +204,19 @@ class UserExtend:
 
     @staticmethod
     async def update_by_id(chat_id: int, nickname: str = None, fullname: str = None, profession: str = None,
-                           id_admin: int = None, new_chat_id: int = None):
+                           bet: int = None,
+                           increased_bet: int = None, id_admin: int = None, new_chat_id: int = None):
         user = await User.get(chat_id=chat_id)
 
         user.chat_id = chat_id if new_chat_id is None else new_chat_id
+
+        if (bet is not None) or (increased_bet is not None):
+            user_info = await user.user_info
+            if bet is not None:
+                user_info.bet = bet
+            if increased_bet is not None:
+                user_info.increased_bet = increased_bet
+            await user_info.save()
 
         if nickname is not None:
             user.nickname = nickname
