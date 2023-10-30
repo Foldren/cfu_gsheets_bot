@@ -3,20 +3,18 @@ from aiofiles.os import remove
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State
-from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import InlineKeyboardMarkup, Message, CallbackQuery
 from cryptography.fernet import Fernet
 from components.keyboards_components.generators import get_gt_url_keyb_markup
 from components.text_generators.users import get_notify_request_report_text
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
-from config import MEMORY_STORAGE, CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY, ROLE_BY_STAGES_REPS_REQS
+from config import CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY, ROLE_BY_STAGES_REPS_REQS
 from microservices.sql_models_extends.category import CategoryExtend
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.sql_models_extends.user import UserExtend
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
-from models import ConfirmNotification, ReportRequest, PaymentAccount
+from models import ConfirmNotification, ReportRequest
 
 
 async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,

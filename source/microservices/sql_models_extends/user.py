@@ -1,8 +1,6 @@
-from ctypes import c_long
 from datetime import datetime, timedelta
 from aiogram.types import Message
 from cryptography.fernet import Fernet
-from numpy import int64, int32, int16, int_, uintc, intc
 from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
