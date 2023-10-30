@@ -17,7 +17,7 @@ from microservices.google_api.google_table import GoogleTable
 from models import ConfirmNotification, ReportRequest
 
 
-async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value: str, include_admin=False,
+async def get_users_keyb_names_with_checkbox(users: list, flag_name: str, flag_value, include_admin=False,
                                              admin_id=None, radio_buttons=False):
     buttons_names = []
     buttons_callbacks = []
@@ -53,7 +53,7 @@ async def get_ids_delete_objects_from_keyb_callb(callback: CallbackQuery, emoji_
 async def get_changed_reply_keyb_with_checkbox(callback: CallbackQuery, select_mode='checkbox',
                                                ignore_emoji: list = None) -> InlineKeyboardMarkup:
     """
-    Мощный инструмент для изменения флажков нажатых на inline клавиатуре кнопок.
+    Мощный инструмент для изменения флажков, для нажатых на inline клавиатуре кнопок.
 
     :param ignore_emoji: список игнорируемых эмоджи в кнопках
     :param callback: колбэк с inline клавиатурой
