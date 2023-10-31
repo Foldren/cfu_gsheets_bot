@@ -28,13 +28,18 @@ class RedisUser:
         return await self.redis_users.hset(str(admin_id), 'status', str(admin_status))
 
     async def add_new_user(self, user_id: int, category: str, admin_id: int = None):
-        await self.redis_users.hset(str(user_id), mapping={
+        map_ur = {
             "category": category,  # admin or user
-            "admin_id": '' if category != 'user' else admin_id,
-            "admin_mode": '' if category != 'admin' else '1',
             "status": '0',
             "active_reply_markup": '',
-        })
+        }
+
+        if category == 'user':
+            map_ur['admin_id'] = admin_id
+        elif category == 'admin':
+            map_ur['admin_mode'] = '1'
+
+        await self.redis_users.hset(str(user_id), mapping=map_ur)
 
     async def delete_users(self, list_id_users: list):
         await self.redis_users.delete(*list_id_users)
