@@ -179,9 +179,10 @@ class UserExtend:
         return user.admin_id if user.admin_id else id_user
 
     @staticmethod
-    async def get_admin_users(id_admin: int):
+    async def get_admin_users(id_admin: int, include_admin: bool = False):
         values_list = ["nickname", "fullname", "profession", "chat_id"]
-        admin_users = await User.filter(admin_id=id_admin).all().values(*values_list)
+        expr = Q(admin_id=id_admin) | Q(chat_id=id_admin) if include_admin else Q(admin_id=id_admin)
+        admin_users = await User.filter(expr).all().values(*values_list)
         return admin_users
 
     @staticmethod

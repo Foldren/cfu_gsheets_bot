@@ -6,6 +6,7 @@ from microservices.sql_models_extends.issuance_report import IssuanceReportExten
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.redis_models.registrations import RedisRegistration
 from microservices.redis_models.user import RedisUser
+from microservices.sql_models_extends.user import UserExtend
 
 
 class IsAdminFilter(BaseFilter):
@@ -34,6 +35,13 @@ class IsMemberFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
         user = await redis_users.get_user(message.from_user.id)
         return user != {}
+
+
+class IsTimeKeeperFilter(BaseFilter):
+    async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
+        user = await redis_users.get_user(message.from_user.id)
+        user_role = await UserExtend.get_user_role(message.from_user.id, role_type="normal")
+        return (user_role == 'timekeeper') and (user != {})
 
 
 class IsRegistration(BaseFilter):

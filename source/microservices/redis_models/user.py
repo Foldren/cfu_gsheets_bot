@@ -14,7 +14,7 @@ class RedisUser:
         return await self.redis_users.hgetall(str(user_id))
 
     async def get_admin_status(self, user_id: int):
-        return await self.redis_users.hget(str(user_id), 'status')
+        return await self.redis_users.hget(str(user_id), 'admin_mode')
 
     async def get_user_category(self, user_id: int):
         category = await self.redis_users.hget(str(user_id), 'category')
@@ -31,7 +31,8 @@ class RedisUser:
         await self.redis_users.hset(str(user_id), mapping={
             "category": category,  # admin or user
             "admin_id": '' if category != 'user' else admin_id,
-            "status": '' if category != 'admin' else '1',
+            "admin_mode": '' if category != 'admin' else '1',
+            "status": '0',
             "active_reply_markup": '',
         })
 

@@ -18,6 +18,7 @@ from handlers.admins.manage_payment_accounts import get_list_payment_accounts, a
 from handlers.admins.manage_users import get_list_users, add_user, change_user, delete_user
 from handlers.members import check_events_notification_groups, confirm_issuance_report, technical_support, \
     manage_confirm_notifications
+from handlers.members.timekeepers import write_new_report_card_user
 from handlers.users import start_user, open_nested_menu, show_user_stats, request_money_report
 from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
     choose_write_category_sender
@@ -28,6 +29,7 @@ from init_db import init_db
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
 from microservices.redis_models.registrations import RedisRegistration
+from microservices.redis_models.report_cards import RedisUserReportCards
 from microservices.redis_models.user import RedisUser
 from microservices.redis_models.wallets import RedisUserWallets
 
@@ -48,7 +50,7 @@ user_routers = [
 
 member_routers = [
     check_events_notification_groups.rt, confirm_issuance_report.rt, technical_support.rt,
-    manage_confirm_notifications.rt
+    manage_confirm_notifications.rt, write_new_report_card_user.rt
 ]
 
 
@@ -79,13 +81,16 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
+    redis_report_cards_users = RedisUserReportCards(await from_url(REDIS_URL, db=3, decode_responses=True))
+    # chat_id -> hash {bank1, bank2,..}
+
     # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
     # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли
     # типов 'report_request' и 'normal'
     #
-    # АДМИН: При добавлении админа нужно добавить его в redis_status_users category='admin', admin_id='', status='1',
-    # active_reply_markup='', определить для него ссылки на гугл таблицу и гугл драйв, добавить ему один кошелек
-    # в redis_wallets_users и добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
+    # АДМИН: При добавлении админа нужно добавить его в redis_status_users category='admin', admin_id='', status='0',
+    # admin_mode = '1', active_reply_markup='', определить для него ссылки на гугл таблицу и гугл драйв, добавить ему
+    # один кошелек в redis_wallets_users и добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
     # также создать папку для чеков в misc, а также создать две роли типов 'report_request' и 'normal'
     # (в папку поместить файл)
 
@@ -97,6 +102,7 @@ async def main():
                            redis_users=redis_status_users,
                            redis_regs=redis_registrations_users,
                            redis_wallets=redis_wallets_users,
+                           redis_report_cards=redis_report_cards_users,
                            allowed_updates=["message", "callback_query", "my_chat_member"]
                            )
 

@@ -2,8 +2,8 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from components.filters import IsUserFilter
-from components.keyboards_components.markups.reply import keyb_markup_start_user, \
-    keyb_markup_start_user_admin, keyb_markup_operation_under_stats, keyb_markup_wallets
+from components.keyboards_components.generators import get_reply_keyb_markup_start
+from components.keyboards_components.markups.reply import keyb_markup_operation_under_stats, keyb_markup_wallets
 from components.texts.users.change_menu import text_open_under_stats_menu, text_open_wallets_menu, \
     text_back_to_main_menu
 from microservices.sql_models_extends.user import UserExtend
@@ -35,8 +35,8 @@ async def open_menu_operation_with_stats(message: Message, state: FSMContext):
     admin_id = await UserExtend.get_user_admin_id(user_id)
 
     if user_id == admin_id:
-        keyboard = keyb_markup_start_user_admin
+        keyboard = await get_reply_keyb_markup_start(message.from_user.id, "admin_user")
     else:
-        keyboard = keyb_markup_start_user
+        keyboard = await get_reply_keyb_markup_start(message.from_user.id, "user")
 
     await message.answer(text=text_back_to_main_menu, reply_markup=keyboard)

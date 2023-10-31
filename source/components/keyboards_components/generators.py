@@ -1,6 +1,34 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton
+from components.keyboards_components.markups.reply import keyb_markup_start_admin, keyb_markup_start_user_admin, \
+    keyb_markup_start_user
+from microservices.sql_models_extends.user import UserExtend
 from models import ConfirmNotification
+
+
+async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
+    result_keyb_markup = keyb_markup_start_user
+    role_user = await UserExtend.get_user_role(chat_id=user_chat_id, role_type='normal')
+
+    if (category_user == "user") and (role_user == 'timekeeper'):
+        keyb_markup_start_user.keyboard[0] = [
+            KeyboardButton(text="Операция с категориями"),
+            KeyboardButton(text="Операция с подотчетами"),
+            KeyboardButton(text="Табель")
+        ]
+    if (category_user == "admin_user") and (role_user == 'timekeeper'):
+        keyb_markup_start_user_admin.keyboard[0] = [
+            KeyboardButton(text="Операция с категориями"),
+            KeyboardButton(text="Операция с подотчетами"),
+            KeyboardButton(text="Табель")
+        ]
+
+    match category_user:
+        case "admin_user":
+            result_keyb_markup = keyb_markup_start_user_admin
+        case "admin":
+            result_keyb_markup = keyb_markup_start_admin
+
+    return result_keyb_markup
 
 
 async def get_inline_keyb_markup(callback_str: str, number_cols: int, list_names: list, list_data: list = None,
@@ -189,7 +217,8 @@ async def get_keyb_row_save_changes(callback_data_str: str) -> list[InlineKeyboa
     ]
 
 
-async def get_keyb_list_notify_types_user(user_role: str, user_notifications: list[ConfirmNotification]) -> InlineKeyboardMarkup:
+async def get_keyb_list_notify_types_user(user_role: str,
+                                          user_notifications: list[ConfirmNotification]) -> InlineKeyboardMarkup:
     inline_keyboard = []
 
     notifies = {
