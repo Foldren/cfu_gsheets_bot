@@ -18,7 +18,7 @@ rt.callback_query.filter(IsAdminFilter(), F.message.chat.type == "private")
 async def change_mode(message: Message, state: FSMContext, redis_users: RedisUser):
     await state.clear()
     admin_status = 0 if message.text == 'Режим: Админ 👨‍💼' else 1
-    await redis_users.set_admin_status(message.chat.id, admin_status)
+    await redis_users.set_admin_mode(message.chat.id, admin_status)
 
     if admin_status == 0:
         keyboard = await get_reply_keyb_markup_start(message.from_user.id, "admin_user")

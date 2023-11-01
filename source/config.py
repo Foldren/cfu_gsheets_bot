@@ -32,6 +32,7 @@ STATS_UPRAVLYAIKA = ["Dashboard", "Ежедневный", "Еженедельн�
 SECRET_KEY = getenv("SECRET_KEY") if IS_THIS_LOCAL else env('SECRET_KEY')
 NAME_GOOGLE_TABLE_BD_LIST = "БД (не редактировать)"
 NAME_GOOGLE_TABLE_ACCOUNTING_LIST = "Учёт"
+NAME_GOOGLE_TABLE_REPORT_CARD_LIST = "БД Табель (не редактировать)"
 CHECKS_PATH = getcwd() + "/misc/images/checks/"
 MAIN_MENU_MSGS = ["Меню", "Сотрудники", "Режим: Админ 👨‍💼", "Операция с категориями", "Операция с подотчетами",
                   "Перевод на кошелек", "Выдача в подотчет", "Возврат подотчета", "Режим: Юзер 🙎‍♂️",
@@ -51,3 +52,4 @@ ROLE_BY_STAGES_REPS_REQS = {
     'treasure': 'treasurer',
 }
 ROLES = ['timekeeper']
+DEFINE_STATUSES = ["🔴 Не пришел:", "🟢 На работе:", "🔵 Ушел:"]

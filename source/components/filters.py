@@ -17,7 +17,7 @@ class IsAdminFilter(BaseFilter):
 
 class IsAdminModeFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        status = await redis_users.get_admin_status(message.from_user.id)
+        status = await redis_users.get_admin_mode(message.from_user.id)
         return status == 1
 
 

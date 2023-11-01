@@ -88,11 +88,11 @@ async def main():
     # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли
     # типов 'report_request' и 'normal'
     #
-    # АДМИН: При добавлении админа нужно добавить его в redis_status_users category='admin', admin_id='', status='0',
-    # admin_mode = '1', active_reply_markup='', определить для него ссылки на гугл таблицу и гугл драйв, добавить ему
-    # один кошелек в redis_wallets_users и добавить ему все 3 периода по отчетам и dashboard в sql period_stats_observers,
-    # также создать папку для чеков в misc, а также создать две роли типов 'report_request' и 'normal'
-    # (в папку поместить файл)
+    # АДМИН: При добавлении админа нужно добавить его в redis_status_users category='admin', status='0',
+    # admin_mode = '1', date_status_refresh='', определить для него ссылки на гугл таблицу и гугл драйв, добавить ему
+    # один кошелек в redis_wallets_users и добавить ему все 3 периода по отчетам и dashboard в sql
+    # period_stats_observers, также создать папку для чеков в misc, а также создать две роли типов
+    # 'report_request' и 'normal' (в папку поместить файл)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot,

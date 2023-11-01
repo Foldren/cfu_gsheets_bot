@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton
 from components.keyboards_components.markups.reply import keyb_markup_start_admin, keyb_markup_start_user_admin, \
     keyb_markup_start_user
+from microservices.sql_models_extends.confirm_notification import ConfirmNotificationExtend
 from microservices.sql_models_extends.user import UserExtend
 from models import ConfirmNotification
 
@@ -27,6 +28,12 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
             result_keyb_markup = keyb_markup_start_user_admin
         case "admin":
             result_keyb_markup = keyb_markup_start_admin
+
+    for i, row in enumerate(result_keyb_markup.keyboard):
+        for k, button in enumerate(row):
+            if "📩" in button.text:
+                number_n = await ConfirmNotificationExtend.get_user_notifies_number(user_chat_id)
+                result_keyb_markup.keyboard[i][k] = f"{number_n} 📩"
 
     return result_keyb_markup
 

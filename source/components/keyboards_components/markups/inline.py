@@ -1,6 +1,15 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
+keyb_markup_write_report_card = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Приход ➕", callback_data="come_work_rc"),
+            InlineKeyboardButton(text="Уход ➖", callback_data="left_work_rc")
+        ]
+    ]
+)
+
 keyb_markup_end_delete_mi = InlineKeyboardMarkup(
     inline_keyboard=[
         [
