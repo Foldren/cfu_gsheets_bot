@@ -59,7 +59,7 @@ async def start_write_new_report_type_user(message: Message, state: FSMContext, 
 
 
 @rt.callback_query(StepsWriteReportCard.change_user_type_report_card, F.data.startswith('report_card'))
-async def select_type_report_card_user(callback: CallbackQuery, state: FSMContext, gt_object: GoogleTable, redis_users: RedisUser):
+async def select_type_report_card_user(callback: CallbackQuery, gt_object: GoogleTable, redis_users: RedisUser):
     user_id = await get_callb_content(callback.data)
     user = await UserExtend.get_by_id(user_id)
     admin_id = await redis_users.get_user_admin_id(callback.message.chat.id)
@@ -83,7 +83,7 @@ async def select_type_report_card_user(callback: CallbackQuery, state: FSMContex
                         status_i=status_number + 1
                     )
                 else:
-                    await callback.answer("⛔️ Для пользователя установлен последний статус, обновление в 00:00.")
+                    await callback.answer("⛔️ Последний статус. Обновление в 00:00")
 
     await callback.message.edit_text(text=text_start_write_new_report_type_user, reply_markup=keyboard_markup)
 
