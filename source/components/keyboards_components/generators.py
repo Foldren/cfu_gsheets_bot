@@ -31,7 +31,11 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
 
     for i, row in enumerate(result_keyb_markup.keyboard):
         for k, button in enumerate(row):
-            if "📩" in button.text:
+            try:
+                btn_text = button.text
+            except AttributeError:
+                btn_text = button
+            if "📩" in btn_text:
                 number_n = await ConfirmNotificationExtend.get_user_notifies_number(user_chat_id)
                 result_keyb_markup.keyboard[i][k] = f"{number_n} 📩"
 

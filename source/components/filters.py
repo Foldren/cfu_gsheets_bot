@@ -26,7 +26,7 @@ class IsUserFilter(BaseFilter):
         user = await redis_users.get_user(message.from_user.id)
         result = False
         if user:
-            if user['category'] == 'user' or (user['category'] == 'admin' and user['status'] == '0'):
+            if user['category'] == 'user' or (user['category'] == 'admin' and user['admin_mode'] == '0'):
                 result = True
         return result
 
