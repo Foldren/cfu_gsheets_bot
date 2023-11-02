@@ -26,6 +26,9 @@ async def start_write_new_report_type_user(message: Message, state: FSMContext, 
     admin_id = await redis_users.get_user_admin_id(message.from_user.id)
     time_status_refresh = await redis_users.get_admin_time_status_refresh(admin_id)
     fst_load = False
+    d_now = datetime.now()
+    d_refresh = d_now + timedelta(days=1)
+    dt_refresh = datetime(year=d_refresh.year, month=d_refresh.month, day=d_refresh.day, hour=0, minute=0)
 
     try:
         date_refresh = datetime.strptime(time_status_refresh, '%d:%m:%Y-%H:%M')
@@ -33,11 +36,9 @@ async def start_write_new_report_type_user(message: Message, state: FSMContext, 
             fst_load = True
             users_ids = await UserExtend.get_admin_users(admin_id, include_admin=True, only_ids=True)
             await redis_users.reset_users_statuses(users_ids)
+            await redis_users.set_admin_time_status_refresh(admin_id, dt_refresh.strftime('%d:%m:%Y-%H:%M'))
 
     except ValueError:
-        d_now = datetime.now()
-        d_refresh = d_now + timedelta(days=1)
-        dt_refresh = datetime(year=d_refresh.year, month=d_refresh.month, day=d_refresh.day, hour=0, minute=0)
         await redis_users.set_admin_time_status_refresh(admin_id, dt_refresh.strftime('%d:%m:%Y-%H:%M'))
 
     users = await UserExtend.get_admin_users(admin_id, include_admin=True)
