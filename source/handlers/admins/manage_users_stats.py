@@ -91,6 +91,7 @@ async def end_change_observers_stat(callback: CallbackQuery, state: FSMContext):
                 new_stat_observers_ids.append(int(button.callback_data.split(":")[1]))
 
     await PeriodStatExtend.update_observers_by_name(
+        admin_id=callback.message.chat.id,
         ps_name=st_data['stat_name'],
         observers_id_list=new_stat_observers_ids
     )

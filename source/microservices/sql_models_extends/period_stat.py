@@ -25,9 +25,13 @@ class PeriodStatExtend:
         return users
 
     @staticmethod
-    async def update_observers_by_name(ps_name: int, observers_id_list: list):
+    async def update_observers_by_name(admin_id: int, ps_name: int, observers_id_list: list):
         period_stat = await PeriodStat.get(name=ps_name)
-        users = await User.filter(chat_id__in=observers_id_list)
-        await period_stat.observers.clear()  # Удаляем текущих наблюдателей
-        await period_stat.observers.add(*users)  # Добавляем новых наблюдателей
+        new_observers = await User.filter(chat_id__in=observers_id_list)
+        admin_users = await User.filter(admin_id=admin_id)
+        old_observers = await period_stat.observers
+        for o in old_observers:
+            if o in admin_users:
+                await period_stat.observers.remove(o)
+        await period_stat.observers.add(*new_observers)  # Добавляем новых наблюдателей
         await period_stat.save()
