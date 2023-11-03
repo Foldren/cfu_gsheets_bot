@@ -29,7 +29,6 @@ from init_db import init_db
 from microservices.google_api.google_drive import GoogleDrive
 from microservices.google_api.google_table import GoogleTable
 from microservices.redis_models.registrations import RedisRegistration
-from microservices.redis_models.report_cards import RedisUserReportCards
 from microservices.redis_models.user import RedisUser
 from microservices.redis_models.wallets import RedisUserWallets
 
@@ -81,9 +80,6 @@ async def main():
     redis_wallets_users = RedisUserWallets(await from_url(REDIS_URL, db=2, decode_responses=True))
     # chat_id -> hash {bank1, bank2,..}
 
-    redis_report_cards_users = RedisUserReportCards(await from_url(REDIS_URL, db=3, decode_responses=True))
-    # chat_id -> hash {bank1, bank2,..}
-
     # ЮЗЕР: При добавлении нового юзера нужно добавить ему хотя бы один кошелек
     # в redis_wallets_users и запись со статусом в redis_status_users, а также две роли
     # типов 'report_request' и 'normal'
@@ -102,7 +98,6 @@ async def main():
                            redis_users=redis_status_users,
                            redis_regs=redis_registrations_users,
                            redis_wallets=redis_wallets_users,
-                           redis_report_cards=redis_report_cards_users,
                            allowed_updates=["message", "callback_query", "my_chat_member"]
                            )
 

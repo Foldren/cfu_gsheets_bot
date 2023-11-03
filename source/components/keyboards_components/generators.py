@@ -16,11 +16,21 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
             KeyboardButton(text="Операция с подотчетами"),
             KeyboardButton(text="Табель")
         ]
-    if (category_user == "admin_user") and (role_user == 'timekeeper'):
+    elif (category_user == "admin_user") and (role_user == 'timekeeper'):
         keyb_markup_start_user_admin.keyboard[0] = [
             KeyboardButton(text="Операция с категориями"),
             KeyboardButton(text="Операция с подотчетами"),
             KeyboardButton(text="Табель")
+        ]
+    elif (category_user == "admin_user") and (role_user is None):
+        keyb_markup_start_user_admin.keyboard[0] = [
+            KeyboardButton(text="Операция с категориями"),
+            KeyboardButton(text="Операция с подотчетами")
+        ]
+    elif (category_user == "user") and (role_user is None):
+        keyb_markup_start_user_admin.keyboard[0] = [
+            KeyboardButton(text="Операция с категориями"),
+            KeyboardButton(text="Операция с подотчетами")
         ]
 
     match category_user:

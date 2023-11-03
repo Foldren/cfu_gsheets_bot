@@ -60,7 +60,7 @@ async def start_write_new_report_type_user(message: Message, state: FSMContext, 
 
 
 @rt.callback_query(StepsWriteReportCard.change_user_type_report_card, F.data.startswith('report_card'))
-async def select_type_report_card_user(callback: CallbackQuery, gt_object: GoogleTable, redis_users: RedisUser):
+async def change_type_report_card_user(callback: CallbackQuery, gt_object: GoogleTable, redis_users: RedisUser):
     user_id = await get_callb_content(callback.data)
     user = await UserExtend.get_by_id(user_id)
     admin_id = await redis_users.get_user_admin_id(callback.message.chat.id)
@@ -76,12 +76,18 @@ async def select_type_report_card_user(callback: CallbackQuery, gt_object: Googl
                     keyboard_markup.inline_keyboard[i][k].text = DEFINE_STATUSES[status_number + 1] + \
                                                                  " " + button.text.split(":")[1][1:]
                     user_id = button.callback_data.split(":")[1]
+                    if (status_number + 1) == 1:
+                        await redis_users.set_last_time_come_to_work(user_id, datetime.now().strftime('%d.%m.%Y-%H:%M'))
+                    last_time_come_to_work = await redis_users.get_last_time_come_to_work(user_id)
                     await redis_users.set_user_status(user_id, status_number + 1)
                     await gt_object.write_new_report_card_user(
                         table_encr_url=admin_info.google_table_url,
                         chat_id_user=int(user_id),
                         name_user=user.fullname,
-                        status_i=status_number + 1
+                        status_i=status_number + 1,
+                        bet=user.bet,
+                        increased_bet=user.increased_bet,
+                        last_time_come_to_work=last_time_come_to_work,
                     )
                 else:
                     await callback.answer("⛔️ Последний статус. Обновление в 00:00")

@@ -5,7 +5,7 @@ from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role, UserInfo
+from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role
 
 
 class UserExtend:
@@ -200,8 +200,7 @@ class UserExtend:
     async def add(chat_id: int, nickname: str, fullname: str, profession: str,
                   id_admin: int, bet: int, increased_bet: int):
         await User.create(chat_id=chat_id, nickname=nickname, fullname=fullname, profession=profession,
-                          admin_id=id_admin)
-        await UserInfo.create(user_id=chat_id, bet=bet, increased_bet=increased_bet)
+                          admin_id=id_admin, bet=bet, increased_bet=increased_bet)
         await Role.bulk_create([Role(user_id=chat_id, type='normal'), Role(user_id=chat_id, type='report_request')])
 
     @staticmethod

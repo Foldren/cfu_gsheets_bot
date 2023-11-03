@@ -17,6 +17,8 @@ class User(Model):
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
                                                                       related_name="observers",
                                                                       through="period_stat_observers")
+    bet = BigIntField(null=False)
+    increased_bet = BigIntField(null=False)
     admin_banks: ReverseRelation['Bank']
     admin_organizations: ReverseRelation["Organization"]
     admin_partners: ReverseRelation["Partner"]
@@ -149,17 +151,6 @@ class AdminInfo(Model):
 
     class Meta:
         table = "admin_info"
-
-
-class UserInfo(Model):
-    id = BigIntField(pk=True)
-    user: OneToOneRelation['User'] = OneToOneField('models.User', on_delete=OnDelete.CASCADE,
-                                                   related_name="user_info", null=True)
-    bet = BigIntField(null=False)
-    increased_bet = BigIntField(null=False)
-
-    class Meta:
-        table = "user_info"
 
 
 class PeriodStat(Model):

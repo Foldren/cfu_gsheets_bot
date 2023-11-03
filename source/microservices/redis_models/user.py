@@ -47,10 +47,17 @@ class RedisUser:
     async def set_user_status(self, chat_id, status):
         return await self.redis_users.hset(str(chat_id), 'status', str(status))
 
+    async def get_last_time_come_to_work(self, chat_id):
+        return await self.redis_users.hget(str(chat_id), 'last_time_coming_to_work')
+
+    async def set_last_time_come_to_work(self, chat_id, last_time):
+        return await self.redis_users.hset(str(chat_id), 'last_time_coming_to_work', str(last_time))
+
     async def add_new_user(self, user_id: int, category: str, admin_id: int = None):
         map_ur = {
             "category": category,  # admin or user
             "status": '0',
+            "last_time_coming_to_work": '',
         }
 
         if category == 'user':

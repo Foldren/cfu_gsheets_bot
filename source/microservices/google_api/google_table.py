@@ -1,8 +1,7 @@
-from asyncio import run, get_event_loop
 from datetime import datetime
 from cryptography.fernet import Fernet
 from google.oauth2.service_account import Credentials
-from gspread_asyncio import AsyncioGspreadClientManager, AsyncioGspreadClient
+from gspread_asyncio import AsyncioGspreadClientManager
 from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA, SECRET_KEY, \
     NAME_GOOGLE_TABLE_REPORT_CARD_LIST
 
@@ -23,7 +22,8 @@ class GoogleTable:
     def __init__(self):
         self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
 
-    async def write_new_report_card_user(self, table_encr_url: str, chat_id_user: int, name_user: str, status_i: int):
+    async def write_new_report_card_user(self, table_encr_url: str, chat_id_user: int, name_user: str, status_i: int,
+                                         bet: int, increased_bet: int, last_time_come_to_work: str):
         # status_i 1 - приход, 2 - уход
         table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
         agc = await self.agcm.authorize()
@@ -31,11 +31,26 @@ class GoogleTable:
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_REPORT_CARD_LIST)
         frmt_date_time = datetime.now().strftime('%d.%m.%Y %H:%M')
         define_statuses = {1: "Приход", 2: "Уход"}
+        time_worked = ""
+        if status_i == 2:
+            last_time_come_to_work = datetime.strptime(last_time_come_to_work, '%d.%m.%Y-%H:%M')
+            td_time_worked = datetime.now() - last_time_come_to_work
+            try:
+                time_worked += str(td_time_worked.hours)
+            except:
+                time_worked += "00"
+            try:
+                time_worked += ":" + str(td_time_worked.minutes)
+            except:
+                time_worked += ":00"
 
         await ws.append_row([chat_id_user,
                              name_user,
                              define_statuses[status_i],
-                             frmt_date_time
+                             frmt_date_time,
+                             bet,
+                             increased_bet,
+                             time_worked,
                              ], value_input_option='USER_ENTERED')
 
     async def distribute_statement_operations(self, table_encr_url: str, inn_partner: str,
