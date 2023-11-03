@@ -41,12 +41,11 @@ async def set_new_data_user(callback: CallbackQuery, state: FSMContext):
 
     id_user = await get_callb_content(callback.data)
     user = await UserExtend.get_by_id(id_user)
-    user_info = await user.user_info
 
     msg_text = f"<b>Редактирование сотрудника:</b> (шаг 2)\n\n" \
                f"<u>Chat_id:</u> <b>{user.chat_id}</b>\n" \
                f"<u>Полное имя:</u> <b>{user.fullname}</b>\n\n"
-    example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}\n{user_info.bet}\n{user_info.increased_bet}</code>"
+    example_text = f"<code>{user.nickname}\n{user.fullname}\n{user.profession}\n{user.bet}\n{user.increased_bet}</code>"
 
     await state.set_data({'id_change_u': user.chat_id})
     await callback.message.edit_text(text=msg_text + text_change_user + example_text, parse_mode="html")
