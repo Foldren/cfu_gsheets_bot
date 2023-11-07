@@ -115,15 +115,14 @@ class UserExtend:
         list_urls = []
         f = Fernet(SECRET_KEY)
         for st_name in stats_names_list:
-            url_for_stat = ""
-            if st_name == "Dashboard":
-                url_for_stat = f.decrypt(admin_info.gt_dashboard_url).decode('utf-8')
-            elif st_name == "Ежедневный":
+            if st_name == "Ежедневный":
                 url_for_stat = f.decrypt(admin_info.gt_day_stat_url).decode('utf-8')
             elif st_name == "Еженедельный":
                 url_for_stat = f.decrypt(admin_info.gt_week_stat_url).decode('utf-8')
             elif st_name == "Ежемесячный":
                 url_for_stat = f.decrypt(admin_info.gt_month_stat_url).decode('utf-8')
+            else:
+                continue
             list_urls.append(url_for_stat)
 
         return list_urls

@@ -13,7 +13,7 @@ TECHNICAL_SUPPORT_GROUP_CHAT_ID = -4023565993
 MYSQL_URL = getenv('MYSQL_URL') if IS_THIS_LOCAL else env("MYSQL_URL")  # getenv для терминала Pycharm
 # К сожалению для миграций придется указывать ссылку напрямую
 AERICH_CONFIG = {
-    "connections": {"default": "mysql://root:KLyXjPfvDL1tKbNHK8_sVwUBrdTFER@158.160.105.173:3306/upravlyaika_db"},
+    "connections": {"default": getenv('MYSQL_URL')},
     "apps": {
         "models": {
             "models": ["source.models", "aerich.models"],
@@ -28,11 +28,12 @@ BANKS_RUS_NAMES = {
     'module': 'Модуль',
     'tochka': 'Точка',
 }
-STATS_UPRAVLYAIKA = ["Dashboard", "Ежедневный", "Еженедельный", "Ежемесячный"]
+STATS_UPRAVLYAIKA = ["Ежедневный", "Еженедельный", "Ежемесячный", "Dashboard", "Чеки"]
 SECRET_KEY = getenv("SECRET_KEY") if IS_THIS_LOCAL else env('SECRET_KEY')
 NAME_GOOGLE_TABLE_BD_LIST = "БД (не редактировать)"
 NAME_GOOGLE_TABLE_ACCOUNTING_LIST = "Учёт"
 NAME_GOOGLE_TABLE_REPORT_CARD_LIST = "БД Табель (не редактировать)"
+NAME_GOOGLE_TABLE_DASHBOARD = "Dashboard"
 CHECKS_PATH = getcwd() + "/misc/images/checks/"
 MAIN_MENU_MSGS = ["Меню", "Сотрудники", "Режим: Админ 👨‍💼", "Операция с категориями", "Операция с подотчетами",
                   "Перевод на кошелек", "Выдача в подотчет", "Возврат подотчета", "Режим: Юзер 🙎‍♂️",

@@ -3,14 +3,14 @@ from cryptography.fernet import Fernet
 from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadClientManager
 from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA, SECRET_KEY, \
-    NAME_GOOGLE_TABLE_REPORT_CARD_LIST
+    NAME_GOOGLE_TABLE_REPORT_CARD_LIST, NAME_GOOGLE_TABLE_DASHBOARD
 
 
 class GoogleTable:
     agcm: AsyncioGspreadClientManager
     json_creds_path = "upravlyaika-credentials.json"  # "universe_domain": "googleapis.com"
 
-    def __inti_credentials(self):
+    def __init_credentials(self):
         creds = Credentials.from_service_account_file(self.json_creds_path)
         scoped = creds.with_scopes([
             "https://spreadsheets.google.com/feeds",
@@ -20,7 +20,26 @@ class GoogleTable:
         return scoped
 
     def __init__(self):
-        self.agcm = AsyncioGspreadClientManager(self.__inti_credentials)
+        self.agcm = AsyncioGspreadClientManager(self.__init_credentials)
+
+    async def get_dashboard(self, table_encr_url: str):
+        table_decr_url = Fernet(SECRET_KEY).decrypt(table_encr_url).decode("utf-8")
+        agc = await self.agcm.authorize()
+        ss = await agc.open_by_url(table_decr_url)
+        ws = await ss.worksheet(NAME_GOOGLE_TABLE_DASHBOARD)
+
+        dashboard_info = await ws.get('D4:K13')
+
+        return {
+            "Продажа товара": dashboard_info[0][0],
+            "Расходы за период": dashboard_info[0][3],
+            "Остатки на расчетном счете ИП": dashboard_info[0][6],
+            "К оплате": dashboard_info[4][0],
+            "Закупка товара": dashboard_info[4][3],
+            "Остатки у физ лиц": dashboard_info[4][6],
+            "Общая Прибыль": dashboard_info[8][0],
+            "Удержания на МП": dashboard_info[8][3],
+        }
 
     async def write_new_report_card_user(self, table_encr_url: str, chat_id_user: int, name_user: str, status_i: int,
                                          bet: int, increased_bet: int, last_time_come_to_work: str):
@@ -76,7 +95,7 @@ class GoogleTable:
 
         for i in range(0, len(bd_values_rows)):
             if bd_values_rows[i][12] == str(inn_partner):
-                indexes_change_rows.append(i+1)
+                indexes_change_rows.append(i + 1)
 
         if indexes_change_rows:
             for i in range(0, 6):
