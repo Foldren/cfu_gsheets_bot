@@ -259,11 +259,11 @@ async def get_keyb_list_notify_types_user(user_role: str,
     inline_keyboard = []
 
     notifies = {
-        'issuance_of_report': {
-            'count': 0,
-            'btn_text': "Подтверждения на выдачу в подотчет:",
-            'callb_d': 'n_issuance_report',
-        }
+        # 'issuance_of_report': {
+        #     'count': 0,
+        #     'btn_text': "Подтверждения на выдачу в подотчет:",
+        #     'callb_d': 'n_issuance_report',
+        # }
     }
 
     match user_role:
