@@ -21,10 +21,17 @@ async def start_change_user(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(StepsChangeUser.start_change_user)
 
-    users = await UserExtend.get_admin_users(callback.message.chat.id)
+    users = await UserExtend.get_admin_users(callback.message.chat.id, include_admin=True)
+    list_fullnames = []
+
+    for e in users:
+        if e['chat_id'] == callback.message.chat.id:
+            list_fullnames.append("Я")
+        else:
+            list_fullnames.append(e["fullname"].split(" ")[1] + " - " + e["profession"])
 
     keyboard = await get_inline_users_keyb_markup(
-        list_fullnames=[e["fullname"].split(" ")[1] + " - " + e["profession"] for e in users],
+        list_fullnames=list_fullnames,
         list_names=[e["chat_id"] for e in users],
         number_cols=2,
         callb="change_this_user",
