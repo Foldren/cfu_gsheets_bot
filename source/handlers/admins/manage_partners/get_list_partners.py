@@ -21,12 +21,23 @@ async def get_partners_list(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsGetPartnersList.get_list_partners)
 
-    partners = await PartnerExtend.get_admin_partners(message.from_user.id)
+    partners = await PartnerExtend.get_admin_partners(message.chat.id)
+    list_names = []
+    list_callbacks = []
+
+    for p in partners:
+        if p['bank_reload_category__id']:
+            list_names.append(f'{p["name"]}  -  {p["inn"]}')
+            list_callbacks.append('disabled_inline_btn')
+        else:
+            list_names.append(f'📥 {p["name"]}  -  {p["inn"]}')
+            list_callbacks.append(f'distribute_auto_load_partner:{p["id"]}')
 
     if partners:
         keyboard = await get_inline_keyb_markup(
-            list_names=[f'{p["name"]}  -  {p["inn"]}' for p in partners],
-            callback_str="disabled_inline_btn",
+            list_names=list_names,
+            list_data=list_callbacks,
+            callback_str="",
             number_cols=1,
             add_keyb_to_start=keyb_str_get_full_list_partners
         )
@@ -34,3 +45,5 @@ async def get_partners_list(message: Message, state: FSMContext):
         keyboard = keyb_markup_get_empty_list_partners
 
     await message.answer(text=text_get_list_partners, reply_markup=keyboard, parse_mode="html")
+
+

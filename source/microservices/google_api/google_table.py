@@ -68,7 +68,7 @@ class GoogleTable:
     async def distribute_statement_operations(self, table_encr_url: str, inn_partner: str,
                                               name_partner: str, list_queue_category: list):
         """
-        Метод распределения операций в листе БД, если инн партнера еще нети в таблице, то возвращает None
+        Метод распределения операций в листе БД, если инн партнера еще нет в таблице, то возвращает False
         (на месте "Без распределения" ставит очередь категорий, на месте названия контрагента ставит новое)
 
         :param list_queue_category: очередь категорий
@@ -84,30 +84,26 @@ class GoogleTable:
         ws = await ss.worksheet(NAME_GOOGLE_TABLE_BD_LIST)
 
         bd_values_rows = await ws.get_all_values()
-        indexes_change_rows = []
+        inns_col = await ws.col_values(13)
+        number_rows = len(bd_values_rows)
 
-        for i in range(0, len(bd_values_rows)):
-            if bd_values_rows[i][12] == str(inn_partner):
-                indexes_change_rows.append(i + 1)
+        bd_values_rows.pop(0)
 
-        if indexes_change_rows:
+        if inn_partner in inns_col:
             for i in range(0, 6):
                 if i > len(list_queue_category):
                     list_queue_category.append("")
 
-            for index in indexes_change_rows:
-                await ws.batch_update([
-                    {
-                        "range": f"B{index}",
-                        "values": [[name_partner]]
-                    },
-                    {
-                        "range": f"H{index}:L{index}",
-                        "values": [list_queue_category]
-                    },
-                ])
-            return True
+            for i, row in enumerate(bd_values_rows):
+                if row[12] == inn_partner:
+                    bd_values_rows[i][1] = name_partner
 
+                    # Записываем категорию
+                    for k, elem in enumerate(list_queue_category):
+                        bd_values_rows[i][7+k] = elem
+
+            await ws.update(range_name=f"A2:M{number_rows}", values=bd_values_rows)
+            return True
         else:
             return False
 
