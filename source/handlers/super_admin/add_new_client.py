@@ -22,7 +22,7 @@ rt.message.filter(IsSuperAdminFilter(), F.chat.type == "private")
 rt.callback_query.filter(IsSuperAdminFilter(), F.message.chat.type == "private")
 
 
-@rt.message(F.text == '⭐️ Добавить нового клиента ⭐️')
+@rt.message(F.text == 'Добавить клиента')
 async def start_add_new_client(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(StepsAddNewClient.start_add_new_client)

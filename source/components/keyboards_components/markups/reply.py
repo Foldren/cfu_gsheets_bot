@@ -106,3 +106,14 @@ keyb_markup_operation_integration_banks = ReplyKeyboardMarkup(
         ]
     ]
 )
+
+keyb_markup_start_superadmin = ReplyKeyboardMarkup(
+    resize_keyboard=True,  # меняем размер клавиатуры
+    input_field_placeholder='Главное меню суперадмина',
+    keyboard=[
+        [
+            KeyboardButton(text='Режим: Суперадмин 👨‍💻'),
+            KeyboardButton(text='Добавить клиента')
+        ]
+    ]
+)

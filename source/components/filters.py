@@ -1,7 +1,7 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message, ChatMemberUpdated
 from components.tools import get_callb_content
-from config import MAIN_MENU_MSGS, SUPER_ADMIN_CHAT_ID
+from config import MAIN_MENU_MSGS, SUPER_ADMINS_CHAT_ID
 from microservices.sql_models_extends.issuance_report import IssuanceReportExtend
 from microservices.sql_models_extends.notify_group import NotifyGroupExtend
 from microservices.redis_models.registrations import RedisRegistration
@@ -17,7 +17,7 @@ class IsAdminFilter(BaseFilter):
 
 class IsSuperAdminFilter(BaseFilter):
     async def __call__(self, message: Message, redis_users: RedisUser) -> bool:
-        return message.from_user.id == SUPER_ADMIN_CHAT_ID
+        return message.from_user.id in SUPER_ADMINS_CHAT_ID
 
 
 class IsAdminModeFilter(BaseFilter):
