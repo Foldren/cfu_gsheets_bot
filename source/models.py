@@ -5,7 +5,7 @@ from tortoise.fields import IntField, TextField, BooleanField, ManyToManyField, 
 
 
 class User(Model):
-    chat_id = BigIntField(pk=True, field_type=int)
+    chat_id = BigIntField(pk=True)
     admin: ForeignKeyRelation['User'] = ForeignKeyField('models.User', on_delete=OnDelete.CASCADE,
                                                         related_name="workers", null=True)
     categories: ManyToManyRelation['Category'] = ManyToManyField('models.Category', on_delete=OnDelete.CASCADE,
@@ -17,8 +17,8 @@ class User(Model):
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
                                                                       related_name="observers",
                                                                       through="period_stat_observers")
-    bet = BigIntField(null=False, field_type=int)
-    increased_bet = BigIntField(null=False, field_type=int)
+    bet = BigIntField(null=False)
+    increased_bet = BigIntField(null=False)
     admin_banks: ReverseRelation['Bank']
     admin_organizations: ReverseRelation["Organization"]
     admin_partners: ReverseRelation["Partner"]
