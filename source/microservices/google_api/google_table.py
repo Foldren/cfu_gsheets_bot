@@ -122,6 +122,8 @@ class GoogleTable:
         result_stats_urls = {}
 
         for stat_name in STATS_UPRAVLYAIKA:
+            if stat_name == "Чеки":
+                continue
             ws = await ss.worksheet(stat_name)
             result_stats_urls[stat_name] = f.encrypt(ws.url.encode())
 
