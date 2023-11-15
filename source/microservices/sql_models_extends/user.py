@@ -205,6 +205,8 @@ class UserExtend:
                                  admin_id=id_admin, bet=bet, increased_bet=increased_bet)
         await Role.bulk_create([Role(user_id=chat_id, type='normal'), Role(user_id=chat_id, type='report_request')])
 
+        print(google_table_url)
+
         if id_admin is None:
             await AdminInfo.create(
                 admin_id=chat_id,
