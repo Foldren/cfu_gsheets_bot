@@ -55,8 +55,8 @@ async def end_add_new_client(message: Message, state: FSMContext, redis_users: R
             google_drive_dir_url=msg_data[4]
         )
 
-        await mkdir(CHECKS_PATH + msg_data[0])
         try:
+            await mkdir(CHECKS_PATH + msg_data[0])
             await copy(IMAGES_PATH + 'fstfile.jpg', CHECKS_PATH + msg_data[0] + '/fstfile.jpg')
         except:
             pass
