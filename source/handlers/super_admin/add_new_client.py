@@ -56,7 +56,10 @@ async def end_add_new_client(message: Message, state: FSMContext, redis_users: R
         )
 
         await mkdir(CHECKS_PATH + msg_data[0])
-        await copy(IMAGES_PATH + 'fstfile.jpg', CHECKS_PATH + msg_data[0] + '/fstfile.jpg')
+        try:
+            await copy(IMAGES_PATH + 'fstfile.jpg', CHECKS_PATH + msg_data[0] + '/fstfile.jpg')
+        except:
+            pass
 
         await redis_wallets.set_new_wallets_list(msg_data[0], ["Другой"])
         await redis_users.add_new_user(msg_data[0], 'admin')
