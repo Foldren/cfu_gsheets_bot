@@ -57,7 +57,7 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
         case "admin":
             result_keyb_markup = keyb_markup_start_admin
 
-    have_btn_add_client = False
+    have_btn_add_client = True
     for i, row in enumerate(result_keyb_markup.keyboard):
         for k, button in enumerate(row):
             try:
@@ -68,9 +68,9 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
                 number_n = await ConfirmNotificationExtend.get_user_notifies_number(user_chat_id)
                 result_keyb_markup.keyboard[i][k] = f"{number_n} 📩"
             if "⭐️ Добавить нового клиента ⭐️" in btn_text:
-                have_btn_add_client = True
+                have_btn_add_client = False
 
-    if (user_chat_id == SUPER_ADMIN_CHAT_ID) and have_btn_add_client:
+    if (user_chat_id == SUPER_ADMIN_CHAT_ID) and (have_btn_add_client is False):
         result_keyb_markup.keyboard.insert(0, [KeyboardButton(text='⭐️ Добавить нового клиента ⭐️')])
 
     return result_keyb_markup
