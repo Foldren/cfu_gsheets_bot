@@ -9,7 +9,7 @@ from components.filters import IsSuperAdminFilter, IsNotMainMenuMessage
 from components.texts.super_admin.add_new_client import text_start_add_client, text_success_add_client, \
     text_success_error_add_client
 from components.tools import get_msg_list_data
-from config import CHECKS_PATH
+from config import CHECKS_PATH, IMAGES_PATH
 from microservices.redis_models.user import RedisUser
 from microservices.redis_models.wallets import RedisUserWallets
 from microservices.sql_models_extends.user import UserExtend
@@ -56,7 +56,7 @@ async def end_add_new_client(message: Message, state: FSMContext, redis_users: R
         )
 
         await mkdir(CHECKS_PATH + msg_data[0])
-        await copy(CHECKS_PATH + 'fstfile.jpg', CHECKS_PATH + msg_data[0] + '/fstfile.jpg')
+        await copy(IMAGES_PATH + 'fstfile.jpg', CHECKS_PATH + msg_data[0] + '/fstfile.jpg')
 
         await redis_wallets.set_new_wallets_list(msg_data[0], ["Другой"])
         await redis_users.add_new_user(msg_data[0], 'admin')
