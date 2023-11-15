@@ -208,8 +208,8 @@ class UserExtend:
         if id_admin is None:
             await AdminInfo.create(
                 admin_id=chat_id,
-                google_table_url=google_table_url,
-                google_drive_dir_url=google_drive_dir_url
+                google_table_url=Fernet(SECRET_KEY).encrypt(google_table_url.encode()),
+                google_drive_dir_url=Fernet(SECRET_KEY).encrypt(google_drive_dir_url.encode())
             )
             await user.periods_stats.add(*(await PeriodStat.all()))
 
