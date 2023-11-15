@@ -51,8 +51,8 @@ async def end_add_new_client(message: Message, state: FSMContext, redis_users: R
             profession="администратор",
             bet=0,
             increased_bet=0,
-            google_table_url=msg_data[3],
-            google_drive_dir_url=msg_data[4]
+            google_table_url=msg_data[4],
+            google_drive_dir_url=msg_data[3]
         )
 
         try:
