@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta
+from sys import maxsize
+
 from aiogram.types import Message
 from cryptography.fernet import Fernet
 from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
 from microservices.google_api.google_table import GoogleTable
-from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role
+from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role, PeriodStat
 
 
 class UserExtend:
@@ -197,10 +199,19 @@ class UserExtend:
 
     @staticmethod
     async def add(chat_id: int, nickname: str, fullname: str, profession: str,
-                  id_admin: int, bet: int, increased_bet: int):
-        await User.create(chat_id=chat_id, nickname=nickname, fullname=fullname, profession=profession,
-                          admin_id=id_admin, bet=bet, increased_bet=increased_bet)
+                  bet: int, increased_bet: int, id_admin: int = None, google_table_url: str = None,
+                  google_drive_dir_url: str = None):
+        user = await User.create(chat_id=chat_id, nickname=nickname, fullname=fullname, profession=profession,
+                                 admin_id=id_admin, bet=bet, increased_bet=increased_bet)
         await Role.bulk_create([Role(user_id=chat_id, type='normal'), Role(user_id=chat_id, type='report_request')])
+
+        if id_admin is None:
+            await AdminInfo.create(
+                admin_id=chat_id,
+                google_table_url=google_table_url,
+                google_drive_dir_url=google_drive_dir_url
+            )
+            await user.periods_stats.add(*(await PeriodStat.all()))
 
     @staticmethod
     async def update_by_id(chat_id: int, nickname: str = None, fullname: str = None, profession: str = None,

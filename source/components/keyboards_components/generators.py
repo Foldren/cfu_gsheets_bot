@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton
 from components.keyboards_components.markups.reply import keyb_markup_start_admin, keyb_markup_start_user_admin, \
     keyb_markup_start_user
+from config import SUPER_ADMIN_CHAT_ID
 from microservices.sql_models_extends.confirm_notification import ConfirmNotificationExtend
 from microservices.sql_models_extends.user import UserExtend
 from models import ConfirmNotification
@@ -10,6 +11,7 @@ async def get_dashboard_url_keyb_markup(url_d: str):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Ссылка на Dashboard", url=url_d)]
     ])
+
 
 async def get_dashb_checks_row(dashb_checks_btns: list, checks_url: str):
     result_row = []
@@ -64,6 +66,9 @@ async def get_reply_keyb_markup_start(user_chat_id: int, category_user: str):
             if "📩" in btn_text:
                 number_n = await ConfirmNotificationExtend.get_user_notifies_number(user_chat_id)
                 result_keyb_markup.keyboard[i][k] = f"{number_n} 📩"
+
+    if user_chat_id == SUPER_ADMIN_CHAT_ID:
+        result_keyb_markup.keyboard.insert(0, [KeyboardButton(text='⭐️ Добавить нового клиента ⭐️')])
 
     return result_keyb_markup
 

@@ -19,6 +19,7 @@ from handlers.admins.manage_users import get_list_users, add_user, change_user, 
 from handlers.members import check_events_notification_groups, confirm_issuance_report, technical_support, \
     manage_confirm_notifications
 from handlers.members.timekeepers import write_new_report_card_user
+from handlers.super_admin import add_new_client
 from handlers.users import start_user, open_nested_menu, show_user_stats, request_money_report
 from handlers.users.categories_operations import browse_categories, write_chosen_category_to_bd, \
     choose_write_category_sender
@@ -52,6 +53,10 @@ member_routers = [
     manage_confirm_notifications.rt, write_new_report_card_user.rt
 ]
 
+super_admin_routers = [
+    add_new_client.rt
+]
+
 
 # Запуск процесса поллинга новых апдейтов
 async def main():
@@ -65,7 +70,7 @@ async def main():
 
     # Включаем логирование, чтобы не пропустить важные сообщения
     logging.basicConfig(level=logging.INFO)
-    dp.include_routers(*admin_routers, *user_routers, *member_routers, main_handlers.rt)
+    dp.include_routers(*admin_routers, *user_routers, *member_routers, main_handlers.rt, *super_admin_routers)
 
     google_table = GoogleTable()
 

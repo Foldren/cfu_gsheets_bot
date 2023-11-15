@@ -28,6 +28,7 @@ BANKS_RUS_NAMES = {
     'module': 'Модуль',
     'tochka': 'Точка',
 }
+SUPER_ADMIN_CHAT_ID = 330061031
 STATS_UPRAVLYAIKA = ["Ежедневный", "Еженедельный", "Ежемесячный", "Dashboard", "Чеки"]
 SECRET_KEY = getenv("SECRET_KEY") if IS_THIS_LOCAL else env('SECRET_KEY')
 NAME_GOOGLE_TABLE_BD_LIST = "БД (не редактировать)"

@@ -21,7 +21,10 @@ class RedisUserWallets:
         for e in wallets_list:
             wallets_dict[e] = ""
 
-        await self.redis_wallets.delete(str(user_id))
+        try:
+            await self.redis_wallets.delete(str(user_id))
+        except Exception:
+            pass
         await self.redis_wallets.hset(str(user_id), mapping=wallets_dict)
 
     async def delete(self, user_ids: list):

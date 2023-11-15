@@ -17,8 +17,8 @@ class User(Model):
     periods_stats: ManyToManyRelation['PeriodStat'] = ManyToManyField('models.PeriodStat', on_delete=OnDelete.CASCADE,
                                                                       related_name="observers",
                                                                       through="period_stat_observers")
-    bet = BigIntField(null=False)
-    increased_bet = BigIntField(null=False)
+    bet = BigIntField(null=False, field_type=int)
+    increased_bet = BigIntField(null=False, field_type=int)
     admin_banks: ReverseRelation['Bank']
     admin_organizations: ReverseRelation["Organization"]
     admin_partners: ReverseRelation["Partner"]
@@ -26,7 +26,6 @@ class User(Model):
     notify_groups: ReverseRelation["NotifyGroup"]
     issuance_reports: ReverseRelation["IssuanceReport"]
     admin_info: ReverseRelation["AdminInfo"]
-    user_info: ReverseRelation["UserInfo"]
     roles: ReverseRelation["Role"]
     confirm_notifications: ReverseRelation["ConfirmNotification"]
     nickname = TextField(maxlength=150, null=False)
