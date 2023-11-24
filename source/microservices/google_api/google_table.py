@@ -54,7 +54,7 @@ class GoogleTable:
         if status_i == 2:
             last_time_come_to_work = datetime.strptime(last_time_come_to_work, '%d.%m.%Y-%H:%M')
             td_time_worked = datetime.now() - last_time_come_to_work
-            time_worked = str(td_time_worked).split(":")[1] + ":" + str(td_time_worked).split(":")[2].split(".")[0]
+            time_worked = str(td_time_worked).split(":")[0] + ":" + str(td_time_worked).split(":")[1]
 
         await ws.append_row([chat_id_user,
                              name_user,
