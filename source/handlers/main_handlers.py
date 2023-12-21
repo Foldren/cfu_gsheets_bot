@@ -10,7 +10,7 @@ rt.callback_query.filter(F.message.chat.type == "private")
 
 
 @rt.callback_query(F.data == 'disabled_inline_btn')
-async def end_load_empty_button(callback: CallbackQuery, state: FSMContext):
+async def end_load_empty_button(callback: CallbackQuery):
     await callback.answer()
     return
 
