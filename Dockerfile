@@ -1,8 +1,6 @@
-FROM python:3.11-slim
-WORKDIR /home
-RUN apt update
-COPY /source /source
-COPY ./requirements.txt /source/requirements.txt
-WORKDIR /source
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r /source/requirements.txt
+FROM python:3.11-alpine
+WORKDIR /usr/src/app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+COPY ./source .
+CMD ["python", "bot.py"]
