@@ -1,13 +1,56 @@
 version: "3.3"
 services:
-  bot_upravlyaika:
+  bank_consumer:
     build: .
-    image: bot_upravlyaika
-    container_name: BOT__Upravlyaika.aiogram
+    container_name: upravlyaika_bot
+    restart: always
     environment:
       - TZ=Europe/Moscow
+    env_file:
+      - ./source/.env
+    depends_on:
+      - upravlyaika_db
+    networks:
+      - uprav_cfu_network
+
+  upravlyaika_db:
+    image: mysql:latest
+    container_name: upravlyaika_db
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - 57269:5432
+    environment:
+      MYSQL_DB: ${MSQ_DB}
+      MYSQL_USER: ${MSQ_USER}
+      MYSQL_PASSWORD: ${MSQ_PASSWORD}
+      TZ: Europe/Moscow
+    networks:
+      - uprav_cfu_network
+    depends_on:
+      - upravlyaika_cache
     volumes:
-      - /home/.VOLUMES/BOT__Upravlyaika.aiogram/source:/source:rw
-    tty: true
-    working_dir: /source
-    command: ["python", "bot.py"]
+      - db_data:/var/lib/postgresql/data
+
+  upravlyaika_cache:
+    image: redis:alpine
+    container_name: upravlyaika_cache
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - 31269:6379
+    command: redis-server --requirepass ${RS_PASSWORD}
+    networks:
+      - uprav_cfu_network
+    volumes:
+      - cache:/data
+
+volumes:
+  db_data:
+  cache:
+
+networks:
+  uprav_cfu_network:
+    external: true
