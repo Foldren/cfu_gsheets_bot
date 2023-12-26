@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  bank_consumer:
+  upravlyaika_bot:
     build: .
     container_name: upravlyaika_bot
     restart: always
