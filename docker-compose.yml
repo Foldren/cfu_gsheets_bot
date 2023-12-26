@@ -31,7 +31,7 @@ services:
     depends_on:
       - upravlyaika_cache
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/mysql
 
   upravlyaika_cache:
     image: redis:alpine
@@ -49,7 +49,17 @@ services:
 
 volumes:
   db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ~/.databases/uprav_gsheet_my_sql
+      o: bind
   cache:
+    driver: local
+    driver_opts:
+      type: none
+      device: ~/.databases/uprav_gsheet_redis
+      o: bind
 
 networks:
   uprav_cfu_network:
