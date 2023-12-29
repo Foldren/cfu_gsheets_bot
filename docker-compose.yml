@@ -20,7 +20,7 @@ services:
     env_file:
       - ./.env
     ports:
-      - 57269:5432
+      - 57269:3306
     environment:
       MYSQL_DB: ${MSQ_DB}
       MYSQL_USER: ${MSQ_USER}
