@@ -14,15 +14,16 @@ services:
       - cfu-uprav-bot
 
   upravlyaika_db:
-    image: mysql:latest
+    image: mysql:8.2.0
     container_name: upravlyaika_db
     restart: always
     ports:
       - 57269:3306
     environment:
-      MYSQL_DB: ${MSQ_DB}
+      MYSQL_DATABASE: ${MSQ_DB}
       MYSQL_USER: ${MSQ_USER}
       MYSQL_PASSWORD: ${MSQ_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MSQ_ROOT_PASSWORD}
       TZ: Europe/Moscow
     networks:
       - cfu-uprav-bot
