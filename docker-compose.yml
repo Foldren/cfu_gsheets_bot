@@ -17,8 +17,6 @@ services:
     image: mysql:latest
     container_name: upravlyaika_db
     restart: always
-    env_file:
-      - ./.env
     ports:
       - 57269:3306
     environment:
@@ -37,8 +35,6 @@ services:
     image: redis:alpine
     container_name: upravlyaika_cache
     restart: always
-    env_file:
-      - ./.env
     ports:
       - 31269:6379
     command: redis-server --requirepass ${RS_PASSWORD}
