@@ -20,6 +20,7 @@ services:
     ports:
       - 57269:3306
     environment:
+      MYSQL_HOST: ${MSQ_HOST}
       MYSQL_DATABASE: ${MSQ_DB}
       MYSQL_USER: ${MSQ_USER}
       MYSQL_PASSWORD: ${MSQ_PASSWORD}
