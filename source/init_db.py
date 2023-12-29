@@ -1,5 +1,7 @@
 from tortoise import Tortoise
+from tortoise.exceptions import OperationalError
 from config import MYSQL_URL
+from models import PeriodStat
 
 
 async def init_db():
@@ -11,5 +13,18 @@ async def init_db():
         modules={'models': ["models"]},
     )
 
-    # Generate the schema
-    # await Tortoise.generate_schemas(safe=True)
+    try:
+        await PeriodStat.all()
+    except OperationalError:
+        # Generate the schema
+        await Tortoise.generate_schemas(safe=True)
+
+        new_ps = [
+            PeriodStat(name="Ежедневный"),
+            PeriodStat(name="Еженедельный"),
+            PeriodStat(name="Ежемесячный"),
+            PeriodStat(name="Dashboard"),
+            PeriodStat(name="Чеки"),
+        ]
+
+        await PeriodStat.bulk_create(new_ps)

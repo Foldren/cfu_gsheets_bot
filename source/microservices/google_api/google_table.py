@@ -3,12 +3,12 @@ from cryptography.fernet import Fernet
 from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadClientManager
 from config import NAME_GOOGLE_TABLE_ACCOUNTING_LIST, NAME_GOOGLE_TABLE_BD_LIST, STATS_UPRAVLYAIKA, SECRET_KEY, \
-    NAME_GOOGLE_TABLE_REPORT_CARD_LIST, NAME_GOOGLE_TABLE_DASHBOARD
+    NAME_GOOGLE_TABLE_REPORT_CARD_LIST, NAME_GOOGLE_TABLE_DASHBOARD, UPRAV_CREDS_URL
 
 
 class GoogleTable:
     agcm: AsyncioGspreadClientManager
-    json_creds_path = "upravlyaika-credentials.json"  # "universe_domain": "googleapis.com"
+    json_creds_path = UPRAV_CREDS_URL  # "universe_domain": "googleapis.com"
 
     def __init_credentials(self):
         creds = Credentials.from_service_account_file(self.json_creds_path)

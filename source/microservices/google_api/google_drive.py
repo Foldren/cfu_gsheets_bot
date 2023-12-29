@@ -3,13 +3,12 @@ import mimetypes
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
 from cryptography.fernet import Fernet
-
-from config import SECRET_KEY
+from config import SECRET_KEY, UPRAV_CREDS_URL
 
 
 class GoogleDrive:
     credentials: ServiceAccountCreds
-    json_creds_path = "upravlyaika-credentials.json"
+    json_creds_path = UPRAV_CREDS_URL
 
     def __init__(self):
         service_account_key = json.load(open(self.json_creds_path))
