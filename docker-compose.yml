@@ -11,7 +11,7 @@ services:
     depends_on:
       - upravlyaika_db
     networks:
-      - uprav_cfu_network
+      - cfu-uprav-bot
 
   upravlyaika_db:
     image: mysql:latest
@@ -27,7 +27,7 @@ services:
       MYSQL_PASSWORD: ${MSQ_PASSWORD}
       TZ: Europe/Moscow
     networks:
-      - uprav_cfu_network
+      - cfu-uprav-bot
     depends_on:
       - upravlyaika_cache
     volumes:
@@ -43,7 +43,7 @@ services:
       - 31269:6379
     command: redis-server --requirepass ${RS_PASSWORD}
     networks:
-      - uprav_cfu_network
+      - cfu-uprav-bot
     volumes:
       - cache:/data
 
@@ -62,5 +62,4 @@ volumes:
       o: bind
 
 networks:
-  uprav_cfu_network:
-    external: true
+  cfu-uprav-bot:
