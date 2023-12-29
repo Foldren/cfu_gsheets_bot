@@ -13,7 +13,7 @@ TOKEN = environ["TOKEN_BOT"] if IS_THIS_LOCAL else getenv('TOKEN_BOT')
 
 TECHNICAL_SUPPORT_GROUP_CHAT_ID = -4023565993
 
-MYSQL_URL = environ['MYSQL_URL'] if IS_THIS_LOCAL else getenv("MYSQL_URL")  # getenv для терминала Pycharm
+MYSQL_URL = environ['MYSQL_URL'] if IS_THIS_LOCAL else getenv("MYSQL_URL")
 
 UPRAV_CREDS_URL = getcwd() + "/source/upravlyaika-credentials.json"
 
