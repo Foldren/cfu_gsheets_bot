@@ -59,5 +59,6 @@ volumes:
       device: ~/.databases/uprav_gsheet_redis
       o: bind
 
+# networks
 networks:
   cfu-uprav-bot:
