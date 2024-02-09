@@ -8,7 +8,7 @@ from components.tools import get_callb_content, generate_wallets_status_list, \
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.change_wallet_list import text_change_wallets_list, text_end_change_wallets_list
 from config import BANKS_UPRAVLYAIKA
-from microservices.redis_models.wallets import RedisUserWallets
+from modules.redis_models.wallets import RedisUserWallets
 from states.user.steps_change_wallet_list import StepsChangeWalletList
 
 rt = Router()

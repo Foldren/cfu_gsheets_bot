@@ -8,12 +8,12 @@ from components.texts.users.write_category_to_bd import text_invalid_volume_oper
 from components.texts.users.write_transfer_to_wallet_to_bd import text_set_volume_transfer, text_select_wallet_sender, \
     text_select_wallet_recipient, text_end_transfer, text_start_transfer
 from components.tools import get_callb_content, send_multiply_messages
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.user import RedisUser
-from microservices.redis_models.wallets import RedisUserWallets
-from microservices.sql_models_extends.notify_group import NotifyGroupExtend
-from microservices.sql_models_extends.organization import OrganizationExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.user import RedisUser
+from modules.redis_models.wallets import RedisUserWallets
+from modules.sql_models_extends.notify_group import NotifyGroupExtend
+from modules.sql_models_extends.organization import OrganizationExtend
+from modules.sql_models_extends.user import UserExtend
 from states.user.steps_create_notes_to_bd import StepsWriteTransfer
 
 rt = Router()

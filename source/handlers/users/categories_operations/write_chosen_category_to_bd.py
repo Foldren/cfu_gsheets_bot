@@ -8,9 +8,9 @@ from components.texts.users.write_category_to_bd import text_start_add_mi_to_bd,
     text_invalid_volume_operation, text_send_check_photo, text_invalid_check_photo
 from components.tools import get_callb_content, add_new_note_to_bd_handler_algorithm, \
     get_str_format_queue
-from microservices.google_api.google_drive import GoogleDrive
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.wallets import RedisUserWallets
+from modules.google_api.google_drive import GoogleDrive
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.wallets import RedisUserWallets
 from states.user.steps_create_notes_to_bd import StepsWriteCategoriesToBd
 
 rt = Router()

@@ -6,7 +6,7 @@ from cryptography.fernet import Fernet
 from tortoise.expressions import Q
 from components.texts.users.show_user_stats import text_fst_load_dashboard
 from config import SECRET_KEY
-from microservices.google_api.google_table import GoogleTable
+from modules.google_api.google_table import GoogleTable
 from models import User, AdminInfo, ReportRequest, ConfirmNotification, Role, PeriodStat
 
 

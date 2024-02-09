@@ -8,10 +8,10 @@ from components.texts.admins.manage_partners import text_start_add_partner, text
     text_select_bank_reload_category, text_start_distribute_statement_operations, text_error_add_partner
 from components.tools import get_msg_list_data, get_emoji_number, get_callb_content
 from handlers.admins.manage_partners.get_list_partners import get_partners_list
-from microservices.google_api.google_table import GoogleTable
-from microservices.sql_models_extends.category import CategoryExtend
-from microservices.sql_models_extends.partner import PartnerExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.google_api.google_table import GoogleTable
+from modules.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.partner import PartnerExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_partners import StepsGetPartnersList, StepsAddPartner
 
 rt = Router()

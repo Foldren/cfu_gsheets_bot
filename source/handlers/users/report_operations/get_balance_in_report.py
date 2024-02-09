@@ -3,9 +3,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from components.filters import IsUserFilter
 from components.texts.users.get_balance_in_report import text_user_balances, text_no_reports, text_load_balances
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.user import RedisUser
-from microservices.sql_models_extends.user import UserExtend
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.user import RedisUser
+from modules.sql_models_extends.user import UserExtend
 
 rt = Router()
 

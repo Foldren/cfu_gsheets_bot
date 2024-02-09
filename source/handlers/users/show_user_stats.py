@@ -9,9 +9,9 @@ from components.keyboards_components.generators import get_inline_keyb_markup, g
 from components.text_generators.users import get_text_dashboard_message
 from components.texts.users.show_user_stats import text_success_show_stats, text_no_shares_show_stats
 from config import SECRET_KEY
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.user import RedisUser
-from microservices.sql_models_extends.user import UserExtend
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.user import RedisUser
+from modules.sql_models_extends.user import UserExtend
 from states.user.steps_show_user_stats import StepsShowUserStats
 
 rt = Router()

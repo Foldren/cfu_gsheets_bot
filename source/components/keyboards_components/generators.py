@@ -2,8 +2,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 from components.keyboards_components.markups.reply import keyb_markup_start_admin, keyb_markup_start_user_admin, \
     keyb_markup_start_user, keyb_markup_start_superadmin
 from config import SUPER_ADMINS_CHAT_ID
-from microservices.sql_models_extends.confirm_notification import ConfirmNotificationExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.confirm_notification import ConfirmNotificationExtend
+from modules.sql_models_extends.user import UserExtend
 from models import ConfirmNotification
 
 

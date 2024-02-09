@@ -8,8 +8,8 @@ from components.texts.admins.manage_categories import text_start_add_menu_item, 
 from components.tools import get_callb_content, get_msg_queue, generate_zero_array, \
     get_str_format_queue
 from components.keyboards_components.generators import get_inline_keyb_markup
-from microservices.sql_models_extends.category import CategoryExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_categories import StepsGetCategoriesList, StepsAddCategory
 
 rt = Router()

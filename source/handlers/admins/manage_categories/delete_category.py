@@ -8,7 +8,7 @@ from components.texts.admins.manage_categories import text_start_delete_menu_ite
     text_end_delete_menu_item
 from components.tools import get_callb_content, get_msg_queue, generate_zero_array, get_sure_delete_mi_msg, get_str_format_queue
 from components.keyboards_components.generators import get_inline_keyb_markup
-from microservices.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.category import CategoryExtend
 from states.admin.steps_manage_categories import StepsGetCategoriesList, StepsDeleteCategories
 
 rt = Router()

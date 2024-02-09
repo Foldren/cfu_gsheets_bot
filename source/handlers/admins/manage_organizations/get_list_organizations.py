@@ -6,7 +6,7 @@ from components.keyboards_components.markups.inline import keyb_markup_get_empty
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.keyboards_components.inline_strings import keyb_str_get_full_list_organizations
 from components.texts.admins.manage_organizations import text_get_list_organizations
-from microservices.sql_models_extends.organization import OrganizationExtend
+from modules.sql_models_extends.organization import OrganizationExtend
 from states.admin.steps_manage_organizations import StepsGetOrganizationsList
 
 rt = Router()

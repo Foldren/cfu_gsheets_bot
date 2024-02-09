@@ -9,7 +9,7 @@ from components.texts.admins.manage_banks import text_start_delete_banks, text_e
 from components.texts.admins.manage_organizations import text_stop_delete_organizations
 from components.tools import get_callb_content, generate_zero_array, get_sure_delete_banks_msg
 from config import BANKS_RUS_NAMES
-from microservices.sql_models_extends.bank import BankExtend
+from modules.sql_models_extends.bank import BankExtend
 from states.admin.steps_manage_banks import StepsDeleteBanks, StepsGetBanksList
 
 rt = Router()

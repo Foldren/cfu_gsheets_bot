@@ -6,7 +6,7 @@ from components.keyboards_components.generators import get_reply_keyb_markup_sta
 from components.keyboards_components.markups.reply import keyb_markup_operation_under_stats, keyb_markup_wallets
 from components.texts.users.change_menu import text_open_under_stats_menu, text_open_wallets_menu, \
     text_back_to_main_menu
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.user import UserExtend
 
 rt = Router()
 

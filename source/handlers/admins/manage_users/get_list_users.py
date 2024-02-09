@@ -6,7 +6,7 @@ from components.keyboards_components.markups.inline import keyb_markup_empty_use
 from components.keyboards_components.inline_strings import keyb_str_user_list
 from components.texts.admins.manage_users import text_get_list_users
 from components.keyboards_components.generators import get_inline_users_keyb_markup
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users import StepsGetListUsers
 
 rt = Router()

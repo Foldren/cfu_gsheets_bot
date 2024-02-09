@@ -9,7 +9,7 @@ from components.keyboards_components.inline_strings import keyb_str_get_full_lis
 from components.texts.admins.manage_banks import text_get_list_banks
 from components.tools import answer_or_edit_message
 from config import BANKS_RUS_NAMES
-from microservices.sql_models_extends.bank import BankExtend
+from modules.sql_models_extends.bank import BankExtend
 from states.admin.steps_manage_banks import StepsGetBanksList
 from states.admin.steps_manage_payment_accounts import StepsGetPaymentAccountsList
 

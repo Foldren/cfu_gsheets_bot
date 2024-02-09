@@ -4,8 +4,8 @@ from aiogram.types import Message, CallbackQuery
 from components.filters import IsAdminFilter, IsNotMainMenuMessage
 from components.texts.admins.manage_users import text_start_add_user, text_end_add_user, text_user_exists
 from components.tools import get_msg_user_data
-from microservices.sql_models_extends.user import UserExtend
-from microservices.redis_models.registrations import RedisRegistration
+from modules.sql_models_extends.user import UserExtend
+from modules.redis_models.registrations import RedisRegistration
 from states.admin.steps_manage_users import StepsGetListUsers, StepsAddUser
 
 rt = Router()

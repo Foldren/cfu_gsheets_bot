@@ -15,7 +15,7 @@ TECHNICAL_SUPPORT_GROUP_CHAT_ID = -4023565993
 
 MYSQL_URL = environ['MYSQL_URL'] if IS_THIS_LOCAL else getenv("MYSQL_URL")
 
-UPRAV_CREDS_URL = "upravlyaika-credentials.json"
+UPRAV_CREDS_URL = str(getcwd()) + "/source/upravlyaika-credentials.json"
 
 SECRET_KEY = getenv("SECRET_KEY")
 

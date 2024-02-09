@@ -10,9 +10,9 @@ from components.texts.super_admin.add_new_client import text_start_add_client, t
     text_success_error_add_client
 from components.tools import get_msg_list_data
 from config import CHECKS_PATH, IMAGES_PATH
-from microservices.redis_models.user import RedisUser
-from microservices.redis_models.wallets import RedisUserWallets
-from microservices.sql_models_extends.user import UserExtend
+from modules.redis_models.user import RedisUser
+from modules.redis_models.wallets import RedisUserWallets
+from modules.sql_models_extends.user import UserExtend
 from states.super_admin.steps_add_new_client import StepsAddNewClient
 
 rt = Router()

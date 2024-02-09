@@ -4,8 +4,8 @@ from aiogram import Router, F
 from components.filters import IsSenderMemberFilter, IsSenderGroupExistFilter
 from components.texts.users.check_events_notifications_group import text_success_join_bot_to_group
 from config import TECHNICAL_SUPPORT_GROUP_CHAT_ID
-from microservices.sql_models_extends.notify_group import NotifyGroupExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.notify_group import NotifyGroupExtend
+from modules.sql_models_extends.user import UserExtend
 
 rt = Router()
 

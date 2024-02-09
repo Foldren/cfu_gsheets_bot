@@ -7,8 +7,8 @@ from components.keyboards_components.generators import get_inline_keyb_markup, g
 from components.texts.admins.manage_payment_accounts import text_get_list_payment_accounts
 from components.tools import get_callb_content
 from config import BANKS_RUS_NAMES
-from microservices.sql_models_extends.bank import BankExtend
-from microservices.sql_models_extends.payment_account import PaymentAccountExtend
+from modules.sql_models_extends.bank import BankExtend
+from modules.sql_models_extends.payment_account import PaymentAccountExtend
 from states.admin.steps_manage_banks import StepsGetBanksList
 from states.admin.steps_manage_payment_accounts import StepsGetPaymentAccountsList
 

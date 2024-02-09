@@ -8,8 +8,8 @@ from components.texts.admins.manage_organizations import text_start_add_organiza
     text_choose_observers_organization, text_end_add_organization
 from components.tools import get_callb_content, generate_zero_array, \
     get_msg_list_data
-from microservices.sql_models_extends.organization import OrganizationExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.organization import OrganizationExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_organizations import StepsGetOrganizationsList, StepsAddOrganization
 
 rt = Router()

@@ -8,7 +8,7 @@ from components.texts.admins.manage_categories import text_choose_param_to_chang
     text_start_change_observers_menu_item, text_end_change_observers_menu_item
 from components.tools import get_callb_content, get_msg_queue, generate_observers_list, get_str_format_queue
 from components.keyboards_components.generators import get_inline_keyb_markup, get_inline_keyb_change_menu_item
-from microservices.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.category import CategoryExtend
 from states.admin.steps_manage_categories import StepsChangeCategory, StepsGetCategoriesList
 
 rt = Router()

@@ -6,8 +6,8 @@ from components.text_generators.users import get_notify_start_request_report
 from components.texts.users.request_money_report import text_start_request_money_report, text_send_request_to_agreement, \
     text_no_all_roles_on_request
 from components.tools import get_msg_list_data, send_multiply_messages
-from microservices.sql_models_extends.notify_group import NotifyGroupExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.notify_group import NotifyGroupExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_reports_requests import StepsMakeRequestMoneyReport
 
 rt = Router()

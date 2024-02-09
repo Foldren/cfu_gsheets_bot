@@ -13,7 +13,7 @@ from components.tools import get_callb_content, answer_or_edit_message, \
     get_users_keyb_names_with_checkbox, \
     get_changed_reply_keyb_with_checkbox
 from config import ROLES
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_reports_requests import StepsManageReportsRequests
 
 rt = Router()

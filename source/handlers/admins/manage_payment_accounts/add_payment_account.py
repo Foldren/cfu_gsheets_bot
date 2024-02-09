@@ -7,8 +7,8 @@ from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.admins.manage_payment_accounts import text_start_add_payment_account, \
     text_select_payment_account_organization, text_end_add_payment_account, text_wrong_datetime
 from components.tools import get_msg_list_data, get_callb_content
-from microservices.sql_models_extends.organization import OrganizationExtend
-from microservices.sql_models_extends.payment_account import PaymentAccountExtend
+from modules.sql_models_extends.organization import OrganizationExtend
+from modules.sql_models_extends.payment_account import PaymentAccountExtend
 from states.admin.steps_manage_payment_accounts import StepsGetPaymentAccountsList, StepsAddPaymentAccount
 
 rt = Router()

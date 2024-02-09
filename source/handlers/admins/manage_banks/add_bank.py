@@ -7,7 +7,7 @@ from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.admins.manage_banks import text_start_add_bank, text_select_bank_name, text_end_add_bank
 from components.tools import get_msg_list_data, get_callb_content
 from config import BANKS_RUS_NAMES, SECRET_KEY
-from microservices.sql_models_extends.bank import BankExtend
+from modules.sql_models_extends.bank import BankExtend
 from states.admin.steps_manage_banks import StepsGetBanksList, StepsAddBank
 
 rt = Router()

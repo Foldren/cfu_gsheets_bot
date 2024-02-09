@@ -6,7 +6,7 @@ from components.keyboards_components.generators import get_reply_keyb_markup_sta
 from components.text_generators.admins import get_text_start_admin
 from components.texts.admins.manage_users import text_start_admin_user
 from config import SUPER_ADMINS_CHAT_ID
-from microservices.redis_models.user import RedisUser
+from modules.redis_models.user import RedisUser
 
 rt = Router()
 

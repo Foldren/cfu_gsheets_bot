@@ -9,11 +9,11 @@ from components.keyboards_components.generators import get_gt_url_keyb_markup
 from components.text_generators.users import get_notify_request_report_text
 from components.texts.users.write_category_to_bd import text_end_add_mi_to_bd
 from config import CHECKS_PATH, BANKS_UPRAVLYAIKA, SECRET_KEY, ROLE_BY_STAGES_REPS_REQS
-from microservices.sql_models_extends.category import CategoryExtend
-from microservices.sql_models_extends.notify_group import NotifyGroupExtend
-from microservices.sql_models_extends.user import UserExtend
-from microservices.google_api.google_drive import GoogleDrive
-from microservices.google_api.google_table import GoogleTable
+from modules.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.notify_group import NotifyGroupExtend
+from modules.sql_models_extends.user import UserExtend
+from modules.google_api.google_drive import GoogleDrive
+from modules.google_api.google_table import GoogleTable
 from models import ConfirmNotification, ReportRequest
 
 

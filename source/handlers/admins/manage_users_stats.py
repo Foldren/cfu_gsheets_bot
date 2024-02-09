@@ -9,8 +9,8 @@ from components.tools import get_callb_content, generate_observers_list, answer_
     get_users_keyb_names_with_checkbox, get_changed_reply_keyb_with_checkbox
 from components.keyboards_components.generators import get_inline_keyb_markup
 from config import STATS_UPRAVLYAIKA
-from microservices.sql_models_extends.period_stat import PeriodStatExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.period_stat import PeriodStatExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_users_stats import StepsManageUsersStats
 
 rt = Router()

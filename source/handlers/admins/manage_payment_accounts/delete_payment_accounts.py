@@ -10,7 +10,7 @@ from components.texts.admins.manage_payment_accounts import text_start_delete_pa
     text_end_delete_payment_accounts
 from components.tools import get_callb_content, get_sure_delete_payment_account_msg, \
     get_changed_reply_keyb_with_checkbox, is_start_select_delete_btns, get_ids_delete_objects_from_keyb_callb
-from microservices.sql_models_extends.payment_account import PaymentAccountExtend
+from modules.sql_models_extends.payment_account import PaymentAccountExtend
 from states.admin.steps_manage_payment_accounts import StepsDeletePaymentAccounts, StepsGetPaymentAccountsList
 
 rt = Router()

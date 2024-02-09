@@ -7,10 +7,10 @@ from components.filters import IsUserFilter, IsRegistration
 from components.keyboards_components.generators import get_reply_keyb_markup_start
 from components.keyboards_components.markups.reply import keyb_markup_start_user
 from components.text_generators.users import get_text_fst_start_user, get_text_start_user
-from microservices.sql_models_extends.user import UserExtend
-from microservices.redis_models.registrations import RedisRegistration
-from microservices.redis_models.user import RedisUser
-from microservices.redis_models.wallets import RedisUserWallets
+from modules.sql_models_extends.user import UserExtend
+from modules.redis_models.registrations import RedisRegistration
+from modules.redis_models.user import RedisUser
+from modules.redis_models.wallets import RedisUserWallets
 
 rt = Router()
 

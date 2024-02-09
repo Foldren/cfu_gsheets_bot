@@ -7,7 +7,7 @@ from components.tools import get_msg_queue, get_callb_content, \
 from components.keyboards_components.generators import get_inline_keyb_markup, get_inline_keyb_profit_cost, \
     get_inline_keyb_str_back_to_parent_items_u
 from components.texts.users.write_category_to_bd import text_get_user_list_mi
-from microservices.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.category import CategoryExtend
 from states.user.steps_create_notes_to_bd import StepsWriteCategoriesToBd
 
 rt = Router()

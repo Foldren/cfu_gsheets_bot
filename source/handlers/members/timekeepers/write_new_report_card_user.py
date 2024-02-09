@@ -6,9 +6,9 @@ from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.members.write_new_report_card_user import text_start_write_new_report_type_user
 from components.tools import get_callb_content
 from config import DEFINE_STATUSES
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.user import RedisUser
-from microservices.sql_models_extends.user import UserExtend
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.user import RedisUser
+from modules.sql_models_extends.user import UserExtend
 from states.member.steps_write_report_card import StepsWriteReportCard
 from datetime import datetime, timedelta
 

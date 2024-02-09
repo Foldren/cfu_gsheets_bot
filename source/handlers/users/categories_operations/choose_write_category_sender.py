@@ -7,8 +7,8 @@ from components.tools import get_callb_content, get_msg_queue
 from components.keyboards_components.generators import get_inline_keyb_markup
 from components.texts.users.write_category_to_bd import text_get_user_list_mi, text_no_menu_items_u, \
     text_choose_sender_write_item, text_choose_organizations, text_no_menu_items_orgs
-from microservices.sql_models_extends.category import CategoryExtend
-from microservices.sql_models_extends.organization import OrganizationExtend
+from modules.sql_models_extends.category import CategoryExtend
+from modules.sql_models_extends.organization import OrganizationExtend
 from states.user.steps_create_notes_to_bd import StepsWriteCategoriesToBd
 
 rt = Router()

@@ -5,9 +5,9 @@ from components.filters import IsMemberFilter
 from components.keyboards_components.generators import get_keyb_list_notify_types_user, get_notify_keyboard_btn
 from components.texts.users.request_money_report import text_get_list_notify_types_user
 from components.tools import get_formatted_msg_callb_notifications, get_callb_content, change_stage_report_request
-from microservices.sql_models_extends.confirm_notification import ConfirmNotificationExtend
-from microservices.sql_models_extends.report_request import ReportRequestExtend
-from microservices.sql_models_extends.user import UserExtend
+from modules.sql_models_extends.confirm_notification import ConfirmNotificationExtend
+from modules.sql_models_extends.report_request import ReportRequestExtend
+from modules.sql_models_extends.user import UserExtend
 from states.admin.steps_manage_reports_requests import StepsManageRequestReports
 
 rt = Router()

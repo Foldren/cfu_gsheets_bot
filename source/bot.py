@@ -27,11 +27,11 @@ from handlers.users.report_operations import write_issuance_of_report_to_bd, wri
     get_balance_in_report
 from handlers.users.wallets_operations import change_wallets_list, write_transfer_to_wallet_to_bd
 from init_db import init_db
-from microservices.google_api.google_drive import GoogleDrive
-from microservices.google_api.google_table import GoogleTable
-from microservices.redis_models.registrations import RedisRegistration
-from microservices.redis_models.user import RedisUser
-from microservices.redis_models.wallets import RedisUserWallets
+from modules.google_api.google_drive import GoogleDrive
+from modules.google_api.google_table import GoogleTable
+from modules.redis_models.registrations import RedisRegistration
+from modules.redis_models.user import RedisUser
+from modules.redis_models.wallets import RedisUserWallets
 
 admin_routers = [
     start_admin.rt, get_list_categories.rt, add_category.rt, get_list_users.rt, add_user.rt,
